@@ -16,34 +16,11 @@ public static class MauiProgram
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 })
-            .RegisterServices()
-            .RegisterViewModels()
-            .RegisterPages()
+            .PreCacheComponents<App>()
+            .RegisterServices<App>()
+            .RegisterViewModels<App>()
+            .RegisterViews<App>()
             .Build()
-            .ConfigureReactiveUISchedulers(typeof(App));
-    }
-
-    public static MauiAppBuilder RegisterServices(this MauiAppBuilder builder)
-    {
-        builder
-            .Services.AddTransient<Services.TestService>();
-
-        return builder;
-    }
-
-    public static MauiAppBuilder RegisterViewModels(this MauiAppBuilder builder)
-    {
-        builder
-            .Services.AddTransient<ViewModels.SampleViewModel>();
-
-        return builder;
-    }
-
-    public static MauiAppBuilder RegisterPages(this MauiAppBuilder builder)
-    {
-        builder
-            .Services.AddTransient<UserInterface.Pages.SamplePage>();
-
-        return builder;
+            .ConfigureReactiveUISchedulers();
     }
 }
