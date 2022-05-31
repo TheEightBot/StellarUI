@@ -20,8 +20,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EightBot.Stellar.MauiSample
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{A8B3EF2B-52AA-40D0-A645-E198A2FD4A44}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EightBot.Stellar.Maui.SourceGenerators", "EightBot.Stellar.Maui.SourceGenerators\EightBot.Stellar.Maui.SourceGenerators.csproj", "{D8042DC9-83F7-41C0-ABEA-F39367CB8875}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,10 +38,6 @@ Global
 		{19579D26-E2AD-4B24-BF34-068EEDDB8C92}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{19579D26-E2AD-4B24-BF34-068EEDDB8C92}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{19579D26-E2AD-4B24-BF34-068EEDDB8C92}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D8042DC9-83F7-41C0-ABEA-F39367CB8875}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D8042DC9-83F7-41C0-ABEA-F39367CB8875}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D8042DC9-83F7-41C0-ABEA-F39367CB8875}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D8042DC9-83F7-41C0-ABEA-F39367CB8875}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

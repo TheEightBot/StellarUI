@@ -48,12 +48,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\EightBot.Stellar\EightBot.Stellar.csproj" />
 	  <ProjectReference Include="..\EightBot.Stellar.Maui\EightBot.Stellar.Maui.csproj" />
-	  <ProjectReference
-				Include="..\EightBot.Stellar.Maui.SourceGenerators\EightBot.Stellar.Maui.SourceGenerators.csproj"
-				OutputItemType="Analyzer"
-				ReferenceOutputAssembly="false" />
+	  <ProjectReference Include="..\EightBot.Stellar\EightBot.Stellar.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 	  <None Remove="UserInterface\" />
