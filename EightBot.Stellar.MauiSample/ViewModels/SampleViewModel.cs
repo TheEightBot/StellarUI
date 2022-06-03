@@ -4,6 +4,7 @@ using ReactiveUI;
 
 namespace EightBot.Stellar.MauiSample.ViewModels;
 
+[ServiceRegistration]
 public class SampleViewModel : ViewModelBase
 {
     private readonly TestService _testService;

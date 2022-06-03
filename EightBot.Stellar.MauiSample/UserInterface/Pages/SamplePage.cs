@@ -3,6 +3,7 @@
 namespace EightBot.Stellar.MauiSample.UserInterface.Pages;
 
 [PreCache]
+[ServiceRegistration]
 public class SamplePage : ContentPageBase<ViewModels.SampleViewModel>
 {
     private VerticalStackLayout _mainLayout;
