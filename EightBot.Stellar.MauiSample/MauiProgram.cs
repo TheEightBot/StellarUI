@@ -17,9 +17,12 @@ public static class MauiProgram
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 })
             .PreCacheComponents<App>()
-            .RegisterServices<App>()
-            .RegisterViewModels<App>()
-            .RegisterViews<App>()
+
+            // We can add individual service registrations or all at once
+            // .RegisterServices<App>()
+            // .RegisterViewModels<App>()
+            // .RegisterViews<App>()
+            .AddRegisteredServices<App>()
             .Build()
             .ConfigureReactiveUISchedulers();
     }

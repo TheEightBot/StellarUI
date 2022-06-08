@@ -5,11 +5,21 @@ namespace EightBot.Stellar.Maui;
 
 public static class MauiAppBuilderExtensions
 {
+    private static Type PreCacheType = typeof(PreCacheAttribute);
+    private static Type ServiceRegistrationType = typeof(ServiceRegistrationAttribute);
+
     public static MauiAppBuilder PreCacheComponents<TStellarAssembly>(this MauiAppBuilder mauiApp)
     {
         PreCache(typeof(TStellarAssembly).GetTypeInfo().Assembly);
 
         return mauiApp;
+    }
+
+    public static MauiAppBuilder AddRegisteredServices<TStellarAssembly>(this MauiAppBuilder mauiAppBuilder)
+    {
+        Register(mauiAppBuilder, typeof(TStellarAssembly).GetTypeInfo().Assembly);
+
+        return mauiAppBuilder;
     }
 
     public static MauiAppBuilder RegisterViewModels<TStellarAssembly>(this MauiAppBuilder mauiAppBuilder)
@@ -55,7 +65,7 @@ public static class MauiAppBuilderExtensions
         var assTypes =
             assembly
                 ?.ExportedTypes
-                ?.Where(ti => ti.IsAssignableTo(registrationType) && !ti.IsAbstract)
+                ?.Where(ti => Attribute.IsDefined(ti, ServiceRegistrationType) && ti.IsAssignableTo(registrationType) && !ti.IsAbstract)
                 ?? Enumerable.Empty<Type>();
 #if DEBUG
         sb
@@ -68,7 +78,21 @@ public static class MauiAppBuilderExtensions
 
         foreach (var ti in assTypes)
         {
-            mauiAppBuilder.Services.AddTransient(ti);
+            if (Attribute.GetCustomAttribute(ti, ServiceRegistrationType) is ServiceRegistrationAttribute a)
+            {
+                switch (a.ServiceRegistrationType)
+                {
+                    case Maui.Lifetime.Transient:
+                        mauiAppBuilder.Services.AddTransient(ti);
+                        break;
+                    case Maui.Lifetime.Scoped:
+                        mauiAppBuilder.Services.AddScoped(ti);
+                        break;
+                    case Maui.Lifetime.Singleton:
+                        mauiAppBuilder.Services.AddSingleton(ti);
+                        break;
+                }
+            }
         }
 
 #if DEBUG
@@ -81,6 +105,74 @@ public static class MauiAppBuilderExtensions
             .AppendLine()
             .AppendLine("------------------------------------------------------------------------------------------")
             .AppendLine($" Registering {registrationType} - End")
+            .AppendLine("------------------------------------------------------------------------------------------");
+
+        System.Diagnostics.Debug.WriteLine(sw.ToString());
+#endif
+
+        return mauiAppBuilder;
+    }
+
+    private static MauiAppBuilder Register(this MauiAppBuilder mauiAppBuilder, Assembly assembly)
+    {
+#if DEBUG
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        var sb = new System.Text.StringBuilder();
+        var totalTime = 0L;
+
+#endif
+
+#if DEBUG
+        sb
+            .AppendLine()
+            .AppendLine("------------------------------------------------------------------------------------------")
+            .AppendLine($" Registering All - Start")
+            .AppendLine("------------------------------------------------------------------------------------------");
+#endif
+
+        var assTypes =
+            assembly
+                ?.ExportedTypes
+                ?.Where(ti => Attribute.IsDefined(ti, ServiceRegistrationType))
+                ?? Enumerable.Empty<Type>();
+#if DEBUG
+        sb
+            .AppendLine($" Assembly Loading\t-\t{sw.ElapsedMilliseconds:N1}ms")
+            .AppendLine()
+            .AppendLine("-------------------------")
+            .AppendLine($" Registering All")
+            .AppendLine();
+#endif
+
+        foreach (var ti in assTypes)
+        {
+            if (Attribute.GetCustomAttribute(ti, ServiceRegistrationType) is ServiceRegistrationAttribute a)
+            {
+                switch (a.ServiceRegistrationType)
+                {
+                    case Maui.Lifetime.Transient:
+                        mauiAppBuilder.Services.AddTransient(ti);
+                        break;
+                    case Maui.Lifetime.Scoped:
+                        mauiAppBuilder.Services.AddScoped(ti);
+                        break;
+                    case Maui.Lifetime.Singleton:
+                        mauiAppBuilder.Services.AddSingleton(ti);
+                        break;
+                }
+            }
+        }
+
+#if DEBUG
+        sw.Stop();
+
+        sb
+            .AppendLine()
+            .AppendLine($" {"Total Loading":-50} \t-\t{totalTime:N1}ms")
+            .AppendLine("-------------------------")
+            .AppendLine()
+            .AppendLine("------------------------------------------------------------------------------------------")
+            .AppendLine($" Registering All - End")
             .AppendLine("------------------------------------------------------------------------------------------");
 
         System.Diagnostics.Debug.WriteLine(sw.ToString());
