@@ -1,8 +1,16 @@
-﻿namespace EightBot.Stellar.Maui;
+﻿using ReactiveUI;
+
+namespace EightBot.Stellar.Maui;
 
 public class ViewManager : IDisposable
 {
     private readonly Lazy<Subject<LifecycleEvent>> _lifecycle = new Lazy<Subject<LifecycleEvent>>(() => new Subject<LifecycleEvent>(), LazyThreadSafetyMode.ExecutionAndPublication);
+
+    private readonly object _bindingLock = new();
+
+    private bool _controlsBound;
+
+    private bool _isDisposed;
 
     public IObservable<Unit> Activated => _lifecycle.Value.Where(x => x == LifecycleEvent.Activated).SelectUnit().AsObservable();
 
@@ -14,13 +22,9 @@ public class ViewManager : IDisposable
 
     public IObservable<LifecycleEvent> Lifecycle => _lifecycle.Value.AsObservable();
 
-    private readonly object _bindingLock = new object();
+    public bool MaintainBindings { get; set; }
 
-    private bool _controlsBound;
-
-    private bool _disposedValue;
-
-    public CompositeDisposable ControlBindings { get; } = new CompositeDisposable();
+    public CompositeDisposable ControlBindings { get; } = new();
 
     public bool ControlsBound => Volatile.Read(ref _controlsBound);
 
@@ -34,11 +38,11 @@ public class ViewManager : IDisposable
                 return;
             }
 
-            Volatile.Write(ref _controlsBound, true);
-
             view.RegisterViewModelBindings();
 
             view.BindControls();
+
+            Volatile.Write(ref _controlsBound, true);
         }
     }
 
@@ -52,61 +56,43 @@ public class ViewManager : IDisposable
                 return;
             }
 
-            Volatile.Write(ref _controlsBound, false);
-
             ControlBindings?.Clear();
 
             view.UnregisterViewModelBindings();
+
+            Volatile.Write(ref _controlsBound, false);
         }
     }
 
-    public void OnVisualElementPropertyChanged<TView, TViewModel>(TView visualElement, string viewModelPropertyName, string propertyName = null)
-        where TView : VisualElement, IStellarView<TViewModel>
+    public void HandlerChanging<TView, TViewModel>(TView visualElement, HandlerChangingEventArgs args)
+        where TView : IStellarView<TViewModel>
         where TViewModel : class
     {
-        if (propertyName == VisualElement.WindowProperty.PropertyName)
-        {
-            if (visualElement.Window != null)
-            {
-                RegisterBindings(visualElement);
-
-                OnLifecycle(LifecycleEvent.Activated);
-            }
-            else
-            {
-                OnLifecycle(LifecycleEvent.Deactivated);
-
-                UnregisterBindings(visualElement);
-            }
-        }
-        else if (propertyName == viewModelPropertyName)
+        if (args.NewHandler is not null)
         {
             visualElement.RegisterViewModelBindings();
+
+            RegisterBindings(visualElement);
+
+            OnLifecycle(LifecycleEvent.Activated);
+
+            return;
         }
+
+        OnLifecycle(LifecycleEvent.Deactivated);
+
+        UnregisterBindings(visualElement);
+
+        visualElement.DisposeView();
     }
 
-    public void OnViewCellPropertyChanged<TView, TViewModel>(TView viewCell, string viewModelPropertyName, string propertyName = null)
-        where TView : ViewCell, IStellarView<TViewModel>
+    public void PropertyChanged<TView, TViewModel>(TView visualElement, string propertyName = null)
+        where TView : IViewFor<TViewModel>
         where TViewModel : class
     {
-        if (propertyName == VisualElement.WindowProperty.PropertyName)
+        if (propertyName == nameof(IViewFor<TViewModel>.ViewModel))
         {
-            if (viewCell?.View?.GetVisualElementWindow() != null)
-            {
-                RegisterBindings(viewCell);
-
-                OnLifecycle(LifecycleEvent.Activated);
-            }
-            else
-            {
-                OnLifecycle(LifecycleEvent.Deactivated);
-
-                UnregisterBindings(viewCell);
-            }
-        }
-        else if (propertyName == viewModelPropertyName)
-        {
-            viewCell.RegisterViewModelBindings();
+            visualElement.SetupViewModel();
         }
     }
 
@@ -120,19 +106,21 @@ public class ViewManager : IDisposable
 
     protected virtual void Dispose(bool disposing)
     {
-        if (!_disposedValue)
+        if (_isDisposed)
         {
-            if (disposing)
-            {
-                if (_lifecycle.IsValueCreated)
-                {
-                    _lifecycle?.Value?.Dispose();
-                }
+            return;
+        }
 
-                this.ControlBindings?.Dispose();
+        _isDisposed = true;
+
+        if (disposing)
+        {
+            if (_lifecycle.IsValueCreated)
+            {
+                _lifecycle?.Value?.Dispose();
             }
 
-            _disposedValue = true;
+            this.ControlBindings?.Dispose();
         }
     }
 
