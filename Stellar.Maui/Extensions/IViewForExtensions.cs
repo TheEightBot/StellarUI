@@ -1,15 +1,28 @@
-using Stellar.ViewModel;
+﻿using Stellar.ViewModel;
 
 namespace Stellar.Maui;
 
 public static class IViewForExtensions
 {
-    public static void SetupViewModel<TViewModel>(this IViewFor<TViewModel> view)
-            where TViewModel : class
+    public static void SetupViewModel<TViewModel>(
+        this IViewFor<TViewModel> view,
+        TViewModel viewModel = null,
+        bool resolveViewModel = true)
+        where TViewModel : class
     {
+        if (viewModel is not null && !viewModel.Equals(view.ViewModel))
+        {
+            view.ViewModel = viewModel;
+        }
+
+        if (view.ViewModel is null && resolveViewModel && view is Element element)
+        {
+            view.ViewModel = element.GetService<TViewModel>();
+        }
+
         if (view.ViewModel is not null && view.ViewModel is ViewModelBase vmb)
         {
-            if (Attribute.GetCustomAttribute(vmb.GetType(), typeof(ServiceRegistrationAttribute)) is ServiceRegistrationAttribute sra)
+            if (Attribute.GetCustomAttribute(typeof(TViewModel), typeof(ServiceRegistrationAttribute)) is ServiceRegistrationAttribute sra)
             {
                 switch (sra.ServiceRegistrationType)
                 {

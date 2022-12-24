@@ -5,21 +5,25 @@ namespace Stellar.Maui;
 
 public static class IStellarViewExtensions
 {
-    public static void InitializeComponent<TViewModel>(this IStellarView<TViewModel> stellarView, bool delayBindingRegistrationUntilAttached = false)
+    public static void InitializeComponent<TViewModel>(
+        this IStellarView<TViewModel> stellarView,
+        TViewModel viewModel = null,
+        bool resolveViewModel = true,
+        bool delayBindingRegistrationUntilAttached = false)
         where TViewModel : class
     {
-        stellarView.SetupViewModel();
-
         if (Attribute.GetCustomAttribute(stellarView.GetType(), typeof(ServiceRegistrationAttribute)) is ServiceRegistrationAttribute sra)
         {
             switch (sra.ServiceRegistrationType)
             {
                 case Lifetime.Scoped:
                 case Lifetime.Singleton:
-                    stellarView.MaintainBindings = true;
+                    stellarView.Maintain = true;
                     break;
             }
         }
+
+        stellarView.SetupViewModel(viewModel, resolveViewModel);
 
         stellarView.Initialize();
 
