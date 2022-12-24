@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq.Expressions;
@@ -438,11 +438,7 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
 
         if (!fromUi && _picker != null && (_picker.SelectedItem == null || !EqualityComparer<TViewModel>.Default.Equals(item, this.SelectedItem)))
         {
-            _picker.Dispatcher.Dispatch(
-                () =>
-                {
-                    _picker.SelectedItem = item;
-                });
+            _picker.Dispatcher.Dispatch(() => _picker.SelectedItem = item);
         }
     }
 
