@@ -1,4 +1,4 @@
-using ReactiveUI;
+﻿using ReactiveUI;
 
 namespace Stellar.Maui;
 
@@ -90,9 +90,9 @@ public class ViewManager : IDisposable
         where TView : IViewFor<TViewModel>
         where TViewModel : class
     {
-        if (propertyName == nameof(IViewFor<TViewModel>.ViewModel))
+        if (propertyName == nameof(IViewFor<TViewModel>.ViewModel) && visualElement.ViewModel is not null)
         {
-            visualElement.SetupViewModel();
+            visualElement.SetupViewModel(visualElement.ViewModel);
         }
     }
 
