@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq.Expressions;
@@ -217,7 +217,7 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
 
         Observable
             .FromEvent<EventHandler<FocusEventArgs>, FocusEventArgs>(
-                eventHandler =>
+                static eventHandler =>
                 {
                     void Handler(object sender, FocusEventArgs e) => eventHandler?.Invoke(e);
                     return Handler;
@@ -270,7 +270,7 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
                         x.Items is INotifyCollectionChanged incc
                             ? Observable
                                 .FromEvent<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>(
-                                    eventHandler =>
+                                    static eventHandler =>
                                     {
                                         void Handler(object sender, NotifyCollectionChangedEventArgs e) => eventHandler?.Invoke(e);
                                         return Handler;
@@ -303,7 +303,7 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
 
         Observable
             .FromEvent<EventHandler<FocusEventArgs>, FocusEventArgs>(
-                eventHandler =>
+                static eventHandler =>
                 {
                     void Handler(object sender, FocusEventArgs e) => eventHandler?.Invoke(e);
                     return Handler;
@@ -356,7 +356,7 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
                         x.Items is INotifyCollectionChanged incc
                             ? Observable
                                 .FromEvent<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>(
-                                    eventHandler =>
+                                    static eventHandler =>
                                     {
                                         void Handler(object sender, NotifyCollectionChangedEventArgs e) => eventHandler?.Invoke(e);
                                         return Handler;

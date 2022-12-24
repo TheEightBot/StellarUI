@@ -33,7 +33,7 @@ public class ReactiveListView : ListView
         return
             Observable
                 .FromEvent<EventHandler<ItemTappedEventArgs>, ItemTappedEventArgs>(
-                    eventHandler =>
+                    static eventHandler =>
                     {
                         void Handler(object sender, ItemTappedEventArgs e) => eventHandler?.Invoke(e);
                         return Handler;
@@ -49,7 +49,7 @@ public class ReactiveListView : ListView
         return
             Observable
                 .FromEvent<EventHandler<ItemTappedEventArgs>, ItemTappedEventArgs>(
-                    eventHandler =>
+                    static eventHandler =>
                     {
                         void Handler(object sender, ItemTappedEventArgs e) => eventHandler?.Invoke(e);
                         return Handler;
@@ -65,7 +65,7 @@ public class ReactiveListView : ListView
         return
             Observable
                 .FromEvent<EventHandler<SelectedItemChangedEventArgs>, SelectedItemChangedEventArgs>(
-                    eventHandler =>
+                    static eventHandler =>
                     {
                         void Handler(object sender, SelectedItemChangedEventArgs e) => eventHandler?.Invoke(e);
                         return Handler;

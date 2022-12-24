@@ -8,14 +8,14 @@ public static class ListViewExtensions
         return
             Observable
                 .FromEvent<EventHandler<ItemTappedEventArgs>, ItemTappedEventArgs>(
-                    eventHandler =>
+                    static eventHandler =>
                     {
                         void Handler(object sender, ItemTappedEventArgs e) => eventHandler?.Invoke(e);
                         return Handler;
                     },
                     x => listView.ItemTapped += x,
                     x => listView.ItemTapped -= x)
-                .Select(x => x.Item)
+                .Select(static x => x.Item)
                 .OfType<T>();
     }
 
@@ -24,14 +24,14 @@ public static class ListViewExtensions
         return
             Observable
                 .FromEvent<EventHandler<ItemTappedEventArgs>, ItemTappedEventArgs>(
-                    eventHandler =>
+                    static eventHandler =>
                     {
                         void Handler(object sender, ItemTappedEventArgs e) => eventHandler?.Invoke(e);
                         return Handler;
                     },
                     x => listView.ItemTapped += x,
                     x => listView.ItemTapped -= x)
-                .Select(args => args.Item);
+                .Select(static args => args.Item);
     }
 
     public static IObservable<T> ItemSelected<T>(this ListView listView)
@@ -40,7 +40,7 @@ public static class ListViewExtensions
         return
             Observable
                 .FromEvent<EventHandler<SelectedItemChangedEventArgs>, SelectedItemChangedEventArgs>(
-                    eventHandler =>
+                    static eventHandler =>
                     {
                         void Handler(object sender, SelectedItemChangedEventArgs e) => eventHandler?.Invoke(e);
                         return Handler;
@@ -56,7 +56,7 @@ public static class ListViewExtensions
         return
             Observable
                 .FromEvent<EventHandler<SelectedItemChangedEventArgs>, SelectedItemChangedEventArgs>(
-                    eventHandler =>
+                    static eventHandler =>
                     {
                         void Handler(object sender, SelectedItemChangedEventArgs e) => eventHandler?.Invoke(e);
                         return Handler;
