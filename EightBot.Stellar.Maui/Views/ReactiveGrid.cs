@@ -1,4 +1,4 @@
-﻿namespace EightBot.Stellar.Maui.Views;
+﻿namespace ReactiveUI.Maui;
 
 /// <summary>
 /// This is an <see cref="Grid"/> that is also an <see cref="IViewFor{T}"/>.
