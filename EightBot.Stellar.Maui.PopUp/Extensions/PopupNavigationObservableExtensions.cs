@@ -1,65 +1,47 @@
-﻿using System.Reactive.Threading.Tasks;
+﻿using System.Reactive;
+using System.Reactive.Concurrency;
+using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
+using Mopups.Pages;
+using Mopups.Services;
+using ReactiveUI;
 
 namespace EightBot.Stellar.Maui;
 
-public static class NavigationObservableExtensions
+public static class PopupNavigationObservableExtensions
 {
-    private static uint _navigatingCount;
-
-    /* This is roughly 12 UI ticks at 60fps. Slightly more than 200ms */
-    public static TimeSpan DefaultMultiTapThrottleDuration { get; set; }
-        = TimeSpan.FromMilliseconds(17 * 12);
-
-    public static bool Navigating
-    {
-        get => Interlocked.Exchange(ref _navigatingCount, 0) > 0;
-
-        set
-        {
-            if (value)
-            {
-                Interlocked.Increment(ref _navigatingCount);
-                return;
-            }
-
-            Interlocked.Decrement(ref _navigatingCount);
-        }
-    }
-
-    public static IDisposable NavigateToPage<TPage>(
+    public static IDisposable NavigateToPopupPage<TPage>(
         this IObservable<Unit> observable,
-        VisualElement element,
         Action<TPage, Unit> preNavigation = null,
         Action<TPage, Unit> postNavigation = null,
         bool animated = true,
         bool allowMultiple = false,
         IScheduler pageCreationScheduler = null,
         TimeSpan? multiTapThrottleDuration = null)
-        where TPage : Page, IStellarView
+        where TPage : PopupPage, IStellarView
     {
-        return NavigateToPage<Unit, TPage>(observable, element, preNavigation, postNavigation, animated, allowMultiple, pageCreationScheduler, multiTapThrottleDuration);
+        return NavigateToPopupPage<Unit, TPage>(observable, preNavigation, postNavigation, animated, allowMultiple, pageCreationScheduler, multiTapThrottleDuration);
     }
 
-    public static IDisposable NavigateToPage<TParameter, TPage>(
+    public static IDisposable NavigateToPopupPage<TParameter, TPage>(
         this IObservable<TParameter> observable,
-        VisualElement element,
         Action<TPage, TParameter> preNavigation = null,
         Action<TPage, TParameter> postNavigation = null,
         bool animated = true,
         bool allowMultiple = false,
         IScheduler pageCreationScheduler = null,
         TimeSpan? multiTapThrottleDuration = null)
-        where TPage : Page, IStellarView
+        where TPage : PopupPage, IStellarView
     {
         return observable
-            .ThrottleFirst(multiTapThrottleDuration ?? DefaultMultiTapThrottleDuration, RxApp.TaskpoolScheduler)
-            .Where(_ => allowMultiple || !Navigating)
-            .Do(_ => Navigating = true)
+            .ThrottleFirst(multiTapThrottleDuration ?? NavigationObservableExtensions.DefaultMultiTapThrottleDuration, RxApp.TaskpoolScheduler)
+            .Where(_ => allowMultiple || !NavigationObservableExtensions.Navigating)
+            .Do(_ => NavigationObservableExtensions.Navigating = true)
             .ObserveOn(pageCreationScheduler ?? RxApp.TaskpoolScheduler)
             .Select(
                 x =>
                 {
-                    var page = element.GetPage<TPage>();
+                    var page = Application.Current.GetPage<TPage>();
                     return (Page: page, Parameter: x, IsAppearingTask: page.AppearingAsync());
                 })
             .ObserveOn(RxApp.MainThreadScheduler)
@@ -68,21 +50,21 @@ public static class NavigationObservableExtensions
                 {
                     preNavigation?.Invoke(x.Page, x.Parameter);
 
+                    var nav = MopupService.Instance;
                     await Task.WhenAll(
                         x.IsAppearingTask,
-                        element.Navigation.PushAsync(x.Page, animated));
+                        nav.PushAsync(x.Page, animated));
 
                     postNavigation?.Invoke(x.Page, x.Parameter);
 
                     return Unit.Default;
                 })
-            .Do(_ => Navigating = false)
+            .Do(_ => NavigationObservableExtensions.Navigating = false)
             .Subscribe();
     }
 
-    public static IDisposable NavigateToPage<TParameter, TPage>(
+    public static IDisposable NavigateToPopupPage<TParameter, TPage>(
         this IObservable<TParameter> observable,
-        VisualElement element,
         Func<TParameter, TPage> pageCreator,
         Action<TPage, TParameter> preNavigation = null,
         Action<TPage, TParameter> postNavigation = null,
@@ -90,12 +72,12 @@ public static class NavigationObservableExtensions
         bool allowMultiple = false,
         IScheduler pageCreationScheduler = null,
         TimeSpan? multiTapThrottleDuration = null)
-        where TPage : Page, IStellarView
+        where TPage : PopupPage, IStellarView
     {
         return observable
-            .ThrottleFirst(multiTapThrottleDuration ?? DefaultMultiTapThrottleDuration, RxApp.TaskpoolScheduler)
-            .Where(_ => allowMultiple || !Navigating)
-            .Do(_ => Navigating = true)
+            .ThrottleFirst(multiTapThrottleDuration ?? NavigationObservableExtensions.DefaultMultiTapThrottleDuration, RxApp.TaskpoolScheduler)
+            .Where(_ => allowMultiple || !NavigationObservableExtensions.Navigating)
+            .Do(_ => NavigationObservableExtensions.Navigating = true)
             .ObserveOn(pageCreationScheduler ?? RxApp.TaskpoolScheduler)
             .Select(
                 x =>
@@ -109,47 +91,20 @@ public static class NavigationObservableExtensions
                 {
                     preNavigation?.Invoke(x.Page, x.Parameter);
 
+                    var nav = MopupService.Instance;
                     await Task.WhenAll(
                         x.IsAppearingTask,
-                        element.Navigation.PushAsync(x.Page, animated));
+                        nav.PushAsync(x.Page, animated));
 
                     postNavigation?.Invoke(x.Page, x.Parameter);
 
                     return Unit.Default;
                 })
-            .Do(_ => Navigating = false)
+            .Do(_ => NavigationObservableExtensions.Navigating = false)
             .Subscribe();
     }
 
-    public static IDisposable NavigatePopTo<TParameter, TPage>(
-        this IObservable<TParameter> observable,
-        Page page,
-        Action<TParameter> preNavigation = null,
-        Action<TParameter> postNavigation = null,
-        bool animated = true,
-        bool allowMultiple = false,
-        TimeSpan? multiTapThrottleDuration = null)
-        where TPage : Page
-    {
-        return observable
-            .ThrottleFirst(multiTapThrottleDuration ?? DefaultMultiTapThrottleDuration, RxApp.TaskpoolScheduler)
-            .Where(_ => allowMultiple || !Navigating)
-            .Do(_ => Navigating = true)
-            .ObserveOn(RxApp.MainThreadScheduler)
-            .SelectMany(
-                async parameter =>
-                {
-                    preNavigation?.Invoke(parameter);
-                    var pages = await page.PopTo<TPage>(animated);
-                    postNavigation?.Invoke(parameter);
-
-                    return Unit.Default;
-                })
-            .Do(_ => Navigating = false)
-            .Subscribe();
-    }
-
-    public static IDisposable NavigatePopPage<TParameter>(
+    public static IDisposable NavigatePopPopupPage<TParameter>(
         this IObservable<TParameter> observable,
         VisualElement element,
         Action<TParameter> preNavigation = null,
@@ -159,26 +114,26 @@ public static class NavigationObservableExtensions
         TimeSpan? multiTapThrottleDuration = null)
     {
         return observable
-            .ThrottleFirst(multiTapThrottleDuration ?? DefaultMultiTapThrottleDuration, RxApp.TaskpoolScheduler)
-            .Where(_ => allowMultiple || !Navigating)
-            .Do(_ => Navigating = true)
+            .ThrottleFirst(multiTapThrottleDuration ?? NavigationObservableExtensions.DefaultMultiTapThrottleDuration, RxApp.TaskpoolScheduler)
+            .Where(_ => allowMultiple || !NavigationObservableExtensions.Navigating)
+            .Do(_ => NavigationObservableExtensions.Navigating = true)
             .ObserveOn(RxApp.MainThreadScheduler)
             .SelectMany(
                 async parameter =>
                 {
                     preNavigation?.Invoke(parameter);
-                    var page = await element.Navigation.PopAsync(animated);
+                    var nav = MopupService.Instance;
+                    await nav.PopAsync(animated);
                     postNavigation?.Invoke(parameter);
 
                     return Unit.Default;
                 })
-            .Do(_ => Navigating = false)
+            .Do(_ => NavigationObservableExtensions.Navigating = false)
             .Subscribe();
     }
 
-    public static IDisposable NavigatePopToRoot<TParameter>(
+    public static IDisposable NavigatePopAllPopupPage<TParameter>(
         this IObservable<TParameter> observable,
-        VisualElement element,
         Action<TParameter> preNavigation = null,
         Action<TParameter> postNavigation = null,
         bool animated = true,
@@ -186,139 +141,50 @@ public static class NavigationObservableExtensions
         TimeSpan? multiTapThrottleDuration = null)
     {
         return observable
-            .ThrottleFirst(multiTapThrottleDuration ?? DefaultMultiTapThrottleDuration, RxApp.TaskpoolScheduler)
-            .Where(_ => allowMultiple || !Navigating)
-            .Do(_ => Navigating = true)
+            .ThrottleFirst(multiTapThrottleDuration ?? NavigationObservableExtensions.DefaultMultiTapThrottleDuration, RxApp.TaskpoolScheduler)
+            .Where(_ => allowMultiple || !NavigationObservableExtensions.Navigating)
+            .Do(_ => NavigationObservableExtensions.Navigating = true)
             .ObserveOn(RxApp.MainThreadScheduler)
             .SelectMany(
                 async parameter =>
                 {
                     preNavigation?.Invoke(parameter);
-                    await element.Navigation.PopToRootAsync(animated);
+                    var nav = MopupService.Instance;
+                    await nav.PopAllAsync(animated);
                     postNavigation?.Invoke(parameter);
 
                     return Unit.Default;
                 })
-            .Do(_ => Navigating = false)
+            .Do(_ => NavigationObservableExtensions.Navigating = false)
             .Subscribe();
     }
 
-    public static IDisposable NavigateToModalPage<TPage>(
-        this IObservable<Unit> observable,
-        VisualElement element,
-        Action<TPage, Unit> preNavigation = null,
-        Action<TPage, Unit> postNavigation = null,
-        bool animated = true,
-        bool allowMultiple = false,
-        IScheduler pageCreationScheduler = null,
-        TimeSpan? multiTapThrottleDuration = null)
-        where TPage : Page, IStellarView
-    {
-        return NavigateToModalPage<Unit, TPage>(observable, element, preNavigation, postNavigation, animated, allowMultiple, pageCreationScheduler, multiTapThrottleDuration);
-    }
-
-    public static IDisposable NavigateToModalPage<TParameter, TPage>(
+    public static IDisposable NavigateRemovePopupPage<TParameter, TPage>(
         this IObservable<TParameter> observable,
-        VisualElement element,
-        Action<TPage, TParameter> preNavigation = null,
-        Action<TPage, TParameter> postNavigation = null,
-        bool animated = true,
-        bool allowMultiple = false,
-        IScheduler pageCreationScheduler = null,
-        TimeSpan? multiTapThrottleDuration = null)
-        where TPage : Page, IStellarView
-    {
-        return observable
-            .ThrottleFirst(multiTapThrottleDuration ?? DefaultMultiTapThrottleDuration, RxApp.TaskpoolScheduler)
-            .Where(_ => allowMultiple || !Navigating)
-            .Do(_ => Navigating = true)
-            .ObserveOn(pageCreationScheduler ?? RxApp.TaskpoolScheduler)
-            .Select(
-                x =>
-                {
-                    var page = element.GetPage<TPage>();
-                    return (Page: page, Parameter: x, IsAppearingTask: page.AppearingAsync());
-                })
-            .ObserveOn(RxApp.MainThreadScheduler)
-            .SelectMany(
-                async x =>
-                {
-                    preNavigation?.Invoke(x.Page, x.Parameter);
-                    await Task.WhenAll(
-                        x.IsAppearingTask,
-                        element.Navigation.PushModalAsync(x.Page, animated));
-                    postNavigation?.Invoke(x.Page, x.Parameter);
-
-                    return Unit.Default;
-                })
-            .Do(_ => Navigating = false)
-            .Subscribe();
-    }
-
-    public static IDisposable NavigateToModalPage<TParameter, TPage>(
-        this IObservable<TParameter> observable,
-        VisualElement element,
-        Func<TParameter, TPage> pageCreator,
-        Action<TPage, TParameter> preNavigation = null,
-        Action<TPage, TParameter> postNavigation = null,
-        bool animated = true,
-        bool allowMultiple = false,
-        IScheduler pageCreationScheduler = null,
-        TimeSpan? multiTapThrottleDuration = null)
-        where TPage : Page, IStellarView
-    {
-        return observable
-            .ThrottleFirst(multiTapThrottleDuration ?? DefaultMultiTapThrottleDuration, RxApp.TaskpoolScheduler)
-            .Where(_ => allowMultiple || !Navigating)
-            .Do(_ => Navigating = true)
-            .ObserveOn(pageCreationScheduler ?? RxApp.TaskpoolScheduler)
-            .Select(
-                x =>
-                {
-                    var page = pageCreator.Invoke(x);
-                    return (Page: page, Parameter: x, IsAppearingTask: page.AppearingAsync());
-                })
-            .ObserveOn(RxApp.MainThreadScheduler)
-            .SelectMany(
-                async x =>
-                {
-                    preNavigation?.Invoke(x.Page, x.Parameter);
-                    await Task.WhenAll(
-                        x.IsAppearingTask,
-                        element.Navigation.PushModalAsync(x.Page, animated));
-                    postNavigation?.Invoke(x.Page, x.Parameter);
-
-                    return Unit.Default;
-                })
-            .Do(_ => Navigating = false)
-            .Subscribe();
-    }
-
-    public static IDisposable NavigatePopModalPage<TParameter>(
-        this IObservable<TParameter> observable,
-        VisualElement element,
+        TPage page,
         Action<TParameter> preNavigation = null,
         Action<TParameter> postNavigation = null,
         bool animated = true,
         bool allowMultiple = false,
         TimeSpan? multiTapThrottleDuration = null)
+        where TPage : PopupPage
     {
         return observable
-            .ThrottleFirst(multiTapThrottleDuration ?? DefaultMultiTapThrottleDuration, RxApp.TaskpoolScheduler)
-            .Where(_ => allowMultiple || !Navigating)
-            .Do(_ => Navigating = true)
+            .ThrottleFirst(multiTapThrottleDuration ?? NavigationObservableExtensions.DefaultMultiTapThrottleDuration, RxApp.TaskpoolScheduler)
+            .Where(_ => allowMultiple || !NavigationObservableExtensions.Navigating)
+            .Do(_ => NavigationObservableExtensions.Navigating = true)
             .ObserveOn(RxApp.MainThreadScheduler)
             .SelectMany(
                 async parameter =>
                 {
                     preNavigation?.Invoke(parameter);
-                    var page = await element.Navigation.PopModalAsync(animated);
+                    var nav = MopupService.Instance;
+                    await nav.RemovePageAsync(page, animated);
                     postNavigation?.Invoke(parameter);
-
-                    Navigating = false;
 
                     return Unit.Default;
                 })
+            .Do(_ => NavigationObservableExtensions.Navigating = false)
             .Subscribe();
     }
 }
