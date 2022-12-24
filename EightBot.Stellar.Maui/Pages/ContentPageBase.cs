@@ -1,67 +1,34 @@
-﻿namespace EightBot.Stellar.Maui.Pages;
+﻿using System.ComponentModel;
 
-public abstract class ContentPageBase<TViewModel> : ReactiveContentPage<TViewModel>, IStellarPage<TViewModel>
+namespace EightBot.Stellar.Maui.Pages;
+
+public abstract class ContentPageBase<TViewModel> : ReactiveContentPage<TViewModel>, IStellarView<TViewModel>
     where TViewModel : class
 {
-    private readonly ViewManager _viewManager = new ViewManager();
+    private bool _isDisposed;
 
-    private bool _disposedValue;
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public ViewManager ViewManager { get; set; } = new();
 
-    public IObservable<Unit> Activated => _viewManager.Activated;
+    public IObservable<Unit> Activated => ViewManager.Activated;
 
-    public IObservable<Unit> Deactivated => _viewManager.Deactivated;
+    public IObservable<Unit> Deactivated => ViewManager.Deactivated;
 
-    public IObservable<Unit> IsAppearing => _viewManager.IsAppearing;
+    public IObservable<Unit> IsAppearing => ViewManager.IsAppearing;
 
-    public IObservable<Unit> IsDisappearing => _viewManager.IsDisappearing;
+    public IObservable<Unit> IsDisappearing => ViewManager.IsDisappearing;
 
-    public IObservable<LifecycleEvent> Lifecycle => _viewManager.Lifecycle;
+    public IObservable<LifecycleEvent> Lifecycle => ViewManager.Lifecycle;
 
-    public CompositeDisposable ControlBindings => _viewManager.ControlBindings;
+    public CompositeDisposable ControlBindings => ViewManager.ControlBindings;
 
-    public bool ControlsBound => _viewManager.ControlsBound;
-
-    public bool MaintainBindings { get; set; }
-
-    protected ContentPageBase(bool delayBindingRegistrationUntilAttached = false)
+    public bool MaintainBindings
     {
-        InitializeInternal(delayBindingRegistrationUntilAttached);
+        get => ViewManager.MaintainBindings;
+        set => ViewManager.MaintainBindings = value;
     }
 
-    private void InitializeInternal(bool delayBindingRegistrationUntilAttached)
-    {
-        Initialize();
-
-        SetupUserInterface();
-
-        if (!delayBindingRegistrationUntilAttached)
-        {
-            _viewManager.RegisterBindings(this);
-        }
-    }
-
-    protected override void OnAppearing()
-    {
-        base.OnAppearing();
-
-        _viewManager.OnLifecycle(LifecycleEvent.IsAppearing);
-    }
-
-    protected override void OnDisappearing()
-    {
-        _viewManager.OnLifecycle(LifecycleEvent.IsDisappearing);
-
-        base.OnDisappearing();
-    }
-
-    protected override void OnPropertyChanged(string propertyName = null)
-    {
-        base.OnPropertyChanged(propertyName);
-
-        _viewManager.OnVisualElementPropertyChanged<ContentPageBase<TViewModel>, TViewModel>(this, ViewModelProperty.PropertyName, propertyName);
-    }
-
-    protected virtual void Initialize()
+    public virtual void Initialize()
     {
     }
 
@@ -69,19 +36,36 @@ public abstract class ContentPageBase<TViewModel> : ReactiveContentPage<TViewMod
 
     public abstract void BindControls();
 
-    protected virtual void Dispose(bool disposing)
+    protected override void OnAppearing()
     {
-        if (!_disposedValue)
-        {
-            if (disposing)
-            {
-                _viewManager?.Dispose();
-                this.DisposeViewModel();
-            }
+        base.OnAppearing();
 
-            _disposedValue = true;
-        }
+        ViewManager.OnLifecycle(LifecycleEvent.IsAppearing);
     }
+
+    protected override void OnDisappearing()
+    {
+        ViewManager.OnLifecycle(LifecycleEvent.IsDisappearing);
+
+        base.OnDisappearing();
+    }
+
+    protected override void OnHandlerChanging(HandlerChangingEventArgs args)
+    {
+        ViewManager.HandlerChanging<ContentPageBase<TViewModel>, TViewModel>(this, args);
+
+        base.OnHandlerChanging(args);
+    }
+
+    protected override void OnPropertyChanged(string propertyName = null)
+    {
+        ViewManager.PropertyChanged<ContentPageBase<TViewModel>, TViewModel>(this, propertyName);
+
+        base.OnPropertyChanged(propertyName);
+    }
+
+    protected virtual void Dispose(bool disposing) =>
+        this.ManageDispose(disposing, ref _isDisposed);
 
     public void Dispose()
     {

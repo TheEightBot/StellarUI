@@ -1,12 +1,12 @@
 ﻿namespace EightBot.Stellar.Maui.Views;
 
 /// <summary>
-/// This is an <see cref="Grid"/> that is also an <see cref="IViewFor{T}"/>.
+/// This is an <see cref="StackLayout"/> that is also an <see cref="IViewFor{T}"/>.
 /// </summary>
 /// <typeparam name="TViewModel">The type of the view model.</typeparam>
-/// <seealso cref="Microsoft.Maui.Controls.Grid" />
+/// <seealso cref="Microsoft.Maui.Controls.StackLayout" />
 /// <seealso cref="ReactiveUI.IViewFor{TViewModel}" />
-public class ReactiveGrid<TViewModel> : Grid, IViewFor<TViewModel>
+public class ReactiveStackLayout<TViewModel> : StackLayout, IViewFor<TViewModel>
     where TViewModel : class
 {
     /// <summary>
@@ -15,7 +15,7 @@ public class ReactiveGrid<TViewModel> : Grid, IViewFor<TViewModel>
     public static readonly BindableProperty ViewModelProperty = BindableProperty.Create(
         nameof(ViewModel),
         typeof(TViewModel),
-        typeof(ReactiveGrid<TViewModel>),
+        typeof(ReactiveStackLayout<TViewModel>),
         default(TViewModel),
         BindingMode.OneWay,
         propertyChanged: OnViewModelChanged);

@@ -2,7 +2,8 @@
 
 namespace EightBot.Stellar.Maui.Pages;
 
-public abstract class ContentViewBase<TViewModel> : ReactiveContentView<TViewModel>, IStellarView<TViewModel>
+public abstract class MultiPageBase<TPage, TViewModel> : ReactiveMultiPage<TPage, TViewModel>, IStellarView<TViewModel>
+    where TPage : Page
     where TViewModel : class
 {
     private bool _isDisposed;
@@ -36,16 +37,31 @@ public abstract class ContentViewBase<TViewModel> : ReactiveContentView<TViewMod
 
     public abstract void BindControls();
 
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+
+        ViewManager.OnLifecycle(LifecycleEvent.IsAppearing);
+    }
+
+    protected override void OnDisappearing()
+    {
+        ViewManager.OnLifecycle(LifecycleEvent.IsDisappearing);
+
+        base.OnDisappearing();
+    }
+
     protected override void OnHandlerChanging(HandlerChangingEventArgs args)
     {
-        ViewManager.HandlerChanging<ContentViewBase<TViewModel>, TViewModel>(this, args);
+        ViewManager.HandlerChanging<MultiPageBase<TPage, TViewModel>, TViewModel>(this, args);
 
         base.OnHandlerChanging(args);
     }
 
     protected override void OnPropertyChanged(string propertyName = null)
     {
-        ViewManager.PropertyChanged<ContentViewBase<TViewModel>, TViewModel>(this, propertyName);
+        ViewManager.PropertyChanged<MultiPageBase<TPage, TViewModel>, TViewModel>(this, propertyName);
+
         base.OnPropertyChanged(propertyName);
     }
 

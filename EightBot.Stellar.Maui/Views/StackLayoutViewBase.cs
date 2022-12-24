@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel;
 
-namespace EightBot.Stellar.Maui.Pages;
+namespace EightBot.Stellar.Maui.Views;
 
-public abstract class ContentViewBase<TViewModel> : ReactiveContentView<TViewModel>, IStellarView<TViewModel>
+public abstract class StackLayoutViewBase<TViewModel> : ReactiveStackLayout<TViewModel>, IStellarView<TViewModel>
     where TViewModel : class
 {
     private bool _isDisposed;
@@ -38,14 +38,15 @@ public abstract class ContentViewBase<TViewModel> : ReactiveContentView<TViewMod
 
     protected override void OnHandlerChanging(HandlerChangingEventArgs args)
     {
-        ViewManager.HandlerChanging<ContentViewBase<TViewModel>, TViewModel>(this, args);
+        ViewManager.HandlerChanging<StackLayoutViewBase<TViewModel>, TViewModel>(this, args);
 
         base.OnHandlerChanging(args);
     }
 
     protected override void OnPropertyChanged(string propertyName = null)
     {
-        ViewManager.PropertyChanged<ContentViewBase<TViewModel>, TViewModel>(this, propertyName);
+        ViewManager.PropertyChanged<StackLayoutViewBase<TViewModel>, TViewModel>(this, propertyName);
+
         base.OnPropertyChanged(propertyName);
     }
 
