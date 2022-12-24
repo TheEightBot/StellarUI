@@ -2,6 +2,7 @@
 using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq.Expressions;
+using Microsoft.Maui.Platform;
 using ReactiveUI;
 
 namespace EightBot.Stellar.Maui;
@@ -50,6 +51,7 @@ public static class PickerExtensions
         where TViewIn : VisualElement
     {
         IObservable<Unit> refresh = null;
+
         if (signalRefresh != null)
         {
             refresh = signalRefresh.Select(_ => Unit.Default);
@@ -82,6 +84,7 @@ public static class PickerExtensions
         IObservable<TDontCare> signalRefresh = null)
     {
         IObservable<Unit> refresh = null;
+
         if (signalRefresh != null)
         {
             refresh = signalRefresh.Select(_ => Unit.Default);
@@ -134,6 +137,7 @@ public static class PickerExtensions
         where TViewModel : class
     {
         IObservable<Unit> refresh = null;
+
         if (signalRefresh != null)
         {
             refresh = signalRefresh.Select(_ => Unit.Default);
@@ -166,6 +170,7 @@ public static class PickerExtensions
         IObservable<TDontCare> signalRefresh = null)
     {
         IObservable<Unit> refresh = null;
+
         if (signalRefresh != null)
         {
             refresh = signalRefresh.Select(_ => Unit.Default);
@@ -183,86 +188,32 @@ public static class PickerExtensions
 
 public class ReactivePickerBinder<TViewModel> : IDisposable
 {
-    private const string BindingContextPath = ".";
-
     private readonly Action<TViewModel> _selectedItemChanged;
 
     private readonly Func<TViewModel, bool> _selectItem;
 
-    private readonly Picker _picker;
+    private Picker _picker;
 
-    private readonly CompositeDisposable _disposableSubscriptions;
+    private IList _items;
 
-    // Properties
+    private CompositeDisposable _disposableSubscriptions;
+
     public TViewModel SelectedItem
         => _picker?.SelectedItem != null
             ? (TViewModel)_picker.SelectedItem
             : default(TViewModel);
 
-    private (bool Success, TViewModel FoundItem) GetItemAt(int index)
-        => index < (_picker?.ItemsSource?.Count ?? 0)
-            ? (true, (TViewModel)_picker.ItemsSource[index])
-            : (false, default(TViewModel));
-
-    public ReactivePickerBinder(
-        Picker picker,
-        IEnumerable<TViewModel> items,
-        Action<TViewModel> selectedItemChanged, Func<TViewModel, bool> selectItem, Func<TViewModel, string> titleSelector,
-        IObservable<Unit> signalViewUpdate = null)
-        : this(picker, Observable.Return(items),
-            selectedItemChanged, selectItem, titleSelector,
-            signalViewUpdate)
-    {
-    }
-
-    public ReactivePickerBinder(
-        Picker picker,
-        IObservable<IEnumerable<TViewModel>> items,
+    public ReactivePickerBinder(Picker picker, IEnumerable<TViewModel> items,
         Action<TViewModel> selectedItemChanged, Func<TViewModel, bool> selectItem, Func<TViewModel, string> titleSelector,
         IObservable<Unit> signalViewUpdate = null)
     {
         _picker = picker;
-
-        _picker.ItemDisplayBinding = new Binding(BindingContextPath, BindingMode.OneTime, new TitleSelectorConverter<TViewModel>(titleSelector));
+        _picker.ItemDisplayBinding = new Binding(".", BindingMode.OneWay, new TitleSelectorConverter<TViewModel>(titleSelector));
 
         _selectedItemChanged = selectedItemChanged;
         _selectItem = selectItem;
 
         _disposableSubscriptions = new CompositeDisposable();
-
-        Observable
-            .CombineLatest(
-                _picker
-                    .WhenAnyValue(x => x.Window),
-                items
-                    .Select(itms => itms is IList il ? il : itms?.ToList()),
-                (window, items) => (HasWindow: window != null, Items: items))
-            .Where(x => x.HasWindow)
-            .Select(x => x.Items)
-            .DistinctUntilChanged()
-            .ObserveOn(RxApp.MainThreadScheduler)
-            .Do(items => _picker.ItemsSource = items)
-            .Subscribe()
-            .DisposeWith(_disposableSubscriptions);
-
-        _picker
-            .WhenAnyValue(x => x.ItemsSource)
-            .IsNotNull()
-            .Select(_ => signalViewUpdate?.Select(_ => true) ?? Observable.Return(false))
-            .Switch()
-            .ObserveOn(RxApp.MainThreadScheduler)
-            .Do(fromNotificationTrigger => SetSelectedItem(fromNotificationTrigger))
-            .Subscribe()
-            .DisposeWith(_disposableSubscriptions);
-
-        _picker
-            .WhenAnyValue(x => x.SelectedItem)
-            .Select(item => item != null ? (TViewModel)item : default(TViewModel))
-            .Skip(1)
-            .ObserveOn(RxApp.MainThreadScheduler)
-            .Do(item => SelectedItemChanged(item, true))
-            .Subscribe()
-            .DisposeWith(_disposableSubscriptions);
 
         Observable
             .FromEvent<EventHandler<FocusEventArgs>, FocusEventArgs>(
@@ -279,6 +230,93 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
                         _picker.Focused -= x;
                     }
                 })
+            .ObserveOn(Schedulers.ShortTermThreadPoolScheduler)
+            .Where(_ => DeviceInfo.Platform == DevicePlatform.iOS)
+            .Where(args => args.IsFocused)
+            .ObserveOn(RxApp.MainThreadScheduler)
+            .Subscribe(args =>
+            {
+                if (_picker != null && _picker.SelectedIndex < 0 && _picker.Items.Count > 0)
+                {
+                    _picker.SelectedIndex = 0;
+                }
+            })
+            .DisposeWith(_disposableSubscriptions);
+
+        _picker
+            .WhenAnyValue(x => x.SelectedItem)
+            .ObserveOn(Schedulers.ShortTermThreadPoolScheduler)
+            .Select(item => item != null ? (TViewModel)item : default(TViewModel))
+            .Skip(1)
+            .Do(item => SelectedItemChanged(item, true))
+            .Subscribe()
+            .DisposeWith(_disposableSubscriptions);
+
+        Observable
+            .Return(items)
+            .ObserveOn(Schedulers.ShortTermThreadPoolScheduler)
+            .Select(itms => (Items: itms is IList<TViewModel> iltvm ? iltvm : itms?.ToList(), SignalViewUpdate: signalViewUpdate))
+            .Do(x => SetItems(x.Items))
+            .Select(
+                static x =>
+                {
+                    var svu =
+                        x.SignalViewUpdate != null
+                            ? x.SignalViewUpdate
+                                .Select(_ => true)
+                            : Observable.Return(false);
+
+                    var inccChanges =
+                        x.Items is INotifyCollectionChanged incc
+                            ? Observable
+                                .FromEvent<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>(
+                                    eventHandler =>
+                                    {
+                                        void Handler(object sender, NotifyCollectionChangedEventArgs e) => eventHandler?.Invoke(e);
+                                        return Handler;
+                                    },
+                                    x => incc.CollectionChanged += x,
+                                    x => incc.CollectionChanged -= x)
+                                .Select(_ => false)
+                            : Observable.Empty<bool>();
+
+                    return Observable.Merge(svu, inccChanges);
+                })
+            .Switch()
+            .Do(fromNotificationTrigger => SetSelectedItem(fromNotificationTrigger))
+            .Subscribe()
+            .DisposeWith(_disposableSubscriptions);
+    }
+
+    public ReactivePickerBinder(Picker picker, IObservable<IEnumerable<TViewModel>> items,
+        Action<TViewModel> selectedItemChanged, Func<TViewModel, bool> selectItem, Func<TViewModel, string> titleSelector,
+        IObservable<Unit> signalViewUpdate = null)
+    {
+        _picker = picker;
+
+        _picker.ItemDisplayBinding = new Binding(".", BindingMode.OneWay, new TitleSelectorConverter<TViewModel>(titleSelector));
+
+        _selectedItemChanged = selectedItemChanged;
+        _selectItem = selectItem;
+
+        _disposableSubscriptions = new CompositeDisposable();
+
+        Observable
+            .FromEvent<EventHandler<FocusEventArgs>, FocusEventArgs>(
+                eventHandler =>
+                {
+                    void Handler(object sender, FocusEventArgs e) => eventHandler?.Invoke(e);
+                    return Handler;
+                },
+                x => _picker.Focused += x,
+                x =>
+                {
+                    if (_picker != null)
+                    {
+                        _picker.Focused -= x;
+                    }
+                })
+            .ObserveOn(Schedulers.ShortTermThreadPoolScheduler)
             .Where(_ => DeviceInfo.Platform == DevicePlatform.iOS)
             .Where(args => args.IsFocused)
             .ObserveOn(RxApp.MainThreadScheduler)
@@ -291,11 +329,79 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
                     }
                 })
             .DisposeWith(_disposableSubscriptions);
+
+        _picker
+            .WhenAnyValue(x => x.SelectedItem)
+            .ObserveOn(Schedulers.ShortTermThreadPoolScheduler)
+            .Select(item => item != null ? (TViewModel)item : default(TViewModel))
+            .Skip(1)
+            .Do(item => SelectedItemChanged(item, true))
+            .Subscribe()
+            .DisposeWith(_disposableSubscriptions);
+
+        items
+            .ObserveOn(Schedulers.ShortTermThreadPoolScheduler)
+            .Select(itms => (Items: itms is IList<TViewModel> iltvm ? iltvm : itms?.ToList(), SignalViewUpdate: signalViewUpdate))
+            .Do(x => SetItems(x.Items))
+            .Select(
+                static x =>
+                {
+                    var svu =
+                        x.SignalViewUpdate != null
+                            ? x.SignalViewUpdate
+                                .Select(_ => true)
+                            : Observable.Return(false);
+
+                    var inccChanges =
+                        x.Items is INotifyCollectionChanged incc
+                            ? Observable
+                                .FromEvent<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>(
+                                    eventHandler =>
+                                    {
+                                        void Handler(object sender, NotifyCollectionChangedEventArgs e) => eventHandler?.Invoke(e);
+                                        return Handler;
+                                    },
+                                    x => incc.CollectionChanged += x,
+                                    x => incc.CollectionChanged -= x)
+                                .Select(_ => false)
+                            : Observable.Empty<bool>();
+
+                    return Observable.Merge(svu, inccChanges);
+                })
+            .Switch()
+            .Do(fromNotificationTrigger => SetSelectedItem(fromNotificationTrigger))
+            .Subscribe()
+            .DisposeWith(_disposableSubscriptions);
+    }
+
+    // Methods
+    private void SetItems(IList<TViewModel> items)
+    {
+        if (_picker is null)
+        {
+            return;
+        }
+
+        _items = (IList)items;
+
+        _picker.Dispatcher.Dispatch(
+            () =>
+            {
+                try
+                {
+                    _picker.ItemsSource = _items;
+                }
+                catch (ArgumentException ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Ex: {ex}");
+                }
+            });
     }
 
     private void SetSelectedItem(bool fromNotificationTrigger = false)
     {
-        var pickerItemCount = _picker?.ItemsSource?.Count ?? 0;
+        var pickerItemCount = _items?.Count ?? 0;
+
         if (pickerItemCount <= 0)
         {
             return;
@@ -321,16 +427,22 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
         }
     }
 
+    private (bool Success, TViewModel FoundItem) GetItemAt(int index)
+        => index < (_items?.Count ?? 0)
+            ? (true, (TViewModel)_items[index])
+            : (false, default(TViewModel));
+
     private void SelectedItemChanged(TViewModel item, bool fromUi = false)
     {
         _selectedItemChanged?.Invoke(item);
 
-        if (!fromUi)
+        if (!fromUi && _picker != null && (_picker.SelectedItem == null || !EqualityComparer<TViewModel>.Default.Equals(item, this.SelectedItem)))
         {
-            if (_picker != null && (_picker.SelectedItem == null || !EqualityComparer<TViewModel>.Default.Equals(item, this.SelectedItem)))
-            {
-               _picker.SelectedItem = item;
-            }
+            _picker.Dispatcher.Dispatch(
+                () =>
+                {
+                    _picker.SelectedItem = item;
+                });
         }
     }
 
@@ -344,6 +456,9 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
         if (disposing)
         {
             _disposableSubscriptions?.Dispose();
+
+            _items = null;
+            _picker = null;
         }
     }
 }
