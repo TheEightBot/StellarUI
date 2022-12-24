@@ -1,4 +1,4 @@
-﻿using Stellar.ViewModel;
+using Stellar.ViewModel;
 
 namespace Stellar.Maui;
 
@@ -15,7 +15,7 @@ public static class IViewForExtensions
                 {
                     case Lifetime.Scoped:
                     case Lifetime.Singleton:
-                        vmb.MaintainBindings = true;
+                        vmb.Maintain = true;
                         break;
                 }
             }
@@ -45,7 +45,7 @@ public static class IViewForExtensions
     public static void DisposeViewModel<TViewModel>(this IViewFor<TViewModel> view)
         where TViewModel : class
     {
-        if (view.ViewModel is not null && view.ViewModel is ViewModelBase vmb && !vmb.MaintainBindings)
+        if (view.ViewModel is not null && view.ViewModel is ViewModelBase vmb && !vmb.Maintain)
         {
             vmb.Dispose();
             view.ViewModel = null;
@@ -54,7 +54,7 @@ public static class IViewForExtensions
 
     public static void DisposeView(this IStellarView ve)
     {
-        if (ve is not null && ve is IStellarView isv && !isv.MaintainBindings)
+        if (ve is not null && ve is IStellarView isv && !isv.Maintain)
         {
             isv.Dispose();
         }

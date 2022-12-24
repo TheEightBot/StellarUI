@@ -1,4 +1,4 @@
-﻿using ReactiveUI;
+using ReactiveUI;
 
 namespace Stellar.Maui;
 
@@ -22,7 +22,7 @@ public class ViewManager : IDisposable
 
     public IObservable<LifecycleEvent> Lifecycle => _lifecycle.Value.AsObservable();
 
-    public bool MaintainBindings { get; set; }
+    public bool Maintain { get; set; }
 
     public CompositeDisposable ControlBindings { get; } = new();
 
@@ -51,7 +51,7 @@ public class ViewManager : IDisposable
     {
         lock (_bindingLock)
         {
-            if (view.MaintainBindings || !_controlsBound)
+            if (view.Maintain || !_controlsBound)
             {
                 return;
             }

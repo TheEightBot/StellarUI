@@ -22,10 +22,10 @@ public abstract class ShellBase<TViewModel> : ReactiveShell<TViewModel>, IStella
 
     public CompositeDisposable ControlBindings => ViewManager.ControlBindings;
 
-    public bool MaintainBindings
+    public bool Maintain
     {
-        get => ViewManager.MaintainBindings;
-        set => ViewManager.MaintainBindings = value;
+        get => ViewManager.Maintain;
+        set => ViewManager.Maintain = value;
     }
 
     public virtual void Initialize()

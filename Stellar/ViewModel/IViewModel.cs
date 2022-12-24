@@ -1,5 +1,5 @@
 ﻿namespace Stellar.ViewModel;
 
-public interface IViewModel : IMaintainBindings
+public interface IViewModel : IMaintain
 {
 }

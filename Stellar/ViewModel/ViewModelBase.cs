@@ -12,7 +12,7 @@ public abstract class ViewModelBase : ReactiveObject, IViewModel, IDisposable
 
     private bool _isDisposed;
 
-    public bool MaintainBindings { get; set; }
+    public bool Maintain { get; set; }
 
     protected CompositeDisposable ViewModelBindings { get; } = new();
 
@@ -53,7 +53,7 @@ public abstract class ViewModelBase : ReactiveObject, IViewModel, IDisposable
     {
         lock (_vmLock)
         {
-            if (MaintainBindings || !_bindingsRegistered)
+            if (Maintain || !_bindingsRegistered)
             {
                 return;
             }
