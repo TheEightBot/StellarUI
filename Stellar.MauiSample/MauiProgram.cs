@@ -21,7 +21,6 @@ public static class MauiProgram
                 })
             .UseMauiCommunityToolkit()
             .UseMauiCommunityToolkitMarkup()
-            .PreCacheComponents<App>()
             /*
             We can add individual service registrations or all at once
             .RegisterServices<App>()
