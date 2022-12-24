@@ -6,7 +6,7 @@ using Mopups.Pages;
 using Mopups.Services;
 using ReactiveUI;
 
-namespace Sui;
+namespace Stellar.Maui;
 
 public static class PopupNavigationObservableExtensions
 {
@@ -106,7 +106,6 @@ public static class PopupNavigationObservableExtensions
 
     public static IDisposable NavigatePopPopupPage<TParameter>(
         this IObservable<TParameter> observable,
-        VisualElement element,
         Action<TParameter> preNavigation = null,
         Action<TParameter> postNavigation = null,
         bool animated = true,
