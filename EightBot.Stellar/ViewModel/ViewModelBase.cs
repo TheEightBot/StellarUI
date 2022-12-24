@@ -2,37 +2,32 @@
 
 public abstract class ViewModelBase : ReactiveObject, IViewModel, IDisposable
 {
-    protected static Action DefaultAction = new Action(() => { });
+    protected static Action DefaultAction = () => { };
 
-    private readonly object _bindingLock = new object();
+    private readonly object _vmLock = new();
 
-    private readonly CompositeDisposable _viewModelBindings = new CompositeDisposable();
+    private bool _initialized;
 
-    protected CompositeDisposable ViewModelBindings => _viewModelBindings;
+    protected bool _bindingsRegistered;
 
-    protected bool _isLoading, _bindingsRegistered, _maintainBindings;
-    private bool _disposedValue;
+    private bool _isDisposed;
 
     public bool MaintainBindings { get; set; }
 
-    protected ViewModelBase()
-        : this(true)
-    {
-    }
+    protected CompositeDisposable ViewModelBindings { get; } = new();
 
-    protected ViewModelBase(bool registerObservables = true)
+    public void SetupViewModel()
     {
-        InitializeInternal(registerObservables);
-    }
-
-    private void InitializeInternal(bool registerObservables)
-    {
-        Initialize();
-
-        if (registerObservables)
+        lock (_vmLock)
         {
-            RegisterBindings();
+            if (!_initialized)
+            {
+                Initialize();
+                _initialized = true;
+            }
         }
+
+        RegisterBindings();
     }
 
     protected virtual void Initialize()
@@ -43,14 +38,12 @@ public abstract class ViewModelBase : ReactiveObject, IViewModel, IDisposable
 
     public void RegisterBindings()
     {
-        lock (_bindingLock)
+        lock (_vmLock)
         {
             if (_bindingsRegistered)
             {
                 return;
             }
-
-            Volatile.Write(ref _bindingsRegistered, true);
 
             RegisterObservables();
         }
@@ -58,29 +51,29 @@ public abstract class ViewModelBase : ReactiveObject, IViewModel, IDisposable
 
     public void UnregisterBindings()
     {
-        lock (_bindingLock)
+        lock (_vmLock)
         {
             if (MaintainBindings || !_bindingsRegistered)
             {
                 return;
             }
 
-            Volatile.Write(ref _bindingsRegistered, false);
-
-            _viewModelBindings?.Clear();
+            ViewModelBindings?.Clear();
         }
     }
 
     protected virtual void Dispose(bool disposing)
     {
-        if (!_disposedValue)
+        if (_isDisposed)
         {
-            if (disposing)
-            {
-                _viewModelBindings?.Dispose();
-            }
+            return;
+        }
 
-            _disposedValue = true;
+        _isDisposed = true;
+
+        if (disposing)
+        {
+            ViewModelBindings?.Dispose();
         }
     }
 

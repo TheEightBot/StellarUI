@@ -1,25 +1,20 @@
-﻿namespace EightBot.Stellar.Maui;
+﻿using System.ComponentModel;
 
-public interface IStellarView<TViewModel> : IViewFor<TViewModel>, IStellarView, IDisposable
+namespace EightBot.Stellar.Maui;
+
+public interface IStellarView<TViewModel> : IViewFor<TViewModel>, IStellarView
     where TViewModel : class
 {
 }
 
-public interface IStellarView : IDisposable
+public interface IStellarView : IDisposable, IMaintainBindings
 {
-    IObservable<Unit> Activated { get; }
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public ViewManager ViewManager { get; set; }
 
-    IObservable<Unit> Deactivated { get; }
+    public void Initialize();
 
-    IObservable<LifecycleEvent> Lifecycle { get; }
+    public void SetupUserInterface();
 
-    CompositeDisposable ControlBindings { get; }
-
-    bool ControlsBound { get; }
-
-    bool MaintainBindings { get; set; }
-
-    public abstract void SetupUserInterface();
-
-    public abstract void BindControls();
+    public void BindControls();
 }

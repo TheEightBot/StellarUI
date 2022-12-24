@@ -107,7 +107,7 @@ public static class MauiAppBuilderExtensions
             .AppendLine($" Registering {registrationType} - End")
             .AppendLine("------------------------------------------------------------------------------------------");
 
-        System.Diagnostics.Debug.WriteLine(sw.ToString());
+        System.Diagnostics.Debug.WriteLine(sb.ToString());
 #endif
 
         return mauiAppBuilder;
@@ -175,7 +175,7 @@ public static class MauiAppBuilderExtensions
             .AppendLine($" Registering All - End")
             .AppendLine("------------------------------------------------------------------------------------------");
 
-        System.Diagnostics.Debug.WriteLine(sw.ToString());
+        System.Diagnostics.Debug.WriteLine(sb.ToString());
 #endif
 
         return mauiAppBuilder;

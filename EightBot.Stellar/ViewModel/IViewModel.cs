@@ -1,5 +1,5 @@
 ﻿namespace EightBot.Stellar.ViewModel;
 
-public interface IViewModel
+public interface IViewModel : IMaintainBindings
 {
 }

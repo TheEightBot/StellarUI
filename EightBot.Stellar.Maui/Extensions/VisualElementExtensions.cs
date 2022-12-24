@@ -5,7 +5,7 @@ namespace EightBot.Stellar.Maui;
 public static class VisualElementExtensions
 {
     public static TPage GetPage<TPage>(this Element element)
-        where TPage : Page, IStellarPage
+        where TPage : Page
     {
         return element.FindMauiContext().Services.GetService<TPage>();
     }

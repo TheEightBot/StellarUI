@@ -2,48 +2,62 @@
 
 public abstract class ApplicationBase : Application, IDisposable
 {
-    private readonly Subject<ApplicationLifecycleEvent> _lifecycle = new Subject<ApplicationLifecycleEvent>();
-    private bool _disposedValue;
+    private readonly Lazy<Subject<ApplicationLifecycleEvent>> _lifecycle = new Lazy<Subject<ApplicationLifecycleEvent>>(() => new Subject<ApplicationLifecycleEvent>(), LazyThreadSafetyMode.ExecutionAndPublication);
+    private bool _isDisposed;
 
-    public IObservable<Unit> IsStarting => _lifecycle.Where(x => x == ApplicationLifecycleEvent.IsStarting).SelectUnit().AsObservable();
+    public IObservable<Unit> IsStarting => _lifecycle.Value.Where(x => x == ApplicationLifecycleEvent.IsStarting).SelectUnit().AsObservable();
 
-    public IObservable<Unit> IsResuming => _lifecycle.Where(x => x == ApplicationLifecycleEvent.IsResuming).SelectUnit().AsObservable();
+    public IObservable<Unit> IsResuming => _lifecycle.Value.Where(x => x == ApplicationLifecycleEvent.IsResuming).SelectUnit().AsObservable();
 
-    public IObservable<Unit> IsSleeping => _lifecycle.Where(x => x == ApplicationLifecycleEvent.IsSleeping).SelectUnit().AsObservable();
+    public IObservable<Unit> IsSleeping => _lifecycle.Value.Where(x => x == ApplicationLifecycleEvent.IsSleeping).SelectUnit().AsObservable();
 
-    public IObservable<ApplicationLifecycleEvent> Lifecycle => _lifecycle.AsObservable();
+    public IObservable<ApplicationLifecycleEvent> Lifecycle => _lifecycle.Value.AsObservable();
 
     protected override void OnStart()
     {
         base.OnStart();
 
-        _lifecycle.OnNext(ApplicationLifecycleEvent.IsStarting);
+        if (_lifecycle.IsValueCreated)
+        {
+            _lifecycle.Value.OnNext(ApplicationLifecycleEvent.IsStarting);
+        }
     }
 
     protected override void OnResume()
     {
         base.OnResume();
 
-        _lifecycle.OnNext(ApplicationLifecycleEvent.IsResuming);
+        if (_lifecycle.IsValueCreated)
+        {
+            _lifecycle.Value.OnNext(ApplicationLifecycleEvent.IsResuming);
+        }
     }
 
     protected override void OnSleep()
     {
         base.OnSleep();
 
-        _lifecycle.OnNext(ApplicationLifecycleEvent.IsSleeping);
+        if (_lifecycle.IsValueCreated)
+        {
+            _lifecycle.Value.OnNext(ApplicationLifecycleEvent.IsSleeping);
+        }
     }
 
     protected virtual void Dispose(bool disposing)
     {
-        if (!_disposedValue)
+        if (_isDisposed)
         {
-            if (disposing)
-            {
-                _lifecycle?.Dispose();
-            }
+            return;
+        }
 
-            _disposedValue = true;
+        _isDisposed = true;
+
+        if (disposing)
+        {
+            if (_lifecycle.IsValueCreated)
+            {
+                _lifecycle.Value?.Dispose();
+            }
         }
     }
 

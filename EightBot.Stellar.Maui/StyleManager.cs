@@ -27,7 +27,7 @@ public abstract class StyleManager : ReactiveObject
     {
         if (name == null)
         {
-            return default(Style);
+            return default;
         }
 
         if (!_cachedStyles.ContainsKey(name))
