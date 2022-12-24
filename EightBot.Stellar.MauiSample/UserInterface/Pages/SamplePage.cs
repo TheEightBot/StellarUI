@@ -18,6 +18,7 @@ public class SamplePage : ContentPageBase<ViewModels.SampleViewModel>
 
     public SamplePage(ViewModels.SampleViewModel sampleViewModel)
     {
+        this.InitializeComponent();
         this.ViewModel = sampleViewModel;
     }
 
@@ -63,7 +64,7 @@ public class SamplePage : ContentPageBase<ViewModels.SampleViewModel>
             .DisposeWith(ControlBindings);
 
         this.WhenAnyObservable(x => x.ViewModel.GoNext)
-            .NavigateToPage<Unit, SamplePage>(this)
+            .NavigateToPage<SamplePage>(this)
             .DisposeWith(ControlBindings);
 
         this.WhenAnyValue(x => x.ViewModel.ColorArray)

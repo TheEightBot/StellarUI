@@ -4,6 +4,11 @@ public class SampleViewCell : ViewCellBase<ViewModels.TestItem>
 {
     private Label _name;
 
+    public SampleViewCell()
+    {
+        this.InitializeComponent();
+    }
+
     public override void SetupUserInterface()
     {
         View =

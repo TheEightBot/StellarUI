@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.ComponentModel;
+using System.Drawing;
 using EightBot.Stellar.MauiSample.Services;
 using ReactiveUI;
 
@@ -28,8 +29,6 @@ public class SampleViewModel : ViewModelBase
 
     protected override void Initialize()
     {
-        base.Initialize();
-
         var rng = new Random(Guid.NewGuid().GetHashCode());
 
         var colors = new byte[4];
@@ -48,7 +47,7 @@ public class SampleViewModel : ViewModelBase
                 });
         }
 
-        SelectedTestItem = items[rng.Next(0, items.Count - 1)];
+        SelectedTestItem = items.ElementAt(rng.Next(0, items.Count - 1));
 
         TestItems = items;
     }
@@ -62,8 +61,10 @@ public class SampleViewModel : ViewModelBase
     }
 }
 
-public class TestItem
+public class TestItem : INotifyPropertyChanged
 {
+    public event PropertyChangedEventHandler PropertyChanged;
+
     public string Value1 { get; set; }
 
     public int Value2 { get; set; }
