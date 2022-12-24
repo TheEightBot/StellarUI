@@ -19,6 +19,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="ReactiveUI.Maui" Version="18.4.1" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <None Remove="ReactiveUI.Maui" />
 	  <None Remove="Platforms\Android\" />
 	  <None Remove="Platforms\iOS\" />
@@ -28,10 +32,12 @@
 	  <None Remove="Views\" />
 	  <None Remove="Pages\" />
 	  <None Remove="Extensions\" />
+	  <None Remove="AttachedProperties\" />
+	  <None Remove="Effects\" />
+	  <None Remove="Platforms\Android\Effects\" />
+	  <None Remove="Platforms\iOS\Effects\" />
 	</ItemGroup>
-	<ItemGroup>
-	  <PackageReference Include="ReactiveUI.Maui" Version="18.4.1" />
-	</ItemGroup>
+
 	<ItemGroup>
 	  <Folder Include="Platforms\Android\" />
 	  <Folder Include="Platforms\iOS\" />
@@ -41,6 +47,10 @@
 	  <Folder Include="Views\" />
 	  <Folder Include="Pages\" />
 	  <Folder Include="Extensions\" />
+	  <Folder Include="AttachedProperties\" />
+	  <Folder Include="Effects\" />
+	  <Folder Include="Platforms\Android\Effects\" />
+	  <Folder Include="Platforms\iOS\Effects\" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\EightBot.Stellar\EightBot.Stellar.csproj" />
