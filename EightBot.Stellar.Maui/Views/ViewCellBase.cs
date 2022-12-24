@@ -1,49 +1,34 @@
-﻿namespace EightBot.Stellar.Maui.Views;
+﻿using System.ComponentModel;
 
-public abstract class ViewCellBase<TViewModel> : ReactiveViewCell<TViewModel>, IStellarView<TViewModel>
+namespace EightBot.Stellar.Maui.Views;
+
+public abstract partial class ViewCellBase<TViewModel> : ReactiveViewCell<TViewModel>, IStellarView<TViewModel>
     where TViewModel : class
 {
-    private readonly ViewManager _viewManager = new ViewManager();
+    private bool _isDisposed;
 
-    private bool _disposedValue;
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public ViewManager ViewManager { get; set; } = new();
 
-    public IObservable<Unit> Activated => _viewManager.Activated;
+    public IObservable<Unit> Activated => ViewManager.Activated;
 
-    public IObservable<Unit> Deactivated => _viewManager.Deactivated;
+    public IObservable<Unit> Deactivated => ViewManager.Deactivated;
 
-    public IObservable<LifecycleEvent> Lifecycle => _viewManager.Lifecycle;
+    public IObservable<Unit> IsAppearing => ViewManager.IsAppearing;
 
-    public CompositeDisposable ControlBindings => _viewManager.ControlBindings;
+    public IObservable<Unit> IsDisappearing => ViewManager.IsDisappearing;
 
-    public bool ControlsBound => _viewManager.ControlsBound;
+    public IObservable<LifecycleEvent> Lifecycle => ViewManager.Lifecycle;
 
-    public bool MaintainBindings { get; set; }
+    public CompositeDisposable ControlBindings => ViewManager.ControlBindings;
 
-    protected ViewCellBase(bool delayBindingRegistrationUntilAttached = false)
+    public bool MaintainBindings
     {
-        InitializeInternal(delayBindingRegistrationUntilAttached);
+        get => ViewManager.MaintainBindings;
+        set => ViewManager.MaintainBindings = value;
     }
 
-    private void InitializeInternal(bool delayBindingRegistrationUntilAttached)
-    {
-        Initialize();
-
-        SetupUserInterface();
-
-        if (!delayBindingRegistrationUntilAttached)
-        {
-            _viewManager.RegisterBindings(this);
-        }
-    }
-
-    protected override void OnPropertyChanged(string propertyName = null)
-    {
-        base.OnPropertyChanged(propertyName);
-
-        _viewManager.OnViewCellPropertyChanged<ViewCellBase<TViewModel>, TViewModel>(this, ViewModelProperty.PropertyName, propertyName);
-    }
-
-    protected virtual void Initialize()
+    public virtual void Initialize()
     {
     }
 
@@ -51,19 +36,22 @@ public abstract class ViewCellBase<TViewModel> : ReactiveViewCell<TViewModel>, I
 
     public abstract void BindControls();
 
-    protected virtual void Dispose(bool disposing)
+    protected override void OnHandlerChanging(HandlerChangingEventArgs args)
     {
-        if (!_disposedValue)
-        {
-            if (disposing)
-            {
-                _viewManager?.Dispose();
-                this.DisposeViewModel();
-            }
+        ViewManager.HandlerChanging<ViewCellBase<TViewModel>, TViewModel>(this, args);
 
-            _disposedValue = true;
-        }
+        base.OnHandlerChanging(args);
     }
+
+    protected override void OnPropertyChanged(string propertyName = null)
+    {
+        ViewManager.PropertyChanged<ViewCellBase<TViewModel>, TViewModel>(this, propertyName);
+
+        base.OnPropertyChanged(propertyName);
+    }
+
+    protected virtual void Dispose(bool disposing) =>
+        this.ManageDispose(disposing, ref _isDisposed);
 
     public void Dispose()
     {
