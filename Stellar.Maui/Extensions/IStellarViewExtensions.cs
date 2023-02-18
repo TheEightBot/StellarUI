@@ -5,7 +5,7 @@ namespace Stellar.Maui;
 
 public static class IStellarViewExtensions
 {
-    public static void InitializeComponent<TViewModel>(
+    public static void InitializeStellarComponent<TViewModel>(
         this IStellarView<TViewModel> stellarView,
         TViewModel viewModel = null,
         bool resolveViewModel = true,
