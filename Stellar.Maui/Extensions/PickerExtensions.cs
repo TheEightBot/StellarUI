@@ -208,7 +208,7 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
         IObservable<Unit> signalViewUpdate = null)
     {
         _picker = picker;
-        _picker.ItemDisplayBinding = new Binding(".", BindingMode.OneWay, new TitleSelectorConverter<TViewModel>(titleSelector));
+        _picker.ItemDisplayBinding = new Binding(".", BindingMode.OneTime, new TitleSelectorConverter<TViewModel>(titleSelector));
 
         _selectedItemChanged = selectedItemChanged;
         _selectItem = selectItem;
