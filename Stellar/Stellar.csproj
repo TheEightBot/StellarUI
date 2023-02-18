@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<SingleProject>true</SingleProject>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="ReactiveUI.Fody" Version="18.4.20" />
+	  <PackageReference Include="ReactiveUI" Version="18.4.20" />
+	</ItemGroup>
+
+</Project>
