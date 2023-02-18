@@ -98,10 +98,12 @@ public class ViewManager : IDisposable
 
     public void OnLifecycle(LifecycleEvent lifecycleEvent)
     {
-        if (_lifecycle.IsValueCreated)
+        if (!_lifecycle.IsValueCreated)
         {
-            _lifecycle.Value.OnNext(lifecycleEvent);
+            return;
         }
+
+        _lifecycle.Value.OnNext(lifecycleEvent);
     }
 
     protected virtual void Dispose(bool disposing)

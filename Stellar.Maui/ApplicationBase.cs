@@ -17,30 +17,36 @@ public abstract class ApplicationBase : Application, IDisposable
     {
         base.OnStart();
 
-        if (_lifecycle.IsValueCreated)
+        if (!_lifecycle.IsValueCreated)
         {
-            _lifecycle.Value.OnNext(ApplicationLifecycleEvent.IsStarting);
+            return;
         }
+
+        _lifecycle.Value.OnNext(ApplicationLifecycleEvent.IsStarting);
     }
 
     protected override void OnResume()
     {
         base.OnResume();
 
-        if (_lifecycle.IsValueCreated)
+        if (!_lifecycle.IsValueCreated)
         {
-            _lifecycle.Value.OnNext(ApplicationLifecycleEvent.IsResuming);
+            return;
         }
+
+        _lifecycle.Value.OnNext(ApplicationLifecycleEvent.IsResuming);
     }
 
     protected override void OnSleep()
     {
         base.OnSleep();
 
-        if (_lifecycle.IsValueCreated)
+        if (!_lifecycle.IsValueCreated)
         {
-            _lifecycle.Value.OnNext(ApplicationLifecycleEvent.IsSleeping);
+            return;
         }
+
+        _lifecycle.Value.OnNext(ApplicationLifecycleEvent.IsSleeping);
     }
 
     protected virtual void Dispose(bool disposing)
@@ -54,10 +60,12 @@ public abstract class ApplicationBase : Application, IDisposable
 
         if (disposing)
         {
-            if (_lifecycle.IsValueCreated)
+            if (!_lifecycle.IsValueCreated)
             {
-                _lifecycle.Value?.Dispose();
+                return;
             }
+
+            _lifecycle.Value?.Dispose();
         }
     }
 
