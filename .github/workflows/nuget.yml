@@ -21,7 +21,10 @@ jobs:
         source-url: https://nuget.pkg.github.com/theeightbot/index.json
       env:
         NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-        
+
+    - name: Install MAUI Workloads
+      run: dotnet workload install maui --ignore-failed-sources        
+
     - name: Semver Parse
       id: version
       uses: release-kit/semver@v1.0.10        
