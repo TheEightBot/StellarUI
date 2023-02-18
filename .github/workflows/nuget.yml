@@ -1,0 +1,48 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: .NET
+
+on: 
+  push:
+    tags:
+      - 'v**'
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '7.x'
+        source-url: https://nuget.pkg.github.com/thegithub/index.json
+      env:
+        NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        
+    - name: Semver Parse
+      id: version
+      uses: release-kit/semver@v1.0.10        
+        
+    - name: Build Stellar    
+      run: dotnet build Stellar/Stellar.csproj
+    - name: Create the package
+      run: dotnet pack --configuration Release  /p:AssemblyVersion=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }} /p:Version=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }} Stellar/Stellar.csproj
+    - name: Publish the package to GPR
+      run: dotnet nuget push Stellar/bin/Release/*.nupkg
+
+    - name: Build Stellar.Maui
+      run: dotnet build Stellar.Maui/Stellar.Maui.csproj
+    - name: Create the package
+      run: dotnet pack --configuration Release /p:AssemblyVersion=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }} /p:Version=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }} Stellar.Maui/Stellar.Maui.csproj
+    - name: Publish the package to GPR
+      run: dotnet nuget push Stellar.Maui/bin/Release/*.nupkg
+
+    - name: Build Stellar.Maui.PopUp
+      run: dotnet build Stellar.Maui.PopUp/Stellar.Maui.PopUp.csproj
+    - name: Create the package
+      run: dotnet pack --configuration Release  /p:AssemblyVersion=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }} /p:Version=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }} Stellar.Maui.PopUp/Stellar.Maui.PopUp.csproj
+    - name: Publish the package to GPR
+      run: dotnet nuget push Stellar.Maui.PopUp/bin/Release/*.nupkg
