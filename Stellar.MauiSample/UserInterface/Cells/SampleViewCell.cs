@@ -6,7 +6,7 @@ public class SampleViewCell : ViewCellBase<ViewModels.TestItem>
 
     public SampleViewCell()
     {
-        this.InitializeComponent();
+        this.InitializeStellarComponent(resolveViewModel: false);
     }
 
     public override void SetupUserInterface()

@@ -12,6 +12,9 @@ public class SampleViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit> GoPopup { get; private set; }
 
     [Reactive]
+    public ReactiveCommand<Unit, Unit> GoModal { get; private set; }
+
+    [Reactive]
     public ReactiveCommand<Unit, Unit> GoNext { get; private set; }
 
     [Reactive]
@@ -56,6 +59,11 @@ public class SampleViewModel : ViewModelBase
     protected override void RegisterObservables()
     {
         GoPopup =
+            ReactiveCommand
+                .Create(DefaultAction)
+                .DisposeWith(ViewModelBindings);
+
+        GoModal =
             ReactiveCommand
                 .Create(DefaultAction)
                 .DisposeWith(ViewModelBindings);

@@ -3,7 +3,7 @@ using Stellar.MauiSample.ViewModels;
 
 namespace Stellar.MauiSample.UserInterface.Pages;
 
-[ServiceRegistration(Lifetime.Singleton)]
+[ServiceRegistration]
 public class SamplePopupPage : PopupPageBase<SampleViewModel>
 {
     private VerticalStackLayout _mainLayout;
@@ -18,7 +18,7 @@ public class SamplePopupPage : PopupPageBase<SampleViewModel>
 
     public SamplePopupPage()
     {
-        this.InitializeComponent();
+        this.InitializeStellarComponent();
     }
 
     public override void SetupUserInterface()

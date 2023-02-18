@@ -1,15 +1,14 @@
-﻿namespace Stellar.MauiSample.UserInterface.Pages;
+﻿using System;
+using Stellar.MauiSample.ViewModels;
 
-[ServiceRegistration]
-public class SamplePage : ContentPageBase<ViewModels.SampleViewModel>
+namespace Stellar.MauiSample.UserInterface.Pages;
+
+[ServiceRegistration(Lifetime.Singleton)]
+public class SampleModalPage : ContentPageBase<SampleViewModel>
 {
     private VerticalStackLayout _mainLayout;
 
-    private Button _popup;
-
-    private Button _modal;
-
-    private Button _next;
+    private Button _close;
 
     private BoxView _color;
 
@@ -17,41 +16,33 @@ public class SamplePage : ContentPageBase<ViewModels.SampleViewModel>
 
     private ListView _listView;
 
-    public SamplePage(ViewModels.SampleViewModel sampleViewModel)
+    public SampleModalPage()
     {
-        this.InitializeStellarComponent(sampleViewModel);
+        this.InitializeStellarComponent();
     }
 
     public override void SetupUserInterface()
     {
+        // this.BackgroundColor = Colors.Transparent;
+        this.BackgroundColor = Color.FromRgba(0d, 0d, 0d, 0.0000001d);
+
         Content =
             new VerticalStackLayout
             {
+                Margin = 32,
                 Padding = 8,
                 Spacing = 8,
+                BackgroundColor = Colors.Chartreuse,
+                VerticalOptions = LayoutOptions.Fill,
                 Children =
                 {
                     new Button
                     {
-                        Text = "Popup",
+                        Text = "Close",
                         HeightRequest = 32,
                         VerticalOptions = LayoutOptions.Start,
                     }
-                        .Assign(out _popup),
-                    new Button
-                    {
-                        Text = "Modal",
-                        HeightRequest = 32,
-                        VerticalOptions = LayoutOptions.Start,
-                    }
-                        .Assign(out _modal),
-                    new Button
-                    {
-                        Text = "Next",
-                        HeightRequest = 32,
-                        VerticalOptions = LayoutOptions.Start,
-                    }
-                        .Assign(out _next),
+                        .Assign(out _close),
                     new BoxView
                     {
                         HeightRequest = 60,
@@ -77,25 +68,11 @@ public class SamplePage : ContentPageBase<ViewModels.SampleViewModel>
 
     public override void BindControls()
     {
-        this.BindCommand(ViewModel, vm => vm.GoNext, ui => ui._next, Observables.UnitDefault)
-            .DisposeWith(ControlBindings);
+        this.BindCommand(ViewModel, vm => vm.GoNext, ui => ui._close, Observables.UnitDefault)
+        .DisposeWith(ControlBindings);
 
         this.WhenAnyObservable(x => x.ViewModel.GoNext)
-            .NavigateToPage<SamplePage>(this)
-            .DisposeWith(ControlBindings);
-
-        this.BindCommand(ViewModel, vm => vm.GoPopup, ui => ui._popup, Observables.UnitDefault)
-            .DisposeWith(ControlBindings);
-
-        this.WhenAnyObservable(x => x.ViewModel.GoPopup)
-            .NavigateToPopupPage<SamplePopupPage>()
-            .DisposeWith(ControlBindings);
-
-        this.BindCommand(ViewModel, vm => vm.GoModal, ui => ui._modal, Observables.UnitDefault)
-            .DisposeWith(ControlBindings);
-
-        this.WhenAnyObservable(x => x.ViewModel.GoModal)
-            .NavigateToModalPage<SampleModalPage>(this)
+            .NavigatePopModalPage(this)
             .DisposeWith(ControlBindings);
 
         this.WhenAnyValue(x => x.ViewModel.ColorArray)
