@@ -3,7 +3,7 @@ using UIKit;
 
 namespace Stellar.MauiSample;
 
-public class Program
+public static class Program
 {
     // This is the main entry point of the application.
     public static void Main(string[] args)
