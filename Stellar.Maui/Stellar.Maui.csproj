@@ -19,7 +19,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="ReactiveUI.Maui" Version="18.4.20" />
+	  <PackageReference Include="ReactiveUI.Maui" Version="18.4.22" />
 	</ItemGroup>
 
 	<ItemGroup>
