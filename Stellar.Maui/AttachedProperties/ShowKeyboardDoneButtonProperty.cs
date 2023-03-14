@@ -25,7 +25,7 @@ public class ShowKeyboardDoneButtonProperty
     {
         var ve = bindable as VisualElement;
 
-        if (ve == null)
+        if (ve is null)
         {
             return;
         }
@@ -34,7 +34,7 @@ public class ShowKeyboardDoneButtonProperty
 
         var foundEffect = ve.Effects.FirstOrDefault(x => x.ResolveId == Effects.EffectNames.ShowKeyboardDoneButtonEffect);
 
-        if (foundEffect != null)
+        if (foundEffect is not null)
         {
             ve.Effects.Remove(foundEffect);
         }

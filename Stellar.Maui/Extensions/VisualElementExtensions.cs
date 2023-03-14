@@ -50,10 +50,10 @@ public static class VisualElementExtensions
     }
 
     internal static bool IsApplicationOrNull(this Element element)
-        => element == null || element is IApplication;
+        => element is null || element is IApplication;
 
     internal static bool IsApplicationOrWindowOrNull(this Element element)
-        => element == null || element is IApplication || element is IWindow;
+        => element is null || element is IApplication || element is IWindow;
 
     private static IMauiContext FindMauiContext(this Element element)
     {
@@ -62,14 +62,14 @@ public static class VisualElementExtensions
             return _mauiContext;
         }
 
-        if (element is IElement fe && fe.Handler?.MauiContext != null)
+        if (element is IElement fe && fe.Handler?.MauiContext is not null)
         {
             return _mauiContext = fe.Handler.MauiContext;
         }
 
         foreach (var parent in element.GetParentsPath())
         {
-            if (parent is IElement parentView && parentView.Handler?.MauiContext != null)
+            if (parent is IElement parentView && parentView.Handler?.MauiContext is not null)
             {
                 return _mauiContext = parentView.Handler.MauiContext;
             }

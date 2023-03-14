@@ -5,7 +5,6 @@ namespace Stellar.Maui;
 
 public static class MauiAppBuilderExtensions
 {
-    private static Type PreCacheType = typeof(PreCacheAttribute);
     private static Type ServiceRegistrationType = typeof(ServiceRegistrationAttribute);
 
     public static MauiAppBuilder PreCacheComponents<TStellarAssembly>(this MauiAppBuilder mauiApp)
@@ -48,7 +47,6 @@ public static class MauiAppBuilderExtensions
 #if DEBUG
         var sw = System.Diagnostics.Stopwatch.StartNew();
         var sb = new System.Text.StringBuilder();
-        var totalTime = 0L;
 
 #endif
 
@@ -100,7 +98,7 @@ public static class MauiAppBuilderExtensions
 
         sb
             .AppendLine()
-            .AppendLine($" {"Total Loading":-50} \t-\t{totalTime:N1}ms")
+            .AppendLine($" {"Total Loading":-50} \t-\t{sw.ElapsedMilliseconds:N1}ms")
             .AppendLine("-------------------------")
             .AppendLine()
             .AppendLine("------------------------------------------------------------------------------------------")
@@ -118,7 +116,6 @@ public static class MauiAppBuilderExtensions
 #if DEBUG
         var sw = System.Diagnostics.Stopwatch.StartNew();
         var sb = new System.Text.StringBuilder();
-        var totalTime = 0L;
 
 #endif
 
@@ -168,7 +165,7 @@ public static class MauiAppBuilderExtensions
 
         sb
             .AppendLine()
-            .AppendLine($" {"Total Loading":-50} \t-\t{totalTime:N1}ms")
+            .AppendLine($" {"Total Loading":-50} \t-\t{sw.ElapsedMilliseconds:N1}ms")
             .AppendLine("-------------------------")
             .AppendLine()
             .AppendLine("------------------------------------------------------------------------------------------")
@@ -183,6 +180,11 @@ public static class MauiAppBuilderExtensions
 
     private static Task PreCache(Assembly assembly)
     {
+        if (assembly is null)
+        {
+            return Task.CompletedTask;
+        }
+
         return Task.Run(
             () =>
             {
@@ -206,7 +208,7 @@ public static class MauiAppBuilderExtensions
                             ti =>
                                 Attribute.IsDefined(ti, precacheAttribute) &&
                                 ti.IsClass && !ti.IsAbstract &&
-                                ti.GetConstructor(Type.EmptyTypes) != null && !ti.ContainsGenericParameters)
+                                ti.GetConstructor(Type.EmptyTypes) is not null && !ti.ContainsGenericParameters)
                         ?? Enumerable.Empty<Type>();
 #if DEBUG
                 sb
@@ -225,7 +227,10 @@ public static class MauiAppBuilderExtensions
                         sw.Restart();
 #endif
 
-                        assembly.CreateInstance(ti.FullName);
+                        if (ti.FullName is not null)
+                        {
+                            assembly!.CreateInstance(ti.FullName);
+                        }
 
 #if DEBUG
                         var elapsed = sw.ElapsedMilliseconds;

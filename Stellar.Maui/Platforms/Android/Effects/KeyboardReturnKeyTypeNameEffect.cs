@@ -22,7 +22,7 @@ public class KeyboardReturnKeyTypeNameEffect : Microsoft.Maui.Controls.Platform.
     {
         var editText = Control as EditText;
 
-        if (editText == null)
+        if (editText is null)
         {
             return;
         }
@@ -40,7 +40,7 @@ public class KeyboardReturnKeyTypeNameEffect : Microsoft.Maui.Controls.Platform.
     {
         var editText = Control as EditText;
 
-        if (editText == null || editText.Handle == IntPtr.Zero)
+        if (editText is null || editText.Handle == IntPtr.Zero)
         {
             return;
         }
@@ -53,7 +53,7 @@ public class KeyboardReturnKeyTypeNameEffect : Microsoft.Maui.Controls.Platform.
 
     protected override void OnElementPropertyChanged(System.ComponentModel.PropertyChangedEventArgs args)
     {
-        if (args.PropertyName.Equals(KeyboardReturnKeyTypeProperty.KeyboardReturnKeyTypeName))
+        if (args?.PropertyName?.Equals(KeyboardReturnKeyTypeProperty.KeyboardReturnKeyTypeName) == true)
         {
             SetReturnType();
             return;
@@ -64,16 +64,12 @@ public class KeyboardReturnKeyTypeNameEffect : Microsoft.Maui.Controls.Platform.
 
     private void SetReturnType()
     {
-        var editText = Control as EditText;
-
-        if (editText == null)
+        if (!(Control is EditText editText))
         {
             return;
         }
 
-        var keyboardType = KeyboardReturnKeyTypeProperty.GetKeyboardReturnKeyType(Element);
-
-        switch (keyboardType)
+        switch (KeyboardReturnKeyTypeProperty.GetKeyboardReturnKeyType(Element))
         {
             case EntryKeyboardReturnType.Go:
                 editText.ImeOptions = ImeAction.Go;
@@ -104,7 +100,7 @@ public class KeyboardReturnKeyTypeNameEffect : Microsoft.Maui.Controls.Platform.
         {
             var nextElement = KeyboardReturnKeyTypeProperty.GetNextVisualElement(Element);
 
-            if (nextElement != null)
+            if (nextElement is not null)
             {
                 nextElement.Focus();
             }

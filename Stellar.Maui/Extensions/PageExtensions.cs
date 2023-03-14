@@ -4,12 +4,12 @@ public static class PageExtensions
 {
     public static bool IsPresentedModally(this Page page)
     {
-        return page != null && page.Navigation != null && page.Navigation.ModalStack.Contains(page);
+        return page is not null && page.Navigation is not null && page.Navigation.ModalStack.Contains(page);
     }
 
     public static bool IsPresentedOnStack(this Page page)
     {
-        return page != null && page.Navigation != null && page.Navigation.NavigationStack.Contains(page);
+        return page is not null && page.Navigation is not null && page.Navigation.NavigationStack.Contains(page);
     }
 
     public static async Task<IEnumerable<Page>> PopTo<TPage>(this VisualElement visualElement, bool animated = true)
@@ -17,7 +17,7 @@ public static class PageExtensions
     {
         var navStack = visualElement?.Navigation?.NavigationStack;
 
-        if (!navStack?.Any() ?? true)
+        if (visualElement is null || navStack is null || !navStack.Any())
         {
             return Enumerable.Empty<Page>();
         }

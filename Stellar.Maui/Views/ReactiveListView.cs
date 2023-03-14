@@ -113,7 +113,7 @@ public class ReactiveListView : ListView
     {
         base.SetupContent(content, index);
 
-        if (_cellActivatedAction != null && !_cellActivators.ContainsKey(content))
+        if (_cellActivatedAction is not null && !_cellActivators.ContainsKey(content))
         {
             var disposable = new CompositeDisposable();
             _cellActivatedAction(disposable, content, index);

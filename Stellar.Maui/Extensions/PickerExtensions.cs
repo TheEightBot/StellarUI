@@ -52,7 +52,7 @@ public static class PickerExtensions
     {
         IObservable<Unit> refresh = null;
 
-        if (signalRefresh != null)
+        if (signalRefresh is not null)
         {
             refresh = signalRefresh.Select(_ => Unit.Default);
         }
@@ -85,7 +85,7 @@ public static class PickerExtensions
     {
         IObservable<Unit> refresh = null;
 
-        if (signalRefresh != null)
+        if (signalRefresh is not null)
         {
             refresh = signalRefresh.Select(_ => Unit.Default);
         }
@@ -138,7 +138,7 @@ public static class PickerExtensions
     {
         IObservable<Unit> refresh = null;
 
-        if (signalRefresh != null)
+        if (signalRefresh is not null)
         {
             refresh = signalRefresh.Select(_ => Unit.Default);
         }
@@ -171,7 +171,7 @@ public static class PickerExtensions
     {
         IObservable<Unit> refresh = null;
 
-        if (signalRefresh != null)
+        if (signalRefresh is not null)
         {
             refresh = signalRefresh.Select(_ => Unit.Default);
         }
@@ -199,7 +199,7 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
     private CompositeDisposable _disposableSubscriptions;
 
     public TViewModel SelectedItem
-        => _picker?.SelectedItem != null
+        => _picker?.SelectedItem is not null
             ? (TViewModel)_picker.SelectedItem
             : default(TViewModel);
 
@@ -225,7 +225,7 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
                 x => _picker.Focused += x,
                 x =>
                 {
-                    if (_picker != null)
+                    if (_picker is not null)
                     {
                         _picker.Focused -= x;
                     }
@@ -236,7 +236,7 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(args =>
             {
-                if (_picker != null && _picker.SelectedIndex < 0 && _picker.Items.Count > 0)
+                if (_picker is not null && _picker.SelectedIndex < 0 && _picker.Items.Count > 0)
                 {
                     _picker.SelectedIndex = 0;
                 }
@@ -246,7 +246,7 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
         _picker
             .WhenAnyValue(x => x.SelectedItem)
             .ObserveOn(Schedulers.ShortTermThreadPoolScheduler)
-            .Select(item => item != null ? (TViewModel)item : default(TViewModel))
+            .Select(item => item is not null ? (TViewModel)item : default(TViewModel))
             .Skip(1)
             .Do(item => SelectedItemChanged(item, true))
             .Subscribe()
@@ -261,7 +261,7 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
                 static x =>
                 {
                     var svu =
-                        x.SignalViewUpdate != null
+                        x.SignalViewUpdate is not null
                             ? x.SignalViewUpdate
                                 .Select(_ => true)
                             : Observable.Return(false);
@@ -311,7 +311,7 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
                 x => _picker.Focused += x,
                 x =>
                 {
-                    if (_picker != null)
+                    if (_picker is not null)
                     {
                         _picker.Focused -= x;
                     }
@@ -323,7 +323,7 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
             .Subscribe(
                 _ =>
                 {
-                    if (_picker != null && _picker.SelectedIndex < 0 && _picker.Items.Count > 0)
+                    if (_picker is not null && _picker.SelectedIndex < 0 && _picker.Items.Count > 0)
                     {
                         _picker.SelectedIndex = 0;
                     }
@@ -333,7 +333,7 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
         _picker
             .WhenAnyValue(x => x.SelectedItem)
             .ObserveOn(Schedulers.ShortTermThreadPoolScheduler)
-            .Select(item => item != null ? (TViewModel)item : default(TViewModel))
+            .Select(item => item is not null ? (TViewModel)item : default(TViewModel))
             .Skip(1)
             .Do(item => SelectedItemChanged(item, true))
             .Subscribe()
@@ -347,7 +347,7 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
                 static x =>
                 {
                     var svu =
-                        x.SignalViewUpdate != null
+                        x.SignalViewUpdate is not null
                             ? x.SignalViewUpdate
                                 .Select(_ => true)
                             : Observable.Return(false);
@@ -428,15 +428,20 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
     }
 
     private (bool Success, TViewModel FoundItem) GetItemAt(int index)
-        => index < (_items?.Count ?? 0)
-            ? (true, (TViewModel)_items[index])
-            : (false, default(TViewModel));
+    {
+        if (_items is not null && index <= _items.Count)
+        {
+            return (true, (TViewModel)_items[index]);
+        }
+
+        return (false, default(TViewModel));
+    }
 
     private void SelectedItemChanged(TViewModel item, bool fromUi = false)
     {
         _selectedItemChanged?.Invoke(item);
 
-        if (!fromUi && _picker != null && (_picker.SelectedItem == null || !EqualityComparer<TViewModel>.Default.Equals(item, this.SelectedItem)))
+        if (!fromUi && _picker is not null && (_picker.SelectedItem is null || !EqualityComparer<TViewModel>.Default.Equals(item, this.SelectedItem)))
         {
             _picker.Dispatcher.Dispatch(() => _picker.SelectedItem = item);
         }

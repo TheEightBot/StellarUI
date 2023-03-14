@@ -45,7 +45,7 @@ public static class KeyboardReturnKeyTypeProperty
 
         var foundEffect = ve.Effects.FirstOrDefault(x => x.ResolveId == Effects.EffectNames.KeyboardReturnKeyTypeNameEffect);
 
-        if (foundEffect != null)
+        if (foundEffect is not null)
         {
             ve.Effects.Remove(foundEffect);
         }
@@ -72,14 +72,14 @@ public static class KeyboardReturnKeyTypeProperty
     {
         var ve = bindable as VisualElement;
 
-        if (ve == null)
+        if (ve is null)
         {
             return;
         }
 
         var foundEffect = ve.Effects.FirstOrDefault(x => x.ResolveId == Effects.EffectNames.KeyboardReturnKeyTypeNameEffect);
 
-        if (foundEffect != null)
+        if (foundEffect is not null)
         {
             ve.Effects.Remove(foundEffect);
         }
