@@ -4,11 +4,12 @@
 		<TargetFramework>net7.0</TargetFramework>
 		<SingleProject>true</SingleProject>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>warnings</Nullable>
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="ReactiveUI.Fody" Version="18.4.22" />
-	  <PackageReference Include="ReactiveUI" Version="18.4.22" />
+	  <PackageReference Include="ReactiveUI.Fody" Version="18.4.26" />
+	  <PackageReference Include="ReactiveUI" Version="18.4.26" />
 	</ItemGroup>
 
 </Project>

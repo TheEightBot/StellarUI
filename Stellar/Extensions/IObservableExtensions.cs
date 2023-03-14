@@ -22,7 +22,7 @@ public static class IObservableExtensions
     public static IObservable<TSource> IsNull<TSource>(this IObservable<TSource> source)
         where TSource : class
     {
-        return source.Where(obj => obj == null);
+        return source.Where(obj => obj is null);
     }
 
     public static IObservable<TSource> IsDefault<TSource>(this IObservable<TSource> source)
@@ -112,7 +112,7 @@ public static class IObservableExtensions
 
     public static IObservable<Unit> SelectConcurrent<T>(this IObservable<T> source, Action<T> onNext, int concurrentSubscriptions = 1, IScheduler scheduler = null)
     {
-        if (scheduler != null)
+        if (scheduler is not null)
         {
             return source
                 .Select(x =>
@@ -133,7 +133,7 @@ public static class IObservableExtensions
 
     public static IObservable<Unit> SelectConcurrent<T>(this IObservable<T> source, Action<T, CancellationToken> onNext, CancellationToken cancellationToken, int concurrentSubscriptions = 1, IScheduler scheduler = null)
     {
-        if (scheduler != null)
+        if (scheduler is not null)
         {
             return source
                 .Select(x =>
@@ -154,7 +154,7 @@ public static class IObservableExtensions
 
     public static IObservable<TOut> SelectConcurrent<TIn, TOut>(this IObservable<TIn> source, Func<TIn, TOut> onNext, int concurrentSubscriptions = 1, IScheduler scheduler = null)
     {
-        if (scheduler != null)
+        if (scheduler is not null)
         {
             return source
                 .Select(xIn =>
@@ -175,7 +175,7 @@ public static class IObservableExtensions
 
     public static IObservable<TOut> SelectConcurrent<TIn, TOut>(this IObservable<TIn> source, Func<TIn, CancellationToken, TOut> onNext, CancellationToken cancellationToken, int concurrentSubscriptions = 1, IScheduler scheduler = null)
     {
-        if (scheduler != null)
+        if (scheduler is not null)
         {
             return source
                 .Select(xIn =>
@@ -196,7 +196,7 @@ public static class IObservableExtensions
 
     public static IObservable<Unit> SelectSequential<T>(this IObservable<T> source, Action<T, CancellationToken> onNext, CancellationToken cancellationToken, IScheduler scheduler = null)
     {
-        if (scheduler != null)
+        if (scheduler is not null)
         {
             return source
                 .Select(x =>
@@ -217,7 +217,7 @@ public static class IObservableExtensions
 
     public static IObservable<TOut> SelectSequential<TIn, TOut>(this IObservable<TIn> source, Func<TIn, TOut> onNext, IScheduler scheduler = null)
     {
-        if (scheduler != null)
+        if (scheduler is not null)
         {
             return source
                 .Select(xIn =>
@@ -238,7 +238,7 @@ public static class IObservableExtensions
 
     public static IObservable<TOut> SelectSequential<TIn, TOut>(this IObservable<TIn> source, Func<TIn, CancellationToken, TOut> onNext, CancellationToken cancellationToken, IScheduler scheduler = null)
     {
-        if (scheduler != null)
+        if (scheduler is not null)
         {
             return source
                 .Select(xIn =>
@@ -259,7 +259,7 @@ public static class IObservableExtensions
 
     public static IObservable<Unit> SelectManyConcurrent<T>(this IObservable<T> source, Func<T, Task> onNext, int concurrentSubscriptions = 1, IScheduler scheduler = null)
     {
-        if (scheduler != null)
+        if (scheduler is not null)
         {
             return source
                 .Select(x =>
@@ -276,7 +276,7 @@ public static class IObservableExtensions
 
     public static IObservable<Unit> SelectManyConcurrent<T>(this IObservable<T> source, Func<Task> onNext, int concurrentSubscriptions = 1, IScheduler scheduler = null)
     {
-        if (scheduler != null)
+        if (scheduler is not null)
         {
             return source
                 .Select(_ =>
@@ -293,7 +293,7 @@ public static class IObservableExtensions
 
     public static IObservable<Unit> SelectManyConcurrent<T>(this IObservable<T> source, Func<T, CancellationToken, Task> onNext, int concurrentSubscriptions = 1, IScheduler scheduler = null)
     {
-        if (scheduler != null)
+        if (scheduler is not null)
         {
             return source
                 .Select(x =>
@@ -310,7 +310,7 @@ public static class IObservableExtensions
 
     public static IObservable<TOut> SelectManyConcurrent<TIn, TOut>(this IObservable<TIn> source, Func<TIn, Task<TOut>> onNext, int concurrentSubscriptions = 1, IScheduler scheduler = null)
     {
-        if (scheduler != null)
+        if (scheduler is not null)
         {
             return source
                 .Select(x =>
@@ -327,7 +327,7 @@ public static class IObservableExtensions
 
     public static IObservable<TOut> SelectManyConcurrent<TIn, TOut>(this IObservable<TIn> source, Func<TIn, CancellationToken, Task<TOut>> onNext, int concurrentSubscriptions = 1, IScheduler scheduler = null)
     {
-        if (scheduler != null)
+        if (scheduler is not null)
         {
             return source
                 .Select(x =>
@@ -344,7 +344,7 @@ public static class IObservableExtensions
 
     public static IObservable<Unit> SelectManySequential<T>(this IObservable<T> source, Func<T, Task> onNext, IScheduler scheduler = null)
     {
-        if (scheduler != null)
+        if (scheduler is not null)
         {
             return source
                 .Select(x =>
@@ -361,7 +361,7 @@ public static class IObservableExtensions
 
     public static IObservable<Unit> SelectManySequential<T>(this IObservable<T> source, Func<Task> onNext, IScheduler scheduler = null)
     {
-        if (scheduler != null)
+        if (scheduler is not null)
         {
             return source
                 .Select(_ =>
@@ -378,7 +378,7 @@ public static class IObservableExtensions
 
     public static IObservable<Unit> SelectManySequential<T>(this IObservable<T> source, Func<T, CancellationToken, Task> onNext, IScheduler scheduler = null)
     {
-        if (scheduler != null)
+        if (scheduler is not null)
         {
             return source
                 .Select(x =>
@@ -395,7 +395,7 @@ public static class IObservableExtensions
 
     public static IObservable<TOut> SelectManySequential<TIn, TOut>(this IObservable<TIn> source, Func<TIn, Task<TOut>> onNext, IScheduler scheduler = null)
     {
-        if (scheduler != null)
+        if (scheduler is not null)
         {
             return source
                 .Select(x =>
@@ -412,7 +412,7 @@ public static class IObservableExtensions
 
     public static IObservable<TOut> SelectManySequential<TIn, TOut>(this IObservable<TIn> source, Func<TIn, CancellationToken, Task<TOut>> onNext, IScheduler scheduler = null)
     {
-        if (scheduler != null)
+        if (scheduler is not null)
         {
             return source
                 .Select(x =>
@@ -469,7 +469,7 @@ public static class IObservableExtensions
 
                                                 lock (gate)
                                                 {
-                                                    hasPendingNotification = active = outsideNotification != null;
+                                                    hasPendingNotification = active = outsideNotification is not null;
                                                 }
 
                                                 if (hasPendingNotification)

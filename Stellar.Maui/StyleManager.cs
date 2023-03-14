@@ -5,27 +5,30 @@ namespace Stellar.Maui;
 
 public abstract class StyleManager : ReactiveObject
 {
-    protected Application CurrentApplication;
-
     private readonly ConcurrentDictionary<string, Style> _cachedStyles = new ConcurrentDictionary<string, Style>();
 
     public void ApplyStylesToApplication(Application app = null)
     {
-        CurrentApplication = app ?? Application.Current;
+        var currentApplication = app ?? Application.Current;
 
-        if (CurrentApplication.Resources == null)
+        if (currentApplication is null)
         {
-            CurrentApplication.Resources = new ResourceDictionary();
+            return;
         }
 
-        RegisterStyles(CurrentApplication);
+        if (currentApplication!.Resources is null)
+        {
+            currentApplication.Resources = new ResourceDictionary();
+        }
+
+        RegisterStyles(currentApplication);
     }
 
     protected abstract void RegisterStyles(Application app);
 
     protected Style GetStyle(Func<Style> styleCreator, [CallerMemberName] string name = null)
     {
-        if (name == null)
+        if (name is null)
         {
             return default;
         }

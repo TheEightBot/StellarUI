@@ -19,7 +19,7 @@ public class KeyboardReturnKeyTypeNameEffect : PlatformEffect
     {
         var textField = this.Control as UITextField;
 
-        if (textField == null)
+        if (textField is null)
         {
             return;
         }
@@ -35,7 +35,7 @@ public class KeyboardReturnKeyTypeNameEffect : PlatformEffect
     {
         var textField = this.Control as UITextField;
 
-        if (textField == null)
+        if (textField is null)
         {
             return;
         }
@@ -47,7 +47,7 @@ public class KeyboardReturnKeyTypeNameEffect : PlatformEffect
 
     protected override void OnElementPropertyChanged(System.ComponentModel.PropertyChangedEventArgs args)
     {
-        if (args.PropertyName.Equals(KeyboardReturnKeyTypeProperty.KeyboardReturnKeyTypeName))
+        if (args.PropertyName?.Equals(KeyboardReturnKeyTypeProperty.KeyboardReturnKeyTypeName) == true)
         {
             SetReturnType();
             return;
@@ -58,18 +58,14 @@ public class KeyboardReturnKeyTypeNameEffect : PlatformEffect
 
     private void SetReturnType()
     {
-        var textField = this.Control as UITextField;
-
-        if (textField == null)
+        if (!(this.Control is UITextField textField))
         {
             return;
         }
 
         _startingReturnKeyType = textField.ReturnKeyType;
 
-        var keyboardType = KeyboardReturnKeyTypeProperty.GetKeyboardReturnKeyType(Element);
-
-        switch (keyboardType)
+        switch (KeyboardReturnKeyTypeProperty.GetKeyboardReturnKeyType(Element))
         {
             case EntryKeyboardReturnType.Go:
                 textField.ReturnKeyType = UIReturnKeyType.Go;
@@ -98,10 +94,7 @@ public class KeyboardReturnKeyTypeNameEffect : PlatformEffect
         {
             var nextElement = KeyboardReturnKeyTypeProperty.GetNextVisualElement(Element);
 
-            if (nextElement != null)
-            {
-                nextElement.Focus();
-            }
+            nextElement?.Focus();
         }
 
         return true;
