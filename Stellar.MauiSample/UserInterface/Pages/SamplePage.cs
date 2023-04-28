@@ -104,15 +104,15 @@ public class SamplePage : ContentPageBase<ViewModels.SampleViewModel>
             .BindTo(this, ui => ui._color.BackgroundColor)
             .DisposeWith(ControlBindings);
 
+        this.OneWayBind(ViewModel, x => x.TestItems, ui => ui._listView.ItemsSource)
+            .DisposeWith(ControlBindings);
+
         _picker
             .Bind(
                 this.WhenAnyValue(x => x.ViewModel.TestItems),
                 x => this.ViewModel.SelectedTestItem = x,
                 x => this.ViewModel.SelectedTestItem == x,
                 x => x.Value1)
-            .DisposeWith(ControlBindings);
-
-        this.OneWayBind(ViewModel, vm => vm.TestItems, ui => ui._listView.ItemsSource)
             .DisposeWith(ControlBindings);
     }
 }
