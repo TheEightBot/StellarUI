@@ -28,7 +28,7 @@ public static class MauiProgram
             .RegisterViews<App>()
             */
 
-            .AddRegisteredServices<App>()
+            .ConfigureStellarComponents<App>()
             .Build()
             .ConfigureReactiveUISchedulers();
     }
