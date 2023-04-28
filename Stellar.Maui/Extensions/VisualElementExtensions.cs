@@ -7,8 +7,6 @@ namespace Stellar.Maui;
 
 public static class VisualElementExtensions
 {
-    private static IMauiContext _mauiContext;
-
     public static TPage GetPage<TPage>(this Element element)
         where TPage : Page
     {
@@ -57,24 +55,19 @@ public static class VisualElementExtensions
 
     private static IMauiContext FindMauiContext(this Element element)
     {
-        if (_mauiContext is not null)
-        {
-            return _mauiContext;
-        }
-
         if (element is IElement fe && fe.Handler?.MauiContext is not null)
         {
-            return _mauiContext = fe.Handler.MauiContext;
+            return fe.Handler.MauiContext;
         }
 
         foreach (var parent in element.GetParentsPath())
         {
             if (parent is IElement parentView && parentView.Handler?.MauiContext is not null)
             {
-                return _mauiContext = parentView.Handler.MauiContext;
+                return parentView.Handler.MauiContext;
             }
         }
 
-        return _mauiContext = Application.Current?.FindMauiContext();
+        return Application.Current?.FindMauiContext();
     }
 }
