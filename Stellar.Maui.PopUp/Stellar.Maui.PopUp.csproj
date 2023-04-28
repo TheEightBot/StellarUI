@@ -19,7 +19,7 @@
 	  <CreatePackage>false</CreatePackage>
 	</PropertyGroup>
 	<ItemGroup>
-	  <PackageReference Include="ReactiveUI" Version="18.4.26" />
+	  <PackageReference Include="ReactiveUI" Version="18.4.34" />
 	  <PackageReference Include="Mopups" Version="1.1.1" />
 	</ItemGroup>
 	<ItemGroup>
