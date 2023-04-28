@@ -14,35 +14,35 @@ public static class MauiAppBuilderExtensions
         return mauiApp;
     }
 
-    public static MauiAppBuilder AddRegisteredServices<TStellarAssembly>(this MauiAppBuilder mauiAppBuilder)
+    public static MauiAppBuilder ConfigureStellarComponents<TStellarAssembly>(this MauiAppBuilder mauiAppBuilder)
     {
-        Register(mauiAppBuilder, typeof(TStellarAssembly).GetTypeInfo().Assembly);
+        ConfigureStellarComponents(mauiAppBuilder, typeof(TStellarAssembly).GetTypeInfo().Assembly);
 
         return mauiAppBuilder;
     }
 
-    public static MauiAppBuilder RegisterViewModels<TStellarAssembly>(this MauiAppBuilder mauiAppBuilder)
+    public static MauiAppBuilder ConfigureStellarViewModels<TStellarAssembly>(this MauiAppBuilder mauiAppBuilder)
     {
-        Register<IViewModel>(mauiAppBuilder, typeof(TStellarAssembly).GetTypeInfo().Assembly);
+        ConfigureStellarComponents<IViewModel>(mauiAppBuilder, typeof(TStellarAssembly).GetTypeInfo().Assembly);
 
         return mauiAppBuilder;
     }
 
-    public static MauiAppBuilder RegisterServices<TStellarAssembly>(this MauiAppBuilder mauiAppBuilder)
+    public static MauiAppBuilder ConfigureStellarServices<TStellarAssembly>(this MauiAppBuilder mauiAppBuilder)
     {
-        Register<IService>(mauiAppBuilder, typeof(TStellarAssembly).GetTypeInfo().Assembly);
+        ConfigureStellarComponents<IService>(mauiAppBuilder, typeof(TStellarAssembly).GetTypeInfo().Assembly);
 
         return mauiAppBuilder;
     }
 
-    public static MauiAppBuilder RegisterViews<TStellarAssembly>(this MauiAppBuilder mauiAppBuilder)
+    public static MauiAppBuilder ConfigureStellarViews<TStellarAssembly>(this MauiAppBuilder mauiAppBuilder)
     {
-        Register<IStellarView>(mauiAppBuilder, typeof(TStellarAssembly).GetTypeInfo().Assembly);
+        ConfigureStellarComponents<IStellarView>(mauiAppBuilder, typeof(TStellarAssembly).GetTypeInfo().Assembly);
 
         return mauiAppBuilder;
     }
 
-    private static MauiAppBuilder Register<T>(this MauiAppBuilder mauiAppBuilder, Assembly assembly)
+    private static MauiAppBuilder ConfigureStellarComponents<T>(this MauiAppBuilder mauiAppBuilder, Assembly assembly)
     {
 #if DEBUG
         var sw = System.Diagnostics.Stopwatch.StartNew();
@@ -111,7 +111,7 @@ public static class MauiAppBuilderExtensions
         return mauiAppBuilder;
     }
 
-    private static MauiAppBuilder Register(this MauiAppBuilder mauiAppBuilder, Assembly assembly)
+    private static MauiAppBuilder ConfigureStellarComponents(this MauiAppBuilder mauiAppBuilder, Assembly assembly)
     {
 #if DEBUG
         var sw = System.Diagnostics.Stopwatch.StartNew();
