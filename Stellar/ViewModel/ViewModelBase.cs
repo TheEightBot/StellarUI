@@ -2,19 +2,23 @@
 
 public abstract class ViewModelBase : ReactiveObject, IViewModel, IDisposable
 {
-    protected static Action DefaultAction = () => { };
+    protected static readonly Action DefaultAction = () => { };
 
     private readonly object _vmLock = new();
 
-    private bool _initialized;
+    private bool _bindingsRegistered;
 
-    protected bool _bindingsRegistered;
+    protected CompositeDisposable ViewModelBindings { get; } = new();
+
+    private bool _initialized;
 
     private bool _isDisposed;
 
     public bool Maintain { get; set; }
 
-    protected CompositeDisposable ViewModelBindings { get; } = new();
+    public bool BindingsRegistered => _bindingsRegistered;
+
+    public bool IsDisposed => _isDisposed;
 
     public void SetupViewModel()
     {
@@ -46,6 +50,8 @@ public abstract class ViewModelBase : ReactiveObject, IViewModel, IDisposable
             }
 
             RegisterObservables();
+
+            _bindingsRegistered = true;
         }
     }
 
@@ -59,6 +65,8 @@ public abstract class ViewModelBase : ReactiveObject, IViewModel, IDisposable
             }
 
             ViewModelBindings?.Clear();
+
+            _bindingsRegistered = false;
         }
     }
 
