@@ -38,7 +38,7 @@ public static class PopupNavigationObservableExtensions
         return observable
             .ThrottleFirst(multiTapThrottleDuration ?? DefaultMultiTapThrottleDuration, Schedulers.ShortTermThreadPoolScheduler)
             .Where(_ => allowMultiple || !Navigating)
-            .Do(_ => Navigating = true)
+            .Do(static _ => Navigating = true)
             .ObserveOn(pageCreationScheduler ?? Schedulers.ShortTermThreadPoolScheduler)
             .Select(
                 x =>
@@ -58,18 +58,24 @@ public static class PopupNavigationObservableExtensions
             .SelectMany(
                 static async x =>
                 {
-                    x.PreNavigation?.Invoke(x.Page, x.Parameter);
+                    try
+                    {
+                        x.PreNavigation?.Invoke(x.Page, x.Parameter);
 
-                    var nav = MopupService.Instance;
-                    await Task.WhenAll(
-                        x.IsAppearingAsync,
-                        nav.PushAsync(x.Page, x.Animated));
+                        var nav = MopupService.Instance;
+                        await Task.WhenAll(
+                            x.IsAppearingAsync,
+                            nav.PushAsync(x.Page, x.Animated));
 
-                    x.PostNavigation?.Invoke(x.Page, x.Parameter);
+                        x.PostNavigation?.Invoke(x.Page, x.Parameter);
+                    }
+                    finally
+                    {
+                        Navigating = false;
+                    }
 
                     return Unit.Default;
                 })
-            .Do(_ => Navigating = false)
             .Subscribe();
     }
 
@@ -87,7 +93,7 @@ public static class PopupNavigationObservableExtensions
         return observable
             .ThrottleFirst(multiTapThrottleDuration ?? DefaultMultiTapThrottleDuration, Schedulers.ShortTermThreadPoolScheduler)
             .Where(_ => allowMultiple || !Navigating)
-            .Do(_ => Navigating = true)
+            .Do(static _ => Navigating = true)
             .ObserveOn(pageCreationScheduler ?? Schedulers.ShortTermThreadPoolScheduler)
             .Select(
                 x =>
@@ -105,16 +111,23 @@ public static class PopupNavigationObservableExtensions
                 })
             .ObserveOn(RxApp.MainThreadScheduler)
             .SelectMany(
-                async x =>
+                static async x =>
                 {
-                    preNavigation?.Invoke(x.Page, x.Parameter);
+                    try
+                    {
+                        x.PreNavigation?.Invoke(x.Page, x.Parameter);
 
-                    var nav = MopupService.Instance;
-                    await Task.WhenAll(
-                        x.IsAppearingAsync,
-                        nav.PushAsync(x.Page, animated));
+                        var nav = MopupService.Instance;
+                        await Task.WhenAll(
+                            x.IsAppearingAsync,
+                            nav.PushAsync(x.Page, x.Animated));
 
-                    postNavigation?.Invoke(x.Page, x.Parameter);
+                        x.PostNavigation?.Invoke(x.Page, x.Parameter);
+                    }
+                    finally
+                    {
+                        Navigating = false;
+                    }
 
                     return Unit.Default;
                 })
@@ -133,7 +146,7 @@ public static class PopupNavigationObservableExtensions
         return observable
             .ThrottleFirst(multiTapThrottleDuration ?? DefaultMultiTapThrottleDuration, Schedulers.ShortTermThreadPoolScheduler)
             .Where(_ => allowMultiple || !Navigating)
-            .Do(_ => Navigating = true)
+            .Do(static _ => Navigating = true)
             .Select(
                 x =>
                 {
@@ -149,14 +162,20 @@ public static class PopupNavigationObservableExtensions
             .SelectMany(
                 static async x =>
                 {
-                    x.PreNavigation?.Invoke(x.Parameter);
-                    var nav = MopupService.Instance;
-                    await nav.PopAsync(x.Animated);
-                    x.PostNavigation?.Invoke(x.Parameter);
+                    try
+                    {
+                        x.PreNavigation?.Invoke(x.Parameter);
+                        var nav = MopupService.Instance;
+                        await nav.PopAsync(x.Animated);
+                        x.PostNavigation?.Invoke(x.Parameter);
+                    }
+                    finally
+                    {
+                        Navigating = false;
+                    }
 
                     return Unit.Default;
                 })
-            .Do(_ => Navigating = false)
             .Subscribe();
     }
 
@@ -171,7 +190,7 @@ public static class PopupNavigationObservableExtensions
         return observable
             .ThrottleFirst(multiTapThrottleDuration ?? DefaultMultiTapThrottleDuration, Schedulers.ShortTermThreadPoolScheduler)
             .Where(_ => allowMultiple || !Navigating)
-            .Do(_ => Navigating = true)
+            .Do(static _ => Navigating = true)
             .Select(
                 x =>
                 {
@@ -187,14 +206,20 @@ public static class PopupNavigationObservableExtensions
             .SelectMany(
                 static async x =>
                 {
-                    x.PreNavigation?.Invoke(x.Parameter);
-                    var nav = MopupService.Instance;
-                    await nav.PopAllAsync(x.Animated);
-                    x.PostNavigation?.Invoke(x.Parameter);
+                    try
+                    {
+                        x.PreNavigation?.Invoke(x.Parameter);
+                        var nav = MopupService.Instance;
+                        await nav.PopAllAsync(x.Animated);
+                        x.PostNavigation?.Invoke(x.Parameter);
+                    }
+                    finally
+                    {
+                        Navigating = false;
+                    }
 
                     return Unit.Default;
                 })
-            .Do(_ => Navigating = false)
             .Subscribe();
     }
 
@@ -211,7 +236,7 @@ public static class PopupNavigationObservableExtensions
         return observable
             .ThrottleFirst(multiTapThrottleDuration ?? DefaultMultiTapThrottleDuration, Schedulers.ShortTermThreadPoolScheduler)
             .Where(_ => allowMultiple || !Navigating)
-            .Do(_ => Navigating = true)
+            .Do(static _ => Navigating = true)
             .Select(
                 x =>
                 {
@@ -228,14 +253,20 @@ public static class PopupNavigationObservableExtensions
             .SelectMany(
                 static async x =>
                 {
-                    x.PreNavigation?.Invoke(x.Page, x.Parameter);
-                    var nav = MopupService.Instance;
-                    await nav.RemovePageAsync(x.Page, x.Animated);
-                    x.PostNavigation?.Invoke(x.Page, x.Parameter);
+                    try
+                    {
+                        x.PreNavigation?.Invoke(x.Page, x.Parameter);
+                        var nav = MopupService.Instance;
+                        await nav.RemovePageAsync(x.Page, x.Animated);
+                        x.PostNavigation?.Invoke(x.Page, x.Parameter);
+                    }
+                    finally
+                    {
+                        Navigating = false;
+                    }
 
                     return Unit.Default;
                 })
-            .Do(_ => Navigating = false)
             .Subscribe();
     }
 }

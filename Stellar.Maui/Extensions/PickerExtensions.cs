@@ -231,22 +231,23 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
                     }
                 })
             .ObserveOn(Schedulers.ShortTermThreadPoolScheduler)
-            .Where(_ => DeviceInfo.Platform == DevicePlatform.iOS)
-            .Where(args => args.IsFocused)
+            .Where(static _ => DeviceInfo.Platform == DevicePlatform.iOS)
+            .Where(static args => args.IsFocused)
             .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe(args =>
-            {
-                if (_picker is not null && _picker.SelectedIndex < 0 && _picker.Items.Count > 0)
+            .Subscribe(
+                _ =>
                 {
-                    _picker.SelectedIndex = 0;
-                }
-            })
+                    if (_picker is not null && _picker.SelectedIndex < 0 && _picker.Items.Count > 0)
+                    {
+                        _picker.SelectedIndex = 0;
+                    }
+                })
             .DisposeWith(_disposableSubscriptions);
 
         _picker
-            .WhenAnyValue(x => x.SelectedItem)
+            .WhenAnyValue(static x => x.SelectedItem)
             .ObserveOn(Schedulers.ShortTermThreadPoolScheduler)
-            .Select(item => item is not null ? (TViewModel)item : default(TViewModel))
+            .Select(static item => item is not null ? (TViewModel)item : default(TViewModel))
             .Skip(1)
             .Do(item => SelectedItemChanged(item, true))
             .Subscribe()
