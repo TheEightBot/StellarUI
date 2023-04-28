@@ -5,40 +5,40 @@ public static class IObservableExtensions
     public static IObservable<Unit> SelectUnit<TSource>(this IObservable<TSource> source)
     {
         return source
-            .Select(_ => Unit.Default);
+            .Select(static _ => Unit.Default);
     }
 
     public static IObservable<object> AsObject<TSource>(this IObservable<TSource> source)
     {
         return source
-            .Select(x => x as object);
+            .Select(static x => x as object);
     }
 
     public static IObservable<TSource> IsNotNull<TSource>(this IObservable<TSource> source)
     {
-        return source.Where(obj => !EqualityComparer<TSource>.Default.Equals(obj, default(TSource)));
+        return source.Where(static obj => !EqualityComparer<TSource>.Default.Equals(obj, default(TSource)));
     }
 
     public static IObservable<TSource> IsNull<TSource>(this IObservable<TSource> source)
         where TSource : class
     {
-        return source.Where(obj => obj is null);
+        return source.Where(static obj => obj is null);
     }
 
     public static IObservable<TSource> IsDefault<TSource>(this IObservable<TSource> source)
     {
-        return source.Where(obj => EqualityComparer<TSource>.Default.Equals(obj, default(TSource)));
+        return source.Where(static obj => EqualityComparer<TSource>.Default.Equals(obj, default(TSource)));
     }
 
     public static IObservable<TSource> IsNotDefault<TSource>(this IObservable<TSource> source)
     {
-        return source.Where(obj => !EqualityComparer<TSource>.Default.Equals(obj, default(TSource)));
+        return source.Where(static obj => !EqualityComparer<TSource>.Default.Equals(obj, default(TSource)));
     }
 
     public static IObservable<T?> WhereHasValue<T>(this IObservable<T?> source)
         where T : struct
     {
-        return source.Where(x => x.HasValue);
+        return source.Where(static x => x.HasValue);
     }
 
     public static IObservable<T?> WhereHasValueAndIsNot<T>(this IObservable<T?> source, T comparison)
@@ -61,7 +61,7 @@ public static class IObservableExtensions
 
     public static IObservable<string> IsNotNullOrEmpty(this IObservable<string> source)
     {
-        return source.Where(str => !string.IsNullOrEmpty(str));
+        return source.Where(static str => !string.IsNullOrEmpty(str));
     }
 
     public static IObservable<T> GetValueOrDefault<T>(this IObservable<T?> source, T defaultValue = default(T))
@@ -72,12 +72,12 @@ public static class IObservableExtensions
 
     public static IObservable<bool> WhereIsTrue(this IObservable<bool> source)
     {
-        return source.Where(result => result);
+        return source.Where(static result => result);
     }
 
     public static IObservable<bool> WhereIsFalse(this IObservable<bool> source)
     {
-        return source.Where(result => !result);
+        return source.Where(static result => !result);
     }
 
     public static IObservable<T> WhereIs<T>(this IObservable<T> source, T comparison)
@@ -92,12 +92,12 @@ public static class IObservableExtensions
 
     public static IObservable<bool> ValueIsFalse(this IObservable<bool> source)
     {
-        return source.Select(result => !result);
+        return source.Select(static result => !result);
     }
 
     public static IObservable<bool> ValueIsTrue(this IObservable<bool> source)
     {
-        return source.Select(result => result);
+        return source.Select(static result => result);
     }
 
     public static IObservable<T> TakeOne<T>(this IObservable<T> source)

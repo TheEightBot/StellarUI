@@ -47,7 +47,7 @@ public static class ListViewExtensions
                     },
                     x => listView.ItemSelected += x,
                     x => listView.ItemSelected -= x)
-                .Select(x => x.SelectedItem)
+                .Select(static x => x.SelectedItem)
                 .OfType<T>();
     }
 
@@ -63,6 +63,6 @@ public static class ListViewExtensions
                     },
                     x => listView.ItemSelected += x,
                     x => listView.ItemSelected -= x)
-                .Select(args => args.SelectedItem);
+                .Select(static args => args.SelectedItem);
     }
 }

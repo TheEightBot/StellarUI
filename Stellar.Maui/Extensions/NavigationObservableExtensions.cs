@@ -55,7 +55,7 @@ public static class NavigationObservableExtensions
         return observable
             .ThrottleFirst(multiTapThrottleDuration ?? DefaultMultiTapThrottleDuration, Schedulers.ShortTermThreadPoolScheduler)
             .Where(_ => allowMultiple || !Navigating)
-            .Do(_ => Navigating = true)
+            .Do(static _ => Navigating = true)
             .ObserveOn(pageCreationScheduler ?? Schedulers.ShortTermThreadPoolScheduler)
             .Select(
                 x =>
@@ -76,17 +76,23 @@ public static class NavigationObservableExtensions
             .SelectMany(
                 static async x =>
                 {
-                    x.PreNavigation?.Invoke(x.Page, x.Parameter);
+                    try
+                    {
+                        x.PreNavigation?.Invoke(x.Page, x.Parameter);
 
-                    await Task.WhenAll(
-                        x.IsAppearingAsync,
-                        x.NavigationRoot.Navigation.PushAsync(x.Page, x.Animated));
+                        await Task.WhenAll(
+                            x.IsAppearingAsync,
+                            x.NavigationRoot.Navigation.PushAsync(x.Page, x.Animated));
 
-                    x.PostNavigation?.Invoke(x.Page, x.Parameter);
+                        x.PostNavigation?.Invoke(x.Page, x.Parameter);
+                    }
+                    finally
+                    {
+                        Navigating = false;
+                    }
 
                     return Unit.Default;
                 })
-            .Do(_ => Navigating = false)
             .Subscribe();
     }
 
@@ -105,7 +111,7 @@ public static class NavigationObservableExtensions
         return observable
             .ThrottleFirst(multiTapThrottleDuration ?? DefaultMultiTapThrottleDuration, Schedulers.ShortTermThreadPoolScheduler)
             .Where(_ => allowMultiple || !Navigating)
-            .Do(_ => Navigating = true)
+            .Do(static _ => Navigating = true)
             .ObserveOn(pageCreationScheduler ?? Schedulers.ShortTermThreadPoolScheduler)
             .Select(
                 x =>
@@ -126,17 +132,23 @@ public static class NavigationObservableExtensions
             .SelectMany(
                 static async x =>
                 {
-                    x.PreNavigation?.Invoke(x.Page, x.Parameter);
+                    try
+                    {
+                        x.PreNavigation?.Invoke(x.Page, x.Parameter);
 
-                    await Task.WhenAll(
-                        x.IsAppearingAsync,
-                        x.NavigationRoot.Navigation.PushAsync(x.Page, x.Animated));
+                        await Task.WhenAll(
+                            x.IsAppearingAsync,
+                            x.NavigationRoot.Navigation.PushAsync(x.Page, x.Animated));
 
-                    x.PostNavigation?.Invoke(x.Page, x.Parameter);
+                        x.PostNavigation?.Invoke(x.Page, x.Parameter);
+                    }
+                    finally
+                    {
+                        Navigating = false;
+                    }
 
                     return Unit.Default;
                 })
-            .Do(_ => Navigating = false)
             .Subscribe();
     }
 
@@ -153,7 +165,7 @@ public static class NavigationObservableExtensions
         return observable
             .ThrottleFirst(multiTapThrottleDuration ?? DefaultMultiTapThrottleDuration, Schedulers.ShortTermThreadPoolScheduler)
             .Where(_ => allowMultiple || !Navigating)
-            .Do(_ => Navigating = true)
+            .Do(static _ => Navigating = true)
             .Select(
                 x =>
                 {
@@ -170,13 +182,19 @@ public static class NavigationObservableExtensions
             .SelectMany(
                 static async x =>
                 {
-                    x.PreNavigation?.Invoke(x.Parameter);
-                    var pages = await x.NavigationRoot.PopTo<TPage>(x.Animated);
-                    x.PostNavigation?.Invoke(x.Parameter);
+                    try
+                    {
+                        x.PreNavigation?.Invoke(x.Parameter);
+                        var pages = await x.NavigationRoot.PopTo<TPage>(x.Animated);
+                        x.PostNavigation?.Invoke(x.Parameter);
+                    }
+                    finally
+                    {
+                        Navigating = false;
+                    }
 
                     return Unit.Default;
                 })
-            .Do(_ => Navigating = false)
             .Subscribe();
     }
 
@@ -192,7 +210,7 @@ public static class NavigationObservableExtensions
         return observable
             .ThrottleFirst(multiTapThrottleDuration ?? DefaultMultiTapThrottleDuration, Schedulers.ShortTermThreadPoolScheduler)
             .Where(_ => allowMultiple || !Navigating)
-            .Do(_ => Navigating = true)
+            .Do(static _ => Navigating = true)
             .Select(
                 x =>
                 {
@@ -209,13 +227,19 @@ public static class NavigationObservableExtensions
             .SelectMany(
                 static async x =>
                 {
-                    x.PreNavigation?.Invoke(x.Parameter);
-                    var page = await x.NavigationRoot.Navigation.PopAsync(x.Animated);
-                    x.PostNavigation?.Invoke(x.Parameter);
+                    try
+                    {
+                        x.PreNavigation?.Invoke(x.Parameter);
+                        var page = await x.NavigationRoot.Navigation.PopAsync(x.Animated);
+                        x.PostNavigation?.Invoke(x.Parameter);
+                    }
+                    finally
+                    {
+                        Navigating = false;
+                    }
 
                     return Unit.Default;
                 })
-            .Do(_ => Navigating = false)
             .Subscribe();
     }
 
@@ -231,7 +255,7 @@ public static class NavigationObservableExtensions
         return observable
             .ThrottleFirst(multiTapThrottleDuration ?? DefaultMultiTapThrottleDuration, Schedulers.ShortTermThreadPoolScheduler)
             .Where(_ => allowMultiple || !Navigating)
-            .Do(_ => Navigating = true)
+            .Do(static _ => Navigating = true)
             .Select(
                 x =>
                 {
@@ -248,13 +272,19 @@ public static class NavigationObservableExtensions
             .SelectMany(
                 static async x =>
                 {
-                    x.PreNavigation?.Invoke(x.Parameter);
-                    await x.NavigationRoot.Navigation.PopToRootAsync(x.Animated);
-                    x.PostNavigation?.Invoke(x.Parameter);
+                    try
+                    {
+                        x.PreNavigation?.Invoke(x.Parameter);
+                        await x.NavigationRoot.Navigation.PopToRootAsync(x.Animated);
+                        x.PostNavigation?.Invoke(x.Parameter);
+                    }
+                    finally
+                    {
+                        Navigating = false;
+                    }
 
                     return Unit.Default;
                 })
-            .Do(_ => Navigating = false)
             .Subscribe();
     }
 
@@ -286,7 +316,7 @@ public static class NavigationObservableExtensions
         return observable
             .ThrottleFirst(multiTapThrottleDuration ?? DefaultMultiTapThrottleDuration, Schedulers.ShortTermThreadPoolScheduler)
             .Where(_ => allowMultiple || !Navigating)
-            .Do(_ => Navigating = true)
+            .Do(static _ => Navigating = true)
             .ObserveOn(pageCreationScheduler ?? Schedulers.ShortTermThreadPoolScheduler)
             .Select(
                 x =>
@@ -307,15 +337,21 @@ public static class NavigationObservableExtensions
             .SelectMany(
                 static async x =>
                 {
-                    x.PreNavigation?.Invoke(x.Page, x.Parameter);
-                    await Task.WhenAll(
-                        x.IsAppearingAsync,
-                        x.NavigationRoot.Navigation.PushModalAsync(x.Page, x.Animated));
-                    x.PostNavigation?.Invoke(x.Page, x.Parameter);
+                    try
+                    {
+                        x.PreNavigation?.Invoke(x.Page, x.Parameter);
+                        await Task.WhenAll(
+                            x.IsAppearingAsync,
+                            x.NavigationRoot.Navigation.PushModalAsync(x.Page, x.Animated));
+                        x.PostNavigation?.Invoke(x.Page, x.Parameter);
+                    }
+                    finally
+                    {
+                        Navigating = false;
+                    }
 
                     return Unit.Default;
                 })
-            .Do(_ => Navigating = false)
             .Subscribe();
     }
 
@@ -334,7 +370,7 @@ public static class NavigationObservableExtensions
         return observable
             .ThrottleFirst(multiTapThrottleDuration ?? DefaultMultiTapThrottleDuration, Schedulers.ShortTermThreadPoolScheduler)
             .Where(_ => allowMultiple || !Navigating)
-            .Do(_ => Navigating = true)
+            .Do(static _ => Navigating = true)
             .ObserveOn(pageCreationScheduler ?? Schedulers.ShortTermThreadPoolScheduler)
             .Select(
                 x =>
@@ -355,15 +391,21 @@ public static class NavigationObservableExtensions
             .SelectMany(
                 static async x =>
                 {
-                    x.PreNavigation?.Invoke(x.Page, x.Parameter);
-                    await Task.WhenAll(
-                        x.IsAppearingAsync,
-                        x.NavigationRoot.Navigation.PushModalAsync(x.Page, x.Animated));
-                    x.PostNavigation?.Invoke(x.Page, x.Parameter);
+                    try
+                    {
+                        x.PreNavigation?.Invoke(x.Page, x.Parameter);
+                        await Task.WhenAll(
+                            x.IsAppearingAsync,
+                            x.NavigationRoot.Navigation.PushModalAsync(x.Page, x.Animated));
+                        x.PostNavigation?.Invoke(x.Page, x.Parameter);
+                    }
+                    finally
+                    {
+                        Navigating = false;
+                    }
 
                     return Unit.Default;
                 })
-            .Do(_ => Navigating = false)
             .Subscribe();
     }
 
@@ -379,7 +421,7 @@ public static class NavigationObservableExtensions
         return observable
             .ThrottleFirst(multiTapThrottleDuration ?? DefaultMultiTapThrottleDuration, Schedulers.ShortTermThreadPoolScheduler)
             .Where(_ => allowMultiple || !Navigating)
-            .Do(_ => Navigating = true)
+            .Do(static _ => Navigating = true)
             .Select(
                 x =>
                 {
@@ -396,13 +438,19 @@ public static class NavigationObservableExtensions
             .SelectMany(
                 static async x =>
                 {
-                    x.PreNavigation?.Invoke(x.Parameter);
-                    var page = await x.NavigationRoot.Navigation.PopModalAsync(x.Animated);
-                    x.PostNavigation?.Invoke(x.Parameter);
+                    try
+                    {
+                        x.PreNavigation?.Invoke(x.Parameter);
+                        var page = await x.NavigationRoot.Navigation.PopModalAsync(x.Animated);
+                        x.PostNavigation?.Invoke(x.Parameter);
+                    }
+                    finally
+                    {
+                        Navigating = false;
+                    }
 
                     return Unit.Default;
                 })
-            .Do(_ => Navigating = false)
             .Subscribe();
     }
 
