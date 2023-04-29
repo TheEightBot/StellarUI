@@ -10,18 +10,18 @@ public static class VisualElementExtensions
     public static TPage GetPage<TPage>(this Element element)
         where TPage : Page
     {
-        return GetService<TPage>().ThrowIfNull();
+        return ServiceProvider.GetService<TPage>().ThrowIfNull();
     }
 
     public static TViewModel GetViewModel<TViewModel>(this Element element)
         where TViewModel : ViewModelBase
     {
-        return GetService<TViewModel>().ThrowIfNull();
+        return ServiceProvider.GetService<TViewModel>().ThrowIfNull();
     }
 
     public static TService GetService<TService>(this Element element)
     {
-        return GetService<TService>().ThrowIfNull();
+        return ServiceProvider.GetService<TService>().ThrowIfNull();
     }
 
     private static T ThrowIfNull<T>(this T obj)
@@ -35,19 +35,4 @@ public static class VisualElementExtensions
 
         return obj;
     }
-
-    public static TService GetService<TService>()
-        => Current.GetService<TService>();
-
-    private static IServiceProvider Current
-        =>
-#if WINDOWS10_0_17763_0_OR_GREATER
-            MauiWinUIApplication.Current.Services;
-#elif ANDROID
-            MauiApplication.Current.Services;
-#elif IOS || MACCATALYST
-            MauiUIApplicationDelegate.Current.Services;
-#else
-            null;
-#endif
 }

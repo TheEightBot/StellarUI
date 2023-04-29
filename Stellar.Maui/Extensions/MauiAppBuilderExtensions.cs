@@ -1,4 +1,7 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
+using Microsoft.Extensions.Logging;
+using Microsoft.Maui.Hosting;
 using Stellar.ViewModel;
 
 namespace Stellar.Maui;
@@ -7,11 +10,11 @@ public static class MauiAppBuilderExtensions
 {
     private static Type ServiceRegistrationType = typeof(ServiceRegistrationAttribute);
 
-    public static MauiAppBuilder PreCacheComponents<TStellarAssembly>(this MauiAppBuilder mauiApp)
+    public static MauiAppBuilder PreCacheComponents<TStellarAssembly>(this MauiAppBuilder mauiAppBuilder)
     {
-        PreCache(typeof(TStellarAssembly).GetTypeInfo().Assembly);
+        PreCache(mauiAppBuilder, typeof(TStellarAssembly).GetTypeInfo().Assembly);
 
-        return mauiApp;
+        return mauiAppBuilder;
     }
 
     public static MauiAppBuilder ConfigureStellarComponents<TStellarAssembly>(this MauiAppBuilder mauiAppBuilder)
@@ -44,35 +47,13 @@ public static class MauiAppBuilderExtensions
 
     private static MauiAppBuilder ConfigureStellarComponents<T>(this MauiAppBuilder mauiAppBuilder, Assembly assembly)
     {
-#if DEBUG
-        var sw = System.Diagnostics.Stopwatch.StartNew();
-        var sb = new System.Text.StringBuilder();
-
-#endif
-
         var registrationType = typeof(T);
-
-#if DEBUG
-        sb
-            .AppendLine()
-            .AppendLine("------------------------------------------------------------------------------------------")
-            .AppendLine($" Registering {registrationType} - Start")
-            .AppendLine("------------------------------------------------------------------------------------------");
-#endif
 
         var assTypes =
             assembly
                 ?.ExportedTypes
                 ?.Where(ti => Attribute.IsDefined(ti, ServiceRegistrationType) && ti.IsAssignableTo(registrationType) && !ti.IsAbstract)
                 ?? Enumerable.Empty<Type>();
-#if DEBUG
-        sb
-            .AppendLine($" Assembly Loading\t-\t{sw.ElapsedMilliseconds:N1}ms")
-            .AppendLine()
-            .AppendLine("-------------------------")
-            .AppendLine($" Registering {registrationType}")
-            .AppendLine();
-#endif
 
         foreach (var ti in assTypes)
         {
@@ -92,54 +73,17 @@ public static class MauiAppBuilderExtensions
                 }
             }
         }
-
-#if DEBUG
-        sw.Stop();
-
-        sb
-            .AppendLine()
-            .AppendLine($" {"Total Loading":-50} \t-\t{sw.ElapsedMilliseconds:N1}ms")
-            .AppendLine("-------------------------")
-            .AppendLine()
-            .AppendLine("------------------------------------------------------------------------------------------")
-            .AppendLine($" Registering {registrationType} - End")
-            .AppendLine("------------------------------------------------------------------------------------------");
-
-        System.Diagnostics.Debug.WriteLine(sb.ToString());
-#endif
 
         return mauiAppBuilder;
     }
 
     private static MauiAppBuilder ConfigureStellarComponents(this MauiAppBuilder mauiAppBuilder, Assembly assembly)
     {
-#if DEBUG
-        var sw = System.Diagnostics.Stopwatch.StartNew();
-        var sb = new System.Text.StringBuilder();
-
-#endif
-
-#if DEBUG
-        sb
-            .AppendLine()
-            .AppendLine("------------------------------------------------------------------------------------------")
-            .AppendLine($" Registering All - Start")
-            .AppendLine("------------------------------------------------------------------------------------------");
-#endif
-
         var assTypes =
             assembly
                 ?.ExportedTypes
                 ?.Where(ti => Attribute.IsDefined(ti, ServiceRegistrationType))
                 ?? Enumerable.Empty<Type>();
-#if DEBUG
-        sb
-            .AppendLine($" Assembly Loading\t-\t{sw.ElapsedMilliseconds:N1}ms")
-            .AppendLine()
-            .AppendLine("-------------------------")
-            .AppendLine($" Registering All")
-            .AppendLine();
-#endif
 
         foreach (var ti in assTypes)
         {
@@ -160,25 +104,10 @@ public static class MauiAppBuilderExtensions
             }
         }
 
-#if DEBUG
-        sw.Stop();
-
-        sb
-            .AppendLine()
-            .AppendLine($" {"Total Loading":-50} \t-\t{sw.ElapsedMilliseconds:N1}ms")
-            .AppendLine("-------------------------")
-            .AppendLine()
-            .AppendLine("------------------------------------------------------------------------------------------")
-            .AppendLine($" Registering All - End")
-            .AppendLine("------------------------------------------------------------------------------------------");
-
-        System.Diagnostics.Debug.WriteLine(sb.ToString());
-#endif
-
         return mauiAppBuilder;
     }
 
-    private static Task PreCache(Assembly assembly)
+    private static Task PreCache(MauiAppBuilder mauiAppBuilder, Assembly assembly)
     {
         if (assembly is null)
         {
@@ -188,17 +117,6 @@ public static class MauiAppBuilderExtensions
         return Task.Run(
             () =>
             {
-#if DEBUG
-                var sw = System.Diagnostics.Stopwatch.StartNew();
-                var sb = new System.Text.StringBuilder();
-                var totalTime = 0L;
-
-                sb
-                    .AppendLine()
-                    .AppendLine("------------------------------------------------------------------------------------------")
-                    .AppendLine(" Precaching - Start")
-                    .AppendLine("------------------------------------------------------------------------------------------");
-#endif
                 var precacheAttribute = typeof(PreCacheAttribute);
 
                 var assTypes =
@@ -210,70 +128,14 @@ public static class MauiAppBuilderExtensions
                                 ti.IsClass && !ti.IsAbstract &&
                                 ti.GetConstructor(Type.EmptyTypes) is not null && !ti.ContainsGenericParameters)
                         ?? Enumerable.Empty<Type>();
-#if DEBUG
-                sb
-                    .AppendLine($" Assembly Loading\t-\t{sw.ElapsedMilliseconds:N1}ms")
-                    .AppendLine()
-                    .AppendLine("-------------------------")
-                    .AppendLine(" Precaching Views and View Models")
-                    .AppendLine();
-#endif
 
                 foreach (var ti in assTypes)
                 {
-                    try
+                    if (ti.FullName is not null)
                     {
-#if DEBUG
-                        sw.Restart();
-#endif
-
-                        if (ti.FullName is not null)
-                        {
-                            assembly!.CreateInstance(ti.FullName);
-                        }
-
-#if DEBUG
-                        var elapsed = sw.ElapsedMilliseconds;
-                        totalTime += elapsed;
-                        sb.AppendLine($" {ti.Name,-50}\t-\t{elapsed:N1}ms");
-#endif
-                    }
-                    catch (Exception ex)
-                    {
-#if DEBUG
-                        sb
-                            .AppendLine($" {ti.Name,-50}\t-\tException: {ex}ms")
-                            .AppendLine()
-                            .AppendLine($"{ex}")
-                            .AppendLine();
-#endif
+                        assembly!.CreateInstance(ti.FullName);
                     }
                 }
-
-#if DEBUG
-                sw.Stop();
-
-                sb
-                    .AppendLine()
-                    .AppendLine($" {"Total View and View Model Loading":-50} \t-\t{totalTime:N1}ms")
-                    .AppendLine("-------------------------")
-                    .AppendLine()
-                    .AppendLine("------------------------------------------------------------------------------------------")
-                    .AppendLine(" Precaching - End")
-                    .AppendLine("------------------------------------------------------------------------------------------");
-
-                System.Diagnostics.Debug.WriteLine(sw.ToString());
-#endif
-            })
-        .ContinueWith(
-            result =>
-            {
-#if DEBUG
-                if (result.IsFaulted)
-                {
-                    System.Diagnostics.Debug.WriteLine(result.Exception);
-                }
-#endif
             });
     }
 }
