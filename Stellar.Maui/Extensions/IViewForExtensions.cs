@@ -1,4 +1,5 @@
-﻿using Stellar.ViewModel;
+﻿using Stellar.Maui.Exceptions;
+using Stellar.ViewModel;
 
 namespace Stellar.Maui;
 
@@ -14,10 +15,16 @@ public static class IViewForExtensions
         {
             view.ViewModel = viewModel;
         }
-
-        if (view.ViewModel is null && resolveViewModel && view is Element element)
+        else if (view.ViewModel is null && resolveViewModel && view is Element element)
         {
-            view.ViewModel = element.GetService<TViewModel>();
+            var resolvedViewModel = element.GetService<TViewModel>();
+
+            if (resolvedViewModel is null)
+            {
+                throw new RegisteredServiceNotFoundException($"Unable to find a registration for a ViewModel of type {typeof(TViewModel).FullName}. Verify that the [ServiceRegistration] attribute was set or that the ViewModel was registered with dependency injection.");
+            }
+
+            view.ViewModel = resolvedViewModel;
         }
 
         if (view.ViewModel is not null && view.ViewModel is ViewModelBase vmb)
