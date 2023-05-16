@@ -36,7 +36,7 @@ public static class NavigationObservableExtensions
         bool allowMultiple = false,
         IScheduler pageCreationScheduler = null,
         TimeSpan? multiTapThrottleDuration = null)
-        where TPage : Page, IStellarView
+        where TPage : Page
     {
         return NavigateToPage<Unit, TPage>(observable, element, preNavigation, postNavigation, animated, allowMultiple, pageCreationScheduler, multiTapThrottleDuration);
     }
@@ -50,7 +50,7 @@ public static class NavigationObservableExtensions
         bool allowMultiple = false,
         IScheduler pageCreationScheduler = null,
         TimeSpan? multiTapThrottleDuration = null)
-        where TPage : Page, IStellarView
+        where TPage : Page
     {
         return observable
             .ThrottleFirst(multiTapThrottleDuration ?? DefaultMultiTapThrottleDuration, Schedulers.ShortTermThreadPoolScheduler)
@@ -106,7 +106,7 @@ public static class NavigationObservableExtensions
         bool allowMultiple = false,
         IScheduler pageCreationScheduler = null,
         TimeSpan? multiTapThrottleDuration = null)
-        where TPage : Page, IStellarView
+        where TPage : Page
     {
         return observable
             .ThrottleFirst(multiTapThrottleDuration ?? DefaultMultiTapThrottleDuration, Schedulers.ShortTermThreadPoolScheduler)
@@ -297,7 +297,7 @@ public static class NavigationObservableExtensions
         bool allowMultiple = false,
         IScheduler pageCreationScheduler = null,
         TimeSpan? multiTapThrottleDuration = null)
-        where TPage : Page, IStellarView
+        where TPage : Page
     {
         return NavigateToModalPage<Unit, TPage>(observable, element, preNavigation, postNavigation, animated, allowMultiple, pageCreationScheduler, multiTapThrottleDuration);
     }
@@ -311,7 +311,7 @@ public static class NavigationObservableExtensions
         bool allowMultiple = false,
         IScheduler pageCreationScheduler = null,
         TimeSpan? multiTapThrottleDuration = null)
-        where TPage : Page, IStellarView
+        where TPage : Page
     {
         return observable
             .ThrottleFirst(multiTapThrottleDuration ?? DefaultMultiTapThrottleDuration, Schedulers.ShortTermThreadPoolScheduler)
@@ -365,7 +365,7 @@ public static class NavigationObservableExtensions
         bool allowMultiple = false,
         IScheduler pageCreationScheduler = null,
         TimeSpan? multiTapThrottleDuration = null)
-        where TPage : Page, IStellarView
+        where TPage : Page
     {
         return observable
             .ThrottleFirst(multiTapThrottleDuration ?? DefaultMultiTapThrottleDuration, Schedulers.ShortTermThreadPoolScheduler)
@@ -456,7 +456,7 @@ public static class NavigationObservableExtensions
 
     public record NavigationOptions<TPage, TParameter>
         : NavigationOptions<TParameter>
-        where TPage : Page, IStellarView
+        where TPage : Page
     {
         public TPage Page { get; set; }
 

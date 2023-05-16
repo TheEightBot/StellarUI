@@ -20,7 +20,7 @@ public static class PopupNavigationObservableExtensions
         bool allowMultiple = false,
         IScheduler pageCreationScheduler = null,
         TimeSpan? multiTapThrottleDuration = null)
-        where TPage : PopupPage, IStellarView
+        where TPage : PopupPage
     {
         return NavigateToPopupPage<Unit, TPage>(observable, preNavigation, postNavigation, animated, allowMultiple, pageCreationScheduler, multiTapThrottleDuration);
     }
@@ -33,7 +33,7 @@ public static class PopupNavigationObservableExtensions
         bool allowMultiple = false,
         IScheduler pageCreationScheduler = null,
         TimeSpan? multiTapThrottleDuration = null)
-        where TPage : PopupPage, IStellarView
+        where TPage : PopupPage
     {
         return observable
             .ThrottleFirst(multiTapThrottleDuration ?? DefaultMultiTapThrottleDuration, Schedulers.ShortTermThreadPoolScheduler)
@@ -88,7 +88,7 @@ public static class PopupNavigationObservableExtensions
         bool allowMultiple = false,
         IScheduler pageCreationScheduler = null,
         TimeSpan? multiTapThrottleDuration = null)
-        where TPage : PopupPage, IStellarView
+        where TPage : PopupPage
     {
         return observable
             .ThrottleFirst(multiTapThrottleDuration ?? DefaultMultiTapThrottleDuration, Schedulers.ShortTermThreadPoolScheduler)
@@ -231,7 +231,7 @@ public static class PopupNavigationObservableExtensions
         bool animated = true,
         bool allowMultiple = false,
         TimeSpan? multiTapThrottleDuration = null)
-        where TPage : PopupPage, IStellarView
+        where TPage : PopupPage
     {
         return observable
             .ThrottleFirst(multiTapThrottleDuration ?? DefaultMultiTapThrottleDuration, Schedulers.ShortTermThreadPoolScheduler)
