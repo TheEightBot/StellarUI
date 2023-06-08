@@ -45,8 +45,6 @@ public static class IStellarViewExtensions
             if (disposing)
             {
                 stellarView.ViewManager?.Dispose();
-                stellarView.ViewModel = null;
-
                 stellarView.DisposeViewModel();
             }
         }

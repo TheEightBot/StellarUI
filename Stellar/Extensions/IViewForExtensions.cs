@@ -1,4 +1,4 @@
-﻿using Splat;
+using Splat;
 using Stellar.Exceptions;
 using Stellar.ViewModel;
 
@@ -69,8 +69,9 @@ public static class IViewForExtensions
         if (view.ViewModel is not null && view.ViewModel is ViewModelBase vmb && !vmb.Maintain)
         {
             vmb.Dispose();
-            view.ViewModel = null;
         }
+
+        view.ViewModel = null;
     }
 
     public static void DisposeView(this IStellarView ve)

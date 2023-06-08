@@ -16,7 +16,27 @@ public abstract class ViewModelBase : ReactiveObject, IViewModel, IDisposable
 
     public bool Maintain { get; set; }
 
-    public bool BindingsRegistered => _bindingsRegistered;
+    public bool Initialized
+    {
+        get
+        {
+            lock (_vmLock)
+            {
+                return _initialized;
+            }
+        }
+    }
+
+    public bool BindingsRegistered
+    {
+        get
+        {
+            lock (_vmLock)
+            {
+                return _bindingsRegistered;
+            }
+        }
+    }
 
     public bool IsDisposed => _isDisposed;
 
@@ -26,6 +46,17 @@ public abstract class ViewModelBase : ReactiveObject, IViewModel, IDisposable
         {
             if (!_initialized)
             {
+                if (Attribute.GetCustomAttribute(this.GetType(), typeof(ServiceRegistrationAttribute)) is ServiceRegistrationAttribute sra)
+                {
+                    switch (sra.ServiceRegistrationType)
+                    {
+                        case Lifetime.Scoped:
+                        case Lifetime.Singleton:
+                            Maintain = true;
+                            break;
+                    }
+                }
+
                 Initialize();
                 _initialized = true;
             }
