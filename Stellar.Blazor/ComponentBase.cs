@@ -11,6 +11,8 @@ public abstract class ComponentBase<TViewModel> : ReactiveComponentBase<TViewMod
     [EditorBrowsable(EditorBrowsableState.Never)]
     public ViewManager ViewManager { get; } = new BlazorViewManager();
 
+    public CompositeDisposable ControlBindings => ViewManager.ControlBindings;
+
     public bool Maintain
     {
         get => ViewManager.Maintain;
