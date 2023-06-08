@@ -49,3 +49,10 @@ jobs:
       run: dotnet pack --configuration Release  /p:AssemblyVersion=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }} /p:Version=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }} Stellar.Maui.PopUp/Stellar.Maui.PopUp.csproj
     - name: Publish the package to GPR
       run: dotnet nuget push Stellar.Maui.PopUp/bin/Release/*.nupkg
+
+    - name: Build Stellar.Blazor
+      run: dotnet build Stellar.Blazor/Stellar.Blazor.csproj
+    - name: Create the package
+      run: dotnet pack --configuration Release /p:AssemblyVersion=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }} /p:Version=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }} Stellar.Blazor/Stellar.Blazor.csproj
+    - name: Publish the package to GPR
+      run: dotnet nuget push Stellar.Blazor/bin/Release/*.nupkg      
