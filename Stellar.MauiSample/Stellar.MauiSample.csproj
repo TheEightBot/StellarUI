@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
     <!-- iOS, Android, MacCatalyst -->
-    <TargetFrameworks>net7.0-android;net7.0-ios;net7.0-maccatalyst</TargetFrameworks>
+    <TargetFrameworks>net7.0-android;net7.0-ios;net7.0-maccatalyst16.2</TargetFrameworks>
     <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net7.0-windows10.0.19041.0</TargetFrameworks>
     <OutputType>Exe</OutputType>
 		<RootNamespace>Stellar.MauiSample</RootNamespace>
@@ -14,7 +14,7 @@
 		<ApplicationTitle>MAUI Sample</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.stellar.mauisample</ApplicationId>
+		<ApplicationId>com.eightbot.stellar</ApplicationId>
 		<ApplicationIdGuid>a4f6b8d5-4f72-406a-a801-25109ed112d9</ApplicationIdGuid>
 
 		<!-- Versions -->
@@ -36,6 +36,8 @@
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-ios|AnyCPU'">
 	  <CreatePackage>false</CreatePackage>
+	  <CodesignProvision>Automatic</CodesignProvision>
+	  <CodesignKey>iPhone Developer</CodesignKey>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -68,6 +70,10 @@
 	  <None Remove="CommunityToolkit.Maui" />
 	  <None Remove="CommunityToolkit.Maui.Markup" />
 	  <None Remove="Services\" />
+	  <None Remove="Stellar.BlazorSample\Properties\launchSettings.json" />
+	  <None Remove="Stellar.BlazorSample\wwwroot\favicon.png" />
+	  <None Remove="Stellar.BlazorSample\wwwroot\icon-192.png" />
+	  <None Remove="Stellar.BlazorSample\wwwroot\sample-data\weather.json" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -83,5 +89,11 @@
 	  <PackageReference Include="CommunityToolkit.Maui" Version="5.1.0" />
 	  <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" PrivateAssets="All" />
 	  <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
+	</ItemGroup>
+	<ItemGroup>
+	  <BundleResource Include="Stellar.BlazorSample\Properties\launchSettings.json" />
+	  <BundleResource Include="Stellar.BlazorSample\wwwroot\favicon.png" />
+	  <BundleResource Include="Stellar.BlazorSample\wwwroot\icon-192.png" />
+	  <BundleResource Include="Stellar.BlazorSample\wwwroot\sample-data\weather.json" />
 	</ItemGroup>
 </Project>

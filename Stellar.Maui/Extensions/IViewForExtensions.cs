@@ -1,4 +1,4 @@
-﻿using Stellar.Maui.Exceptions;
+﻿using Stellar.Exceptions;
 using Stellar.ViewModel;
 
 namespace Stellar.Maui;
@@ -41,42 +41,6 @@ public static class IViewForExtensions
             }
 
             vmb.SetupViewModel();
-        }
-    }
-
-    public static void RegisterViewModelBindings<TViewModel>(this IViewFor<TViewModel> view)
-            where TViewModel : class
-    {
-        if (view.ViewModel is not null && view.ViewModel is ViewModelBase vmb)
-        {
-            vmb.RegisterBindings();
-        }
-    }
-
-    public static void UnregisterViewModelBindings<TViewModel>(this IViewFor<TViewModel> view)
-            where TViewModel : class
-    {
-        if (view.ViewModel is not null && view.ViewModel is ViewModelBase vmb)
-        {
-            vmb.UnregisterBindings();
-        }
-    }
-
-    public static void DisposeViewModel<TViewModel>(this IViewFor<TViewModel> view)
-        where TViewModel : class
-    {
-        if (view.ViewModel is not null && view.ViewModel is ViewModelBase vmb && !vmb.Maintain)
-        {
-            vmb.Dispose();
-            view.ViewModel = null;
-        }
-    }
-
-    public static void DisposeView(this IStellarView ve)
-    {
-        if (ve is not null && ve is IStellarView isv && !isv.Maintain)
-        {
-            isv.Dispose();
         }
     }
 }

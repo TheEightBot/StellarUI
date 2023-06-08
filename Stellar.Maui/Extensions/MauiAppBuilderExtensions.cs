@@ -1,15 +1,11 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
-using Microsoft.Extensions.Logging;
-using Microsoft.Maui.Hosting;
-using Stellar.ViewModel;
+using Splat;
+using Splat.Microsoft.Extensions.DependencyInjection;
 
 namespace Stellar.Maui;
 
 public static class MauiAppBuilderExtensions
 {
-    private static Type ServiceRegistrationType = typeof(ServiceRegistrationAttribute);
-
     public static MauiAppBuilder PreCacheComponents<TStellarAssembly>(this MauiAppBuilder mauiAppBuilder)
     {
         PreCache(mauiAppBuilder, typeof(TStellarAssembly).GetTypeInfo().Assembly);
@@ -17,92 +13,15 @@ public static class MauiAppBuilderExtensions
         return mauiAppBuilder;
     }
 
-    public static MauiAppBuilder ConfigureStellarComponents<TStellarAssembly>(this MauiAppBuilder mauiAppBuilder)
+    public static MauiAppBuilder UseStellarComponents<TStellarAssembly>(this MauiAppBuilder mauiAppBuilder)
     {
-        ConfigureStellarComponents(mauiAppBuilder, typeof(TStellarAssembly).GetTypeInfo().Assembly);
+        mauiAppBuilder.Services.UseMicrosoftDependencyResolver();
 
-        return mauiAppBuilder;
-    }
+        PlatformRegistrationManager.SetRegistrationNamespaces(RegistrationNamespace.Maui);
+        Locator.CurrentMutable.InitializeSplat();
+        Locator.CurrentMutable.InitializeReactiveUI();
 
-    public static MauiAppBuilder ConfigureStellarViewModels<TStellarAssembly>(this MauiAppBuilder mauiAppBuilder)
-    {
-        ConfigureStellarComponents<IViewModel>(mauiAppBuilder, typeof(TStellarAssembly).GetTypeInfo().Assembly);
-
-        return mauiAppBuilder;
-    }
-
-    public static MauiAppBuilder ConfigureStellarServices<TStellarAssembly>(this MauiAppBuilder mauiAppBuilder)
-    {
-        ConfigureStellarComponents<IService>(mauiAppBuilder, typeof(TStellarAssembly).GetTypeInfo().Assembly);
-
-        return mauiAppBuilder;
-    }
-
-    public static MauiAppBuilder ConfigureStellarViews<TStellarAssembly>(this MauiAppBuilder mauiAppBuilder)
-    {
-        ConfigureStellarComponents<IStellarView>(mauiAppBuilder, typeof(TStellarAssembly).GetTypeInfo().Assembly);
-
-        return mauiAppBuilder;
-    }
-
-    private static MauiAppBuilder ConfigureStellarComponents<T>(this MauiAppBuilder mauiAppBuilder, Assembly assembly)
-    {
-        var registrationType = typeof(T);
-
-        var assTypes =
-            assembly
-                ?.ExportedTypes
-                ?.Where(ti => Attribute.IsDefined(ti, ServiceRegistrationType) && ti.IsAssignableTo(registrationType) && !ti.IsAbstract)
-                ?? Enumerable.Empty<Type>();
-
-        foreach (var ti in assTypes)
-        {
-            if (Attribute.GetCustomAttribute(ti, ServiceRegistrationType) is ServiceRegistrationAttribute a)
-            {
-                switch (a.ServiceRegistrationType)
-                {
-                    case Maui.Lifetime.Transient:
-                        mauiAppBuilder.Services.AddTransient(ti);
-                        break;
-                    case Maui.Lifetime.Scoped:
-                        mauiAppBuilder.Services.AddScoped(ti);
-                        break;
-                    case Maui.Lifetime.Singleton:
-                        mauiAppBuilder.Services.AddSingleton(ti);
-                        break;
-                }
-            }
-        }
-
-        return mauiAppBuilder;
-    }
-
-    private static MauiAppBuilder ConfigureStellarComponents(this MauiAppBuilder mauiAppBuilder, Assembly assembly)
-    {
-        var assTypes =
-            assembly
-                ?.ExportedTypes
-                ?.Where(ti => Attribute.IsDefined(ti, ServiceRegistrationType))
-                ?? Enumerable.Empty<Type>();
-
-        foreach (var ti in assTypes)
-        {
-            if (Attribute.GetCustomAttribute(ti, ServiceRegistrationType) is ServiceRegistrationAttribute a)
-            {
-                switch (a.ServiceRegistrationType)
-                {
-                    case Maui.Lifetime.Transient:
-                        mauiAppBuilder.Services.AddTransient(ti);
-                        break;
-                    case Maui.Lifetime.Scoped:
-                        mauiAppBuilder.Services.AddScoped(ti);
-                        break;
-                    case Maui.Lifetime.Singleton:
-                        mauiAppBuilder.Services.AddSingleton(ti);
-                        break;
-                }
-            }
-        }
+        mauiAppBuilder.Services.ConfigureStellarComponents(typeof(TStellarAssembly).GetTypeInfo().Assembly);
 
         return mauiAppBuilder;
     }

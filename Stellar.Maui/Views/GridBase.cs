@@ -8,7 +8,7 @@ public abstract class GridBase<TViewModel> : ReactiveGrid<TViewModel>, IStellarV
     private bool _isDisposed;
 
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public ViewManager ViewManager { get; set; } = new();
+    public ViewManager ViewManager { get; } = new MauiViewManager();
 
     public IObservable<Unit> Activated => ViewManager.Activated;
 
@@ -38,7 +38,7 @@ public abstract class GridBase<TViewModel> : ReactiveGrid<TViewModel>, IStellarV
 
     protected override void OnHandlerChanging(HandlerChangingEventArgs args)
     {
-        ViewManager.HandlerChanging<GridBase<TViewModel>, TViewModel>(this, args);
+        ((MauiViewManager)ViewManager).HandlerChanging(this, args);
 
         base.OnHandlerChanging(args);
     }

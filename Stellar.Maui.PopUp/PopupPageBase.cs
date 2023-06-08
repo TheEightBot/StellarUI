@@ -10,7 +10,7 @@ public abstract class PopupPageBase<TViewModel> : ReactivePopupPage<TViewModel>,
     private bool _isDisposed;
 
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public ViewManager ViewManager { get; set; } = new();
+    public ViewManager ViewManager { get; set; } = new MauiViewManager();
 
     public IObservable<Unit> Activated => ViewManager.Activated;
 
@@ -54,7 +54,7 @@ public abstract class PopupPageBase<TViewModel> : ReactivePopupPage<TViewModel>,
 
     protected override void OnHandlerChanging(HandlerChangingEventArgs args)
     {
-        ViewManager.HandlerChanging<PopupPageBase<TViewModel>, TViewModel>(this, args);
+        ((MauiViewManager)ViewManager).HandlerChanging(this, args);
 
         base.OnHandlerChanging(args);
     }

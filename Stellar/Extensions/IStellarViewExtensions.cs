@@ -1,7 +1,7 @@
 ﻿using System;
 using Stellar.ViewModel;
 
-namespace Stellar.Maui;
+namespace Stellar;
 
 public static class IStellarViewExtensions
 {

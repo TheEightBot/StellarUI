@@ -26,6 +26,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{B5F05E2A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stellar.UnitTests", "Stellar.UnitTests\Stellar.UnitTests.csproj", "{DD3F54BD-727D-4800-86DD-4F55470065FF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stellar.Blazor", "Stellar.Blazor\Stellar.Blazor.csproj", "{A6E8C451-A3F7-4624-98CC-8C3939366C15}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stellar.BlazorSample", "Stellar.MauiSample\Stellar.BlazorSample\Stellar.BlazorSample.csproj", "{0E79ECA7-8EBC-4227-89E9-13EC9CD6B7DC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,6 +56,14 @@ Global
 		{DD3F54BD-727D-4800-86DD-4F55470065FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DD3F54BD-727D-4800-86DD-4F55470065FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DD3F54BD-727D-4800-86DD-4F55470065FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6E8C451-A3F7-4624-98CC-8C3939366C15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6E8C451-A3F7-4624-98CC-8C3939366C15}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6E8C451-A3F7-4624-98CC-8C3939366C15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6E8C451-A3F7-4624-98CC-8C3939366C15}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E79ECA7-8EBC-4227-89E9-13EC9CD6B7DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E79ECA7-8EBC-4227-89E9-13EC9CD6B7DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E79ECA7-8EBC-4227-89E9-13EC9CD6B7DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E79ECA7-8EBC-4227-89E9-13EC9CD6B7DC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -62,5 +74,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{19579D26-E2AD-4B24-BF34-068EEDDB8C92} = {A8B3EF2B-52AA-40D0-A645-E198A2FD4A44}
 		{DD3F54BD-727D-4800-86DD-4F55470065FF} = {B5F05E2A-51D0-453C-8204-5144816A72EC}
+		{0E79ECA7-8EBC-4227-89E9-13EC9CD6B7DC} = {A8B3EF2B-52AA-40D0-A645-E198A2FD4A44}
 	EndGlobalSection
 EndGlobal

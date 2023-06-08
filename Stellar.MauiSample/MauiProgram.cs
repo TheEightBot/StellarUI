@@ -19,7 +19,8 @@ public static class MauiProgram
                         fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                     })
                 .UseMauiCommunityToolkit()
-                .UseMauiCommunityToolkitMarkup();
+                .UseMauiCommunityToolkitMarkup()
+                .UseStellarComponents<App>(RegistrationNamespace.Maui);
 
         /*
         We can add individual service registrations or all at once
@@ -34,7 +35,6 @@ public static class MauiProgram
 
         return
             appBuilder
-                .ConfigureStellarComponents<App>()
                 .Build()
                 .ConfigureReactiveUISchedulers();
     }
