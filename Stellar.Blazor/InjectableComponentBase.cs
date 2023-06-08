@@ -31,9 +31,9 @@ public abstract class InjectableComponentBase<TViewModel> : ReactiveInjectableCo
 
     protected override void OnInitialized()
     {
-        base.OnInitialized();
-
         ViewManager.HandleActivated(this);
+
+        base.OnInitialized();
     }
 
     protected override void Dispose(bool disposing)
