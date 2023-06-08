@@ -20,7 +20,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="ReactiveUI.Maui" Version="18.4.44" />
+	  <PackageReference Include="ReactiveUI.Maui" Version="19.2.1" />
+	  <PackageReference Include="Splat.Microsoft.Extensions.DependencyInjection" Version="14.6.37" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -1,8 +1,9 @@
-﻿using ReactiveUI;
+﻿using System.Reactive.Subjects;
+using ReactiveUI;
 
-namespace Stellar.Maui;
+namespace Stellar;
 
-public class ViewManager : IDisposable
+public abstract class ViewManager : IDisposable
 {
     private readonly Lazy<Subject<LifecycleEvent>> _lifecycle = new Lazy<Subject<LifecycleEvent>>(() => new Subject<LifecycleEvent>(), LazyThreadSafetyMode.ExecutionAndPublication);
 
@@ -64,26 +65,24 @@ public class ViewManager : IDisposable
         }
     }
 
-    public void HandlerChanging<TView, TViewModel>(TView visualElement, HandlerChangingEventArgs args)
-        where TView : IStellarView<TViewModel>
+    public void HandleActivated<TViewModel>(IStellarView<TViewModel> view)
         where TViewModel : class
     {
-        if (args.NewHandler is not null)
-        {
-            visualElement.RegisterViewModelBindings();
+        view.RegisterViewModelBindings();
 
-            RegisterBindings(visualElement);
+        RegisterBindings(view);
 
-            OnLifecycle(LifecycleEvent.Activated);
+        OnLifecycle(LifecycleEvent.Activated);
+    }
 
-            return;
-        }
-
+    public void HandleDeactivated<TViewModel>(IStellarView<TViewModel> view)
+        where TViewModel : class
+    {
         OnLifecycle(LifecycleEvent.Deactivated);
 
-        UnregisterBindings(visualElement);
+        UnregisterBindings(view);
 
-        visualElement.DisposeView();
+        view.DisposeView();
     }
 
     public void PropertyChanged<TView, TViewModel>(TView visualElement, string propertyName = null)

@@ -8,7 +8,7 @@ public abstract class NavigationPageBase<TViewModel> : ReactiveNavigationPage<TV
     private bool _isDisposed;
 
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public ViewManager ViewManager { get; set; } = new();
+    public ViewManager ViewManager { get; } = new MauiViewManager();
 
     public IObservable<Unit> Activated => ViewManager.Activated;
 
@@ -52,7 +52,7 @@ public abstract class NavigationPageBase<TViewModel> : ReactiveNavigationPage<TV
 
     protected override void OnHandlerChanging(HandlerChangingEventArgs args)
     {
-        ViewManager.HandlerChanging<NavigationPageBase<TViewModel>, TViewModel>(this, args);
+        ((MauiViewManager)ViewManager).HandlerChanging(this, args);
 
         base.OnHandlerChanging(args);
     }

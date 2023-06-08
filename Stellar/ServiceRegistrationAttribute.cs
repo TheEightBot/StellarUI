@@ -1,4 +1,4 @@
-﻿namespace Stellar.Maui;
+﻿namespace Stellar;
 
 [AttributeUsage(AttributeTargets.Class)]
 public class ServiceRegistrationAttribute : Attribute

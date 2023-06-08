@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ReactiveUI.Blazor" Version="19.2.1" />
+    <PackageReference Include="Splat.Microsoft.Extensions.DependencyInjection" Version="14.6.37" />
+  </ItemGroup>
+
+  	<ItemGroup>
+	  <ProjectReference Include="..\Stellar\Stellar.csproj" />
+	</ItemGroup>
+  	<ItemGroup>
+  	  <None Remove="Extensions\" />
+  	</ItemGroup>
+  	<ItemGroup>
+  	  <Folder Include="Extensions\" />
+  	</ItemGroup>
+</Project>

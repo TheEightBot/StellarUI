@@ -8,8 +8,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="ReactiveUI.Fody" Version="18.4.44" />
-	  <PackageReference Include="ReactiveUI" Version="18.4.44" />
+	  <PackageReference Include="ReactiveUI.Fody" Version="19.2.1" />
+	  <PackageReference Include="ReactiveUI" Version="19.2.1" />
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
 	</ItemGroup>
 
 </Project>
