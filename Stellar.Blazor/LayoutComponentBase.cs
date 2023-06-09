@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using ReactiveUI.Blazor;
 
 namespace Stellar.Blazor;
@@ -32,6 +33,13 @@ public abstract class LayoutComponentBase<TViewModel> : ReactiveLayoutComponentB
         ViewManager.HandleActivated(this);
 
         base.OnInitialized();
+    }
+
+    protected override void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        ViewManager.PropertyChanged<LayoutComponentBase<TViewModel>, TViewModel>(this, propertyName);
+
+        base.OnPropertyChanged(propertyName);
     }
 
     protected override void Dispose(bool disposing)

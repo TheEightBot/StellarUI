@@ -1,4 +1,4 @@
-using Splat;
+﻿using Splat;
 using Stellar.Exceptions;
 using Stellar.ViewModel;
 
@@ -30,17 +30,6 @@ public static class IViewForExtensions
 
         if (view.ViewModel is not null && view.ViewModel is ViewModelBase vmb)
         {
-            if (Attribute.GetCustomAttribute(typeof(TViewModel), typeof(ServiceRegistrationAttribute)) is ServiceRegistrationAttribute sra)
-            {
-                switch (sra.ServiceRegistrationType)
-                {
-                    case Lifetime.Scoped:
-                    case Lifetime.Singleton:
-                        vmb.Maintain = true;
-                        break;
-                }
-            }
-
             vmb.SetupViewModel();
         }
     }

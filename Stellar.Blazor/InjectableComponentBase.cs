@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using ReactiveUI.Blazor;
 
 namespace Stellar.Blazor;
@@ -34,6 +35,13 @@ public abstract class InjectableComponentBase<TViewModel> : ReactiveInjectableCo
         ViewManager.HandleActivated(this);
 
         base.OnInitialized();
+    }
+
+    protected override void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        ViewManager.PropertyChanged<InjectableComponentBase<TViewModel>, TViewModel>(this, propertyName);
+
+        base.OnPropertyChanged(propertyName);
     }
 
     protected override void Dispose(bool disposing)

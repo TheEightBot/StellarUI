@@ -85,13 +85,13 @@ public abstract class ViewManager : IDisposable
         view.DisposeView();
     }
 
-    public void PropertyChanged<TView, TViewModel>(TView visualElement, string propertyName = null)
+    public void PropertyChanged<TView, TViewModel>(TView view, string propertyName = null)
         where TView : IViewFor<TViewModel>
         where TViewModel : class
     {
-        if (propertyName == nameof(IViewFor<TViewModel>.ViewModel) && visualElement.ViewModel is not null)
+        if (propertyName == nameof(IViewFor<TViewModel>.ViewModel) && view.ViewModel is not null)
         {
-            visualElement.SetupViewModel(visualElement.ViewModel);
+            view.SetupViewModel(view.ViewModel);
         }
     }
 
