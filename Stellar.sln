@@ -28,7 +28,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stellar.UnitTests", "Stella
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stellar.Blazor", "Stellar.Blazor\Stellar.Blazor.csproj", "{A6E8C451-A3F7-4624-98CC-8C3939366C15}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stellar.BlazorSample", "Stellar.MauiSample\Stellar.BlazorSample\Stellar.BlazorSample.csproj", "{0E79ECA7-8EBC-4227-89E9-13EC9CD6B7DC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stellar.BlazorSample", "Stellar.BlazorSample\Stellar.BlazorSample.csproj", "{0E79ECA7-8EBC-4227-89E9-13EC9CD6B7DC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

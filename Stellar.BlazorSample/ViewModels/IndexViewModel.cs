@@ -7,7 +7,7 @@ using Stellar.ViewModel;
 
 namespace Stellar.BlazorSample.ViewModels;
 
-[ServiceRegistration]
+[ServiceRegistration(Lifetime.Singleton)]
 public class IndexViewModel : ViewModelBase
 {
     [Reactive]

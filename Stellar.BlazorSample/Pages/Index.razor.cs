@@ -1,5 +1,4 @@
-﻿using System;
-using Stellar.Blazor;
+﻿using Stellar.Blazor;
 using Stellar.BlazorSample.ViewModels;
 
 namespace Stellar.BlazorSample.Pages;
