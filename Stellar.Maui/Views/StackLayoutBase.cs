@@ -2,7 +2,7 @@
 
 namespace Stellar.Maui.Views;
 
-public abstract class GridBase<TViewModel> : ReactiveGrid<TViewModel>, IStellarView<TViewModel>
+public abstract class StackLayoutBase<TViewModel> : ReactiveStackLayout<TViewModel>, IStellarView<TViewModel>
     where TViewModel : class
 {
     private bool _isDisposed;
@@ -45,7 +45,7 @@ public abstract class GridBase<TViewModel> : ReactiveGrid<TViewModel>, IStellarV
 
     protected override void OnPropertyChanged(string propertyName = null)
     {
-        ViewManager.PropertyChanged<GridBase<TViewModel>, TViewModel>(this, propertyName);
+        ViewManager.PropertyChanged<StackLayoutBase<TViewModel>, TViewModel>(this, propertyName);
 
         base.OnPropertyChanged(propertyName);
     }
@@ -61,7 +61,7 @@ public abstract class GridBase<TViewModel> : ReactiveGrid<TViewModel>, IStellarV
     }
 }
 
-public abstract class GridBase<TViewModel, TDataModel> : ReactiveGrid<TViewModel>, IStellarView<TViewModel>
+public abstract class StackLayoutBase<TViewModel, TDataModel> : ReactiveGrid<TViewModel>, IStellarView<TViewModel>
     where TViewModel : class
 {
     private bool _isDisposed;
@@ -106,7 +106,7 @@ public abstract class GridBase<TViewModel, TDataModel> : ReactiveGrid<TViewModel
 
     protected override void OnPropertyChanged(string propertyName = null)
     {
-        ViewManager.PropertyChanged<GridBase<TViewModel, TDataModel>, TViewModel>(this, propertyName);
+        ViewManager.PropertyChanged<StackLayoutBase<TViewModel, TDataModel>, TViewModel>(this, propertyName);
         base.OnPropertyChanged(propertyName);
     }
 

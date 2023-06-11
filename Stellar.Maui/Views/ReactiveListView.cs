@@ -27,70 +27,6 @@ public class ReactiveListView : ListView
     {
     }
 
-    public IObservable<T> ListViewItemTapped<T>()
-        where T : class
-    {
-        return
-            Observable
-                .FromEvent<EventHandler<ItemTappedEventArgs>, ItemTappedEventArgs>(
-                    static eventHandler =>
-                    {
-                        void Handler(object sender, ItemTappedEventArgs e) => eventHandler?.Invoke(e);
-                        return Handler;
-                    },
-                    x => this.ItemTapped += x,
-                    x => this.ItemTapped -= x)
-                .Select(static x => x.Item)
-                .OfType<T>();
-    }
-
-    public IObservable<object> ListViewItemTapped()
-    {
-        return
-            Observable
-                .FromEvent<EventHandler<ItemTappedEventArgs>, ItemTappedEventArgs>(
-                    static eventHandler =>
-                    {
-                        void Handler(object sender, ItemTappedEventArgs e) => eventHandler?.Invoke(e);
-                        return Handler;
-                    },
-                    x => this.ItemTapped += x,
-                    x => this.ItemTapped -= x)
-                .Select(static args => args.Item);
-    }
-
-    public IObservable<T> ListViewItemSelected<T>()
-        where T : class
-    {
-        return
-            Observable
-                .FromEvent<EventHandler<SelectedItemChangedEventArgs>, SelectedItemChangedEventArgs>(
-                    static eventHandler =>
-                    {
-                        void Handler(object sender, SelectedItemChangedEventArgs e) => eventHandler?.Invoke(e);
-                        return Handler;
-                    },
-                    x => this.ItemSelected += x,
-                    x => this.ItemSelected -= x)
-                .Select(static x => x.SelectedItem)
-                .OfType<T>();
-    }
-
-    public IObservable<object> ListViewItemSelected()
-    {
-        return
-            Observable
-                .FromEvent<EventHandler<SelectedItemChangedEventArgs>, SelectedItemChangedEventArgs>(
-                    eventHandler =>
-                    {
-                        void Handler(object sender, SelectedItemChangedEventArgs e) => eventHandler?.Invoke(e);
-                        return Handler;
-                    },
-                    x => this.ItemSelected += x,
-                    x => this.ItemSelected -= x)
-                .Select(static args => args.SelectedItem);
-    }
-
     public IDisposable SetCellActivationAction(Action<CompositeDisposable, Cell, int> cellActivatedAction)
     {
         _cellActivatedAction = cellActivatedAction;
@@ -143,7 +79,6 @@ public class ReactiveListView : ListView
             if (_cellActivators.TryRemove(key, out var disposable))
             {
                 disposable?.Dispose();
-                disposable = null;
             }
         }
     }

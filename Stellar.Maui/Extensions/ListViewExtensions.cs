@@ -1,11 +1,13 @@
-﻿namespace Stellar.Maui;
+﻿using System.Reactive.Linq;
+
+namespace Stellar.Maui;
 
 public static class ListViewExtensions
 {
-    public static IObservable<T> ItemTapped<T>(this ListView listView)
+    public static IObservable<T> ItemTapped<T>(this ListView listView, bool deselect = false)
         where T : class
     {
-        return
+        var observable =
             Observable
                 .FromEvent<EventHandler<ItemTappedEventArgs>, ItemTappedEventArgs>(
                     static eventHandler =>
@@ -17,6 +19,14 @@ public static class ListViewExtensions
                     x => listView.ItemTapped -= x)
                 .Select(static x => x.Item)
                 .OfType<T>();
+
+        if (deselect)
+        {
+            observable
+                .Do(_ => listView.SelectedItem = null);
+        }
+
+        return observable;
     }
 
     public static IObservable<object> ItemTapped(this ListView listView)
@@ -34,10 +44,10 @@ public static class ListViewExtensions
                 .Select(static args => args.Item);
     }
 
-    public static IObservable<T> ItemSelected<T>(this ListView listView)
+    public static IObservable<T> ItemSelected<T>(this ListView listView, bool deselect = false)
         where T : class
     {
-        return
+        var observable =
             Observable
                 .FromEvent<EventHandler<SelectedItemChangedEventArgs>, SelectedItemChangedEventArgs>(
                     static eventHandler =>
@@ -49,6 +59,14 @@ public static class ListViewExtensions
                     x => listView.ItemSelected -= x)
                 .Select(static x => x.SelectedItem)
                 .OfType<T>();
+
+        if (deselect)
+        {
+            observable
+                .Do(_ => listView.SelectedItem = null);
+        }
+
+        return observable;
     }
 
     public static IObservable<object> ListViewItemSelected(this ListView listView)
