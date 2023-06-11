@@ -1,4 +1,6 @@
-﻿namespace Stellar.MauiSample.UserInterface.Pages;
+using Stellar.Maui;
+
+namespace Stellar.MauiSample.UserInterface.Pages;
 
 [ServiceRegistration]
 public class SamplePage : ContentPageBase<ViewModels.SampleViewModel>
@@ -80,7 +82,12 @@ public class SamplePage : ContentPageBase<ViewModels.SampleViewModel>
         this.BindCommand(ViewModel, vm => vm.GoNext, ui => ui._next, Observables.UnitDefault)
             .DisposeWith(ControlBindings);
 
-        this.WhenAnyObservable(x => x.ViewModel.GoNext)
+        Observable
+            .Merge(
+                _listView
+                    .ItemTapped<ViewModels.TestItem>()
+                    .SelectUnit(),
+                this.WhenAnyObservable(x => x.ViewModel.GoNext))
             .NavigateToPage<SamplePage>(this)
             .DisposeWith(ControlBindings);
 

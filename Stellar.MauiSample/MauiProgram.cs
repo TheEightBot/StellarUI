@@ -20,7 +20,7 @@ public static class MauiProgram
                     })
                 .UseMauiCommunityToolkit()
                 .UseMauiCommunityToolkitMarkup()
-                .UseStellarComponents<App>(RegistrationNamespace.Maui);
+                .UseStellarComponents<App>();
 
         /*
         We can add individual service registrations or all at once
