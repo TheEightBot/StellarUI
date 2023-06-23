@@ -1,4 +1,4 @@
-using Stellar.Maui;
+using ReactiveMarbles.ObservableEvents;
 
 namespace Stellar.MauiSample.UserInterface.Pages;
 
@@ -12,6 +12,8 @@ public class SamplePage : ContentPageBase<ViewModels.SampleViewModel>
     private Button _modal;
 
     private Button _next;
+
+    private Label _parameterValue;
 
     private BoxView _color;
 
@@ -54,6 +56,12 @@ public class SamplePage : ContentPageBase<ViewModels.SampleViewModel>
                         VerticalOptions = LayoutOptions.Start,
                     }
                         .Assign(out _next),
+                    new Label
+                    {
+                        HeightRequest = 32,
+                        VerticalOptions = LayoutOptions.Start,
+                    }
+                        .Assign(out _parameterValue),
                     new BoxView
                     {
                         HeightRequest = 60,
@@ -82,14 +90,22 @@ public class SamplePage : ContentPageBase<ViewModels.SampleViewModel>
         this.BindCommand(ViewModel, vm => vm.GoNext, ui => ui._next, Observables.UnitDefault)
             .DisposeWith(disposables);
 
+        this.OneWayBind(ViewModel, vm => vm.ParameterValue, ui => ui._parameterValue.Text, x => $"Parameter: {x}")
+            .DisposeWith(disposables);
+
         Observable
             .Merge(
                 _listView
                     .ItemTapped<ViewModels.TestItem>()
-                    .SelectUnit(),
-                this.WhenAnyObservable(x => x.ViewModel.GoNext))
-            .NavigateToPage<SamplePage>(this)
-            .DisposeWith(ControlBindings);
+                    .Select(x => x.Value2),
+                this.WhenAnyObservable(x => x.ViewModel.GoNext)
+                    .Select(_ => 0))
+            .NavigateToPage<int, SamplePage>(
+                this,
+                queryParameters: (value, dict) =>
+                {
+                    dict.Add("parametervalue", value);
+                })
             .DisposeWith(disposables);
 
         this.BindCommand(ViewModel, vm => vm.GoPopup, ui => ui._popup, Observables.UnitDefault)
