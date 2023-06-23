@@ -67,7 +67,7 @@ public class ViewModelBaseTests
             Initialized = true;
         }
 
-        protected override void RegisterObservables()
+        protected override void RegisterObservables(CompositeDisposable disposables)
         {
             // Do nothing
         }

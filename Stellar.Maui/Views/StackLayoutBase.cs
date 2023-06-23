@@ -20,21 +20,13 @@ public abstract class StackLayoutBase<TViewModel> : ReactiveStackLayout<TViewMod
 
     public IObservable<LifecycleEvent> Lifecycle => ViewManager.Lifecycle;
 
-    public CompositeDisposable ControlBindings => ViewManager.ControlBindings;
-
-    public bool Maintain
-    {
-        get => ViewManager.Maintain;
-        set => ViewManager.Maintain = value;
-    }
-
     public virtual void Initialize()
     {
     }
 
     public abstract void SetupUserInterface();
 
-    public abstract void BindControls();
+    public abstract void BindControls(CompositeDisposable disposables);
 
     protected override void OnHandlerChanging(HandlerChangingEventArgs args)
     {
@@ -79,21 +71,13 @@ public abstract class StackLayoutBase<TViewModel, TDataModel> : ReactiveGrid<TVi
 
     public IObservable<LifecycleEvent> Lifecycle => ViewManager.Lifecycle;
 
-    public CompositeDisposable ControlBindings => ViewManager.ControlBindings;
-
-    public bool Maintain
-    {
-        get => ViewManager.Maintain;
-        set => ViewManager.Maintain = value;
-    }
-
     public virtual void Initialize()
     {
     }
 
     public abstract void SetupUserInterface();
 
-    public abstract void BindControls();
+    public abstract void BindControls(CompositeDisposable disposables);
 
     protected abstract void MapDataModelToViewModel(TViewModel viewModel, TDataModel dataModel);
 

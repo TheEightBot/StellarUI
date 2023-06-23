@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using ReactiveUI.Fody.Helpers;
 
 namespace Stellar.ViewModel;
@@ -17,11 +18,11 @@ public class SelectionViewModel<TSelectedValKey> : ViewModelBase
     [Reactive]
     public ReactiveCommand<Unit, bool> ToggleSelected { get; private set; }
 
-    protected override void RegisterObservables()
+    protected override void RegisterObservables(CompositeDisposable disposables)
     {
         ToggleSelected =
             ReactiveCommand
                 .Create(() => Selected = !Selected)
-                .DisposeWith(ViewModelBindings);
+                .DisposeWith(disposables);
     }
 }

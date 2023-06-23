@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Microsoft.AspNetCore.Components;
 using ReactiveUI.Blazor;
 
 namespace Stellar.Blazor;
@@ -12,14 +13,6 @@ public abstract class InjectableComponentBase<TViewModel> : ReactiveInjectableCo
     [EditorBrowsable(EditorBrowsableState.Never)]
     public ViewManager ViewManager { get; } = new BlazorViewManager();
 
-    public CompositeDisposable ControlBindings => ViewManager.ControlBindings;
-
-    public bool Maintain
-    {
-        get => ViewManager.Maintain;
-        set => ViewManager.Maintain = value;
-    }
-
     public virtual void Initialize()
     {
     }
@@ -28,7 +21,7 @@ public abstract class InjectableComponentBase<TViewModel> : ReactiveInjectableCo
     {
     }
 
-    public abstract void BindControls();
+    public abstract void BindControls(CompositeDisposable disposables);
 
     protected override void OnInitialized()
     {

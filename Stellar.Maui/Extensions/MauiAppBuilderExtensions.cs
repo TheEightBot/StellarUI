@@ -20,6 +20,7 @@ public static class MauiAppBuilderExtensions
         PlatformRegistrationManager.SetRegistrationNamespaces(RegistrationNamespace.Maui);
         Locator.CurrentMutable.InitializeSplat();
         Locator.CurrentMutable.InitializeReactiveUI();
+        RxApp.TaskpoolScheduler = Schedulers.ShortTermThreadPoolScheduler;
 
         mauiAppBuilder.Services.ConfigureStellarComponents(typeof(TStellarAssembly).GetTypeInfo().Assembly);
 

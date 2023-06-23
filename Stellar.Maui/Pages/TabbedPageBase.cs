@@ -20,21 +20,13 @@ public abstract class TabbedPageBase<TViewModel> : ReactiveTabbedPage<TViewModel
 
     public IObservable<LifecycleEvent> Lifecycle => ViewManager.Lifecycle;
 
-    public CompositeDisposable ControlBindings => ViewManager.ControlBindings;
-
-    public bool Maintain
-    {
-        get => ViewManager.Maintain;
-        set => ViewManager.Maintain = value;
-    }
-
     public virtual void Initialize()
     {
     }
 
     public abstract void SetupUserInterface();
 
-    public abstract void BindControls();
+    public abstract void BindControls(CompositeDisposable disposables);
 
     protected override void OnAppearing()
     {
