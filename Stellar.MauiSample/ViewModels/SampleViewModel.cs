@@ -1,4 +1,4 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using Stellar.MauiSample.Services;
 
 namespace Stellar.MauiSample.ViewModels;
@@ -7,6 +7,8 @@ namespace Stellar.MauiSample.ViewModels;
 public class SampleViewModel : ViewModelBase
 {
     private readonly TestService _testService;
+
+    private long _parameterValue;
 
     [Reactive]
     public ReactiveCommand<Unit, Unit> GoPopup { get; private set; }
@@ -25,6 +27,13 @@ public class SampleViewModel : ViewModelBase
 
     [Reactive]
     public TestItem SelectedTestItem { get; set; }
+
+    [QueryParameter]
+    public long ParameterValue
+    {
+        get => _parameterValue;
+        set => this.RaiseAndSetIfChanged(ref _parameterValue, value);
+    }
 
     public SampleViewModel(TestService testService)
     {

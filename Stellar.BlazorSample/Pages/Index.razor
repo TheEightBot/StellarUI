@@ -1,5 +1,7 @@
 ﻿@page "/"
 
+@inject NavigationManager _nav
+
 @inherits InjectableComponentBase<ViewModels.IndexViewModel>
 
 <PageTitle>Index</PageTitle>
@@ -10,4 +12,8 @@ Welcome to your new app.
 
 <div>@ViewModel.Interval</div>
 
+<div>Parameter: @ViewModel.ParameterInput</div>
+
 <SurveyPrompt Title="How is Blazor working for you?" />
+
+<button class="btn btn-primary" @onclick="@(() => _nav.NavigateTo($"/counter/{DateTime.Now.Second}", replace: true))">Click To Win</button>

@@ -1,4 +1,5 @@
 ﻿using System.Reactive.Threading.Tasks;
+using Microsoft.Maui;
 using Microsoft.Maui.Controls;
 
 namespace Stellar.Maui;
@@ -32,13 +33,14 @@ public static class NavigationObservableExtensions
         VisualElement element,
         Action<TPage, Unit> preNavigation = null,
         Action<TPage, Unit> postNavigation = null,
+        Action<Unit, IDictionary<string, object>> queryParameters = null,
         bool animated = true,
         bool allowMultiple = false,
         IScheduler pageCreationScheduler = null,
         TimeSpan? multiTapThrottleDuration = null)
         where TPage : Page
     {
-        return NavigateToPage<Unit, TPage>(observable, element, preNavigation, postNavigation, animated, allowMultiple, pageCreationScheduler, multiTapThrottleDuration);
+        return NavigateToPage<Unit, TPage>(observable, element, preNavigation, postNavigation, queryParameters, animated, allowMultiple, pageCreationScheduler, multiTapThrottleDuration);
     }
 
     public static IDisposable NavigateToPage<TParameter, TPage>(
@@ -46,6 +48,7 @@ public static class NavigationObservableExtensions
         VisualElement element,
         Action<TPage, TParameter> preNavigation = null,
         Action<TPage, TParameter> postNavigation = null,
+        Action<TParameter, IDictionary<string, object>> queryParameters = null,
         bool animated = true,
         bool allowMultiple = false,
         IScheduler pageCreationScheduler = null,
@@ -61,6 +64,14 @@ public static class NavigationObservableExtensions
                 x =>
                 {
                     var page = element.GetPage<TPage>();
+
+                    if (queryParameters is not null)
+                    {
+                        var parameters = new Dictionary<string, object>();
+                        queryParameters.Invoke(x, parameters);
+                        SetViewModelParameters(page, parameters);
+                    }
+
                     return new NavigationOptions<TPage, TParameter>
                     {
                         Page = page,
@@ -102,6 +113,7 @@ public static class NavigationObservableExtensions
         Func<TParameter, TPage> pageCreator,
         Action<TPage, TParameter> preNavigation = null,
         Action<TPage, TParameter> postNavigation = null,
+        Action<TParameter, IDictionary<string, object>> queryParameters = null,
         bool animated = true,
         bool allowMultiple = false,
         IScheduler pageCreationScheduler = null,
@@ -117,6 +129,14 @@ public static class NavigationObservableExtensions
                 x =>
                 {
                     var page = pageCreator.Invoke(x);
+
+                    if (queryParameters is not null)
+                    {
+                        var parameters = new Dictionary<string, object>();
+                        queryParameters.Invoke(x, parameters);
+                        SetViewModelParameters(page, parameters);
+                    }
+
                     return new NavigationOptions<TPage, TParameter>
                     {
                         Page = page,
@@ -293,13 +313,14 @@ public static class NavigationObservableExtensions
         VisualElement element,
         Action<TPage, Unit> preNavigation = null,
         Action<TPage, Unit> postNavigation = null,
+        Action<Unit, IDictionary<string, object>> queryParameters = null,
         bool animated = true,
         bool allowMultiple = false,
         IScheduler pageCreationScheduler = null,
         TimeSpan? multiTapThrottleDuration = null)
         where TPage : Page
     {
-        return NavigateToModalPage<Unit, TPage>(observable, element, preNavigation, postNavigation, animated, allowMultiple, pageCreationScheduler, multiTapThrottleDuration);
+        return NavigateToModalPage<Unit, TPage>(observable, element, preNavigation, postNavigation, queryParameters, animated, allowMultiple, pageCreationScheduler, multiTapThrottleDuration);
     }
 
     public static IDisposable NavigateToModalPage<TParameter, TPage>(
@@ -307,6 +328,7 @@ public static class NavigationObservableExtensions
         VisualElement element,
         Action<TPage, TParameter> preNavigation = null,
         Action<TPage, TParameter> postNavigation = null,
+        Action<TParameter, IDictionary<string, object>> queryParameters = null,
         bool animated = true,
         bool allowMultiple = false,
         IScheduler pageCreationScheduler = null,
@@ -322,6 +344,14 @@ public static class NavigationObservableExtensions
                 x =>
                 {
                     var page = element.GetPage<TPage>();
+
+                    if (queryParameters is not null)
+                    {
+                        var parameters = new Dictionary<string, object>();
+                        queryParameters.Invoke(x, parameters);
+                        SetViewModelParameters(page, parameters);
+                    }
+
                     return new NavigationOptions<TPage, TParameter>
                     {
                         Page = page,
@@ -361,6 +391,7 @@ public static class NavigationObservableExtensions
         Func<TParameter, TPage> pageCreator,
         Action<TPage, TParameter> preNavigation = null,
         Action<TPage, TParameter> postNavigation = null,
+        Action<TParameter, IDictionary<string, object>> queryParameters = null,
         bool animated = true,
         bool allowMultiple = false,
         IScheduler pageCreationScheduler = null,
@@ -376,6 +407,14 @@ public static class NavigationObservableExtensions
                 x =>
                 {
                     var page = pageCreator.Invoke(x);
+
+                    if (queryParameters is not null)
+                    {
+                        var parameters = new Dictionary<string, object>();
+                        queryParameters.Invoke(x, parameters);
+                        SetViewModelParameters(page, parameters);
+                    }
+
                     return new NavigationOptions<TPage, TParameter>
                     {
                         Page = page,
@@ -452,6 +491,51 @@ public static class NavigationObservableExtensions
                     return Unit.Default;
                 })
             .Subscribe();
+    }
+
+    public static void SetViewModelParameters<TPage>(TPage page, IDictionary<string, object> queryParameters)
+        where TPage : Page
+    {
+        var viewModel = page.BindingContext;
+
+        if (viewModel is null)
+        {
+            return;
+        }
+
+        var type = viewModel.GetType();
+
+        var queryProperties =
+            type.GetProperties()
+                .Where(prop =>
+                    Attribute.IsDefined(prop, typeof(QueryParameterAttribute)) &&
+                    prop.CanWrite &&
+                    (prop.SetMethod?.IsPublic ?? false));
+
+        foreach (var prop in queryProperties)
+        {
+            var matchingKey = queryParameters.FirstOrDefault(x => x.Key.Equals(prop.Name, StringComparison.OrdinalIgnoreCase));
+
+            if (!string.IsNullOrEmpty(matchingKey.Key))
+            {
+                var value = matchingKey.Value;
+
+                if (prop.PropertyType == typeof(string))
+                {
+                    if (value != null)
+                    {
+                        value = global::System.Net.WebUtility.UrlDecode((string)value);
+                    }
+
+                    prop.SetValue(viewModel, value);
+                }
+                else
+                {
+                    var castValue = Convert.ChangeType(value, prop.PropertyType);
+                    prop.SetValue(viewModel, castValue);
+                }
+            }
+        }
     }
 
     public record NavigationOptions<TPage, TParameter>
