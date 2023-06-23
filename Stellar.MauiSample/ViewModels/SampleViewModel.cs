@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using Stellar.MauiSample.Services;
 
 namespace Stellar.MauiSample.ViewModels;
@@ -56,22 +56,22 @@ public class SampleViewModel : ViewModelBase
         TestItems = items;
     }
 
-    protected override void RegisterObservables()
+    protected override void RegisterObservables(CompositeDisposable disposables)
     {
         GoPopup =
             ReactiveCommand
                 .Create(DefaultAction)
-                .DisposeWith(ViewModelBindings);
+                .DisposeWith(disposables);
 
         GoModal =
             ReactiveCommand
                 .Create(DefaultAction)
-                .DisposeWith(ViewModelBindings);
+                .DisposeWith(disposables);
 
         GoNext =
             ReactiveCommand
                 .Create(DefaultAction)
-                .DisposeWith(ViewModelBindings);
+                .DisposeWith(disposables);
     }
 }
 

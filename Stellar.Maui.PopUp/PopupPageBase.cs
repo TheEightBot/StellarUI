@@ -22,21 +22,13 @@ public abstract class PopupPageBase<TViewModel> : ReactivePopupPage<TViewModel>,
 
     public IObservable<LifecycleEvent> Lifecycle => ViewManager.Lifecycle;
 
-    public CompositeDisposable ControlBindings => ViewManager.ControlBindings;
-
-    public bool Maintain
-    {
-        get => ViewManager.Maintain;
-        set => ViewManager.Maintain = value;
-    }
-
     public virtual void Initialize()
     {
     }
 
     public abstract void SetupUserInterface();
 
-    public abstract void BindControls();
+    public abstract void BindControls(CompositeDisposable disposables);
 
     protected override void OnAppearing()
     {
@@ -66,8 +58,10 @@ public abstract class PopupPageBase<TViewModel> : ReactivePopupPage<TViewModel>,
         base.OnPropertyChanged(propertyName);
     }
 
-    protected virtual void Dispose(bool disposing) =>
+    protected virtual void Dispose(bool disposing)
+    {
         this.ManageDispose(disposing, ref _isDisposed);
+    }
 
     public void Dispose()
     {

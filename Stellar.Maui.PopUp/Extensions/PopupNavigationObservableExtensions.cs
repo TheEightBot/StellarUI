@@ -16,19 +16,21 @@ public static class PopupNavigationObservableExtensions
         this IObservable<Unit> observable,
         Action<TPage, Unit> preNavigation = null,
         Action<TPage, Unit> postNavigation = null,
+        Action<Unit, IDictionary<string, object>> queryParameters = null,
         bool animated = true,
         bool allowMultiple = false,
         IScheduler pageCreationScheduler = null,
         TimeSpan? multiTapThrottleDuration = null)
         where TPage : PopupPage
     {
-        return NavigateToPopupPage<Unit, TPage>(observable, preNavigation, postNavigation, animated, allowMultiple, pageCreationScheduler, multiTapThrottleDuration);
+        return NavigateToPopupPage<Unit, TPage>(observable, preNavigation, postNavigation, queryParameters, animated, allowMultiple, pageCreationScheduler, multiTapThrottleDuration);
     }
 
     public static IDisposable NavigateToPopupPage<TParameter, TPage>(
         this IObservable<TParameter> observable,
         Action<TPage, TParameter> preNavigation = null,
         Action<TPage, TParameter> postNavigation = null,
+        Action<TParameter, IDictionary<string, object>> queryParameters = null,
         bool animated = true,
         bool allowMultiple = false,
         IScheduler pageCreationScheduler = null,
@@ -44,6 +46,14 @@ public static class PopupNavigationObservableExtensions
                 x =>
                 {
                     var page = Application.Current.GetPage<TPage>();
+
+                    if (queryParameters is not null)
+                    {
+                        var parameters = new Dictionary<string, object>();
+                        queryParameters.Invoke(x, parameters);
+                        SetViewModelParameters(page, parameters);
+                    }
+
                     return new NavigationOptions<TPage, TParameter>
                     {
                         Page = page,
@@ -84,6 +94,7 @@ public static class PopupNavigationObservableExtensions
         Func<TParameter, TPage> pageCreator,
         Action<TPage, TParameter> preNavigation = null,
         Action<TPage, TParameter> postNavigation = null,
+        Action<TParameter, IDictionary<string, object>> queryParameters = null,
         bool animated = true,
         bool allowMultiple = false,
         IScheduler pageCreationScheduler = null,
@@ -99,6 +110,14 @@ public static class PopupNavigationObservableExtensions
                 x =>
                 {
                     var page = pageCreator.Invoke(x);
+
+                    if (queryParameters is not null)
+                    {
+                        var parameters = new Dictionary<string, object>();
+                        queryParameters.Invoke(x, parameters);
+                        SetViewModelParameters(page, parameters);
+                    }
+
                     return new NavigationOptions<TPage, TParameter>
                     {
                         Page = page,

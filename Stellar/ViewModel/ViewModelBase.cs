@@ -6,9 +6,9 @@ public abstract class ViewModelBase : ReactiveObject, IViewModel, IDisposable
 
     private readonly object _vmLock = new();
 
-    private bool _bindingsRegistered;
+    private readonly CompositeDisposable _viewModelBindings = new();
 
-    protected CompositeDisposable ViewModelBindings { get; } = new();
+    private bool _bindingsRegistered;
 
     private bool _initialized;
 
@@ -69,7 +69,7 @@ public abstract class ViewModelBase : ReactiveObject, IViewModel, IDisposable
     {
     }
 
-    protected abstract void RegisterObservables();
+    protected abstract void RegisterObservables(CompositeDisposable disposables);
 
     public void RegisterBindings()
     {
@@ -80,7 +80,8 @@ public abstract class ViewModelBase : ReactiveObject, IViewModel, IDisposable
                 return;
             }
 
-            RegisterObservables();
+            _viewModelBindings.Clear();
+            RegisterObservables(_viewModelBindings);
 
             _bindingsRegistered = true;
         }
@@ -95,7 +96,7 @@ public abstract class ViewModelBase : ReactiveObject, IViewModel, IDisposable
                 return;
             }
 
-            ViewModelBindings?.Clear();
+            _viewModelBindings.Clear();
 
             _bindingsRegistered = false;
         }
@@ -112,7 +113,7 @@ public abstract class ViewModelBase : ReactiveObject, IViewModel, IDisposable
 
         if (disposing)
         {
-            ViewModelBindings?.Dispose();
+            _viewModelBindings.Dispose();
         }
     }
 

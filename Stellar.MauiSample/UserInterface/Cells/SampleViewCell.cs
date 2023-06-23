@@ -18,9 +18,9 @@ public class SampleViewCell : ViewCellBase<ViewModels.TestItem>
                 .Assign(out _name);
     }
 
-    public override void BindControls()
+    public override void BindControls(CompositeDisposable disposables)
     {
         this.OneWayBind(ViewModel, vm => vm.Value1, ui => ui._name.Text)
-            .DisposeWith(ControlBindings);
+            .DisposeWith(disposables);
     }
 }

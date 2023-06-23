@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using ReactiveUI;
@@ -14,11 +14,12 @@ public class IndexViewModel : ViewModelBase
     public string? Interval { get; set; }
 
     protected override void RegisterObservables()
+    protected override void RegisterObservables(CompositeDisposable disposables)
     {
         Observable
             .Interval(TimeSpan.FromSeconds(1))
             .Select(interval => $"Interval - {interval}")
             .BindTo(this, x => x.Interval)
-            .DisposeWith(ViewModelBindings);
+            .DisposeWith(disposables);
     }
 }

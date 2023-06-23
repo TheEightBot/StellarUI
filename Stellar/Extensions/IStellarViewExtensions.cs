@@ -9,16 +9,21 @@ public static class IStellarViewExtensions
         this IStellarView<TViewModel> stellarView,
         TViewModel viewModel = null,
         bool resolveViewModel = true,
+        bool maintain = false,
         bool delayBindingRegistrationUntilAttached = false)
         where TViewModel : class
     {
-        if (Attribute.GetCustomAttribute(stellarView.GetType(), typeof(ServiceRegistrationAttribute)) is ServiceRegistrationAttribute sra)
+        if (maintain)
+        {
+            stellarView.ViewManager.Maintain = true;
+        }
+        else if (Attribute.GetCustomAttribute(stellarView.GetType(), typeof(ServiceRegistrationAttribute)) is ServiceRegistrationAttribute sra)
         {
             switch (sra.ServiceRegistrationType)
             {
                 case Lifetime.Scoped:
                 case Lifetime.Singleton:
-                    stellarView.Maintain = true;
+                    stellarView.ViewManager.Maintain = true;
                     break;
             }
         }

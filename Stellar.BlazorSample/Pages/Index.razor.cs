@@ -1,19 +1,13 @@
-﻿using System.Reactive.Linq;
-using ReactiveUI;
-using Stellar.Blazor;
-using Stellar.BlazorSample.ViewModels;
-
 namespace Stellar.BlazorSample.Pages;
 
-public partial class Index : InjectableComponentBase<IndexViewModel>
+public partial class Index
 {
-    protected override void OnInitialized()
+    public Index()
     {
-        base.OnInitialized();
         this.InitializeStellarComponent();
     }
 
-    public override void BindControls()
+    public override void BindControls(CompositeDisposable disposables)
     {
     }
 }

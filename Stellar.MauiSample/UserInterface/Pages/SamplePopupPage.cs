@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive.Disposables;
 using Stellar.MauiSample.ViewModels;
 
 namespace Stellar.MauiSample.UserInterface.Pages;
@@ -64,20 +65,20 @@ public class SamplePopupPage : PopupPageBase<SampleViewModel>
                 .Assign(out _mainLayout);
     }
 
-    public override void BindControls()
+    public override void BindControls(CompositeDisposable disposables)
     {
         this.BindCommand(ViewModel, vm => vm.GoNext, ui => ui._close, Observables.UnitDefault)
-        .DisposeWith(ControlBindings);
+            .DisposeWith(disposables);
 
         this.WhenAnyObservable(x => x.ViewModel.GoNext)
             .NavigatePopPopupPage()
-            .DisposeWith(ControlBindings);
+            .DisposeWith(disposables);
 
         this.WhenAnyValue(x => x.ViewModel.ColorArray)
             .IsNotNull()
             .Select(colorArray => new Color(colorArray[0], colorArray[1], colorArray[2], colorArray[3]))
             .BindTo(this, ui => ui._color.BackgroundColor)
-            .DisposeWith(ControlBindings);
+            .DisposeWith(disposables);
 
         _picker
             .Bind(
@@ -85,9 +86,9 @@ public class SamplePopupPage : PopupPageBase<SampleViewModel>
                 x => this.ViewModel.SelectedTestItem = x,
                 x => this.ViewModel.SelectedTestItem == x,
                 x => x.Value1)
-            .DisposeWith(ControlBindings);
+            .DisposeWith(disposables);
 
         this.OneWayBind(ViewModel, vm => vm.TestItems, ui => ui._listView.ItemsSource)
-            .DisposeWith(ControlBindings);
+            .DisposeWith(disposables);
     }
 }

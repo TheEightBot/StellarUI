@@ -77,10 +77,10 @@ public class SamplePage : ContentPageBase<ViewModels.SampleViewModel>
                 .Assign(out _mainLayout);
     }
 
-    public override void BindControls()
+    public override void BindControls(CompositeDisposable disposables)
     {
         this.BindCommand(ViewModel, vm => vm.GoNext, ui => ui._next, Observables.UnitDefault)
-            .DisposeWith(ControlBindings);
+            .DisposeWith(disposables);
 
         Observable
             .Merge(
@@ -90,29 +90,30 @@ public class SamplePage : ContentPageBase<ViewModels.SampleViewModel>
                 this.WhenAnyObservable(x => x.ViewModel.GoNext))
             .NavigateToPage<SamplePage>(this)
             .DisposeWith(ControlBindings);
+            .DisposeWith(disposables);
 
         this.BindCommand(ViewModel, vm => vm.GoPopup, ui => ui._popup, Observables.UnitDefault)
-            .DisposeWith(ControlBindings);
+            .DisposeWith(disposables);
 
         this.WhenAnyObservable(x => x.ViewModel.GoPopup)
             .NavigateToPopupPage<SamplePopupPage>()
-            .DisposeWith(ControlBindings);
+            .DisposeWith(disposables);
 
         this.BindCommand(ViewModel, vm => vm.GoModal, ui => ui._modal, Observables.UnitDefault)
-            .DisposeWith(ControlBindings);
+            .DisposeWith(disposables);
 
         this.WhenAnyObservable(x => x.ViewModel.GoModal)
             .NavigateToModalPage<SampleModalPage>(this)
-            .DisposeWith(ControlBindings);
+            .DisposeWith(disposables);
 
         this.WhenAnyValue(x => x.ViewModel.ColorArray)
             .IsNotNull()
             .Select(colorArray => new Color(colorArray[0], colorArray[1], colorArray[2], colorArray[3]))
             .BindTo(this, ui => ui._color.BackgroundColor)
-            .DisposeWith(ControlBindings);
+            .DisposeWith(disposables);
 
         this.OneWayBind(ViewModel, x => x.TestItems, ui => ui._listView.ItemsSource)
-            .DisposeWith(ControlBindings);
+            .DisposeWith(disposables);
 
         _picker
             .Bind(
@@ -120,6 +121,6 @@ public class SamplePage : ContentPageBase<ViewModels.SampleViewModel>
                 x => this.ViewModel.SelectedTestItem = x,
                 x => this.ViewModel.SelectedTestItem == x,
                 x => x.Value1)
-            .DisposeWith(ControlBindings);
+            .DisposeWith(disposables);
     }
 }

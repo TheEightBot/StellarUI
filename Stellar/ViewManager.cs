@@ -9,6 +9,8 @@ public abstract class ViewManager : IDisposable
 
     private readonly object _bindingLock = new();
 
+    private readonly CompositeDisposable _controlBindings = new();
+
     private bool _controlsBound;
 
     private bool _isDisposed;
@@ -25,8 +27,6 @@ public abstract class ViewManager : IDisposable
 
     public bool Maintain { get; set; }
 
-    public CompositeDisposable ControlBindings { get; } = new();
-
     public bool ControlsBound => Volatile.Read(ref _controlsBound);
 
     public void RegisterBindings<TViewModel>(IStellarView<TViewModel> view)
@@ -41,7 +41,8 @@ public abstract class ViewManager : IDisposable
 
             view.RegisterViewModelBindings();
 
-            view.BindControls();
+            _controlBindings.Clear();
+            view.BindControls(_controlBindings);
 
             Volatile.Write(ref _controlsBound, true);
         }
@@ -52,12 +53,12 @@ public abstract class ViewManager : IDisposable
     {
         lock (_bindingLock)
         {
-            if (view.Maintain || !_controlsBound)
+            if (Maintain || !_controlsBound)
             {
                 return;
             }
 
-            ControlBindings?.Clear();
+            _controlBindings.Clear();
 
             view.UnregisterViewModelBindings();
 
@@ -121,7 +122,7 @@ public abstract class ViewManager : IDisposable
                 _lifecycle?.Value?.Dispose();
             }
 
-            this.ControlBindings?.Dispose();
+            _controlBindings.Dispose();
         }
     }
 
