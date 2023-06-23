@@ -14,6 +14,7 @@ public static class BuilderExtensions
         PlatformRegistrationManager.SetRegistrationNamespaces(RegistrationNamespace.Blazor);
         Locator.CurrentMutable.InitializeSplat();
         Locator.CurrentMutable.InitializeReactiveUI();
+        RxApp.TaskpoolScheduler = Schedulers.ShortTermThreadPoolScheduler;
 
         services.ConfigureStellarComponents(typeof(TStellarAssembly).GetTypeInfo().Assembly);
 
