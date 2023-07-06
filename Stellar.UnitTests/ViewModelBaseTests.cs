@@ -24,7 +24,7 @@ public class ViewModelBaseTests
         var viewModel = new TestViewModel();
 
         // Act
-        viewModel.RegisterBindings();
+        viewModel.Register();
 
         // Assert
         Assert.True(viewModel.BindingsRegistered);
@@ -35,10 +35,10 @@ public class ViewModelBaseTests
     {
         // Arrange
         var viewModel = new TestViewModel();
-        viewModel.RegisterBindings();
+        viewModel.Register();
 
         // Act
-        viewModel.UnregisterBindings();
+        viewModel.Unregister();
 
         // Assert
         Assert.False(viewModel.BindingsRegistered);
@@ -49,7 +49,7 @@ public class ViewModelBaseTests
     {
         // Arrange
         var viewModel = new TestViewModel();
-        viewModel.RegisterBindings();
+        viewModel.Register();
 
         // Act
         viewModel.Dispose();

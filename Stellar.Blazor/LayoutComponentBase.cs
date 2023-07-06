@@ -21,7 +21,7 @@ public abstract class LayoutComponentBase<TViewModel> : ReactiveLayoutComponentB
     {
     }
 
-    public abstract void BindControls(CompositeDisposable disposables);
+    public abstract void Bind(CompositeDisposable disposables);
 
     protected override void OnInitialized()
     {

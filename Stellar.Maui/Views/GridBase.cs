@@ -26,7 +26,7 @@ public abstract class GridBase<TViewModel> : ReactiveGrid<TViewModel>, IStellarV
 
     public abstract void SetupUserInterface();
 
-    public abstract void BindControls(CompositeDisposable disposables);
+    public abstract void Bind(CompositeDisposable disposables);
 
     protected override void OnHandlerChanging(HandlerChangingEventArgs args)
     {
@@ -77,7 +77,7 @@ public abstract class GridBase<TViewModel, TDataModel> : ReactiveGrid<TViewModel
 
     public abstract void SetupUserInterface();
 
-    public abstract void BindControls(CompositeDisposable disposables);
+    public abstract void Bind(CompositeDisposable disposables);
 
     protected abstract void MapDataModelToViewModel(TViewModel viewModel, TDataModel dataModel);
 

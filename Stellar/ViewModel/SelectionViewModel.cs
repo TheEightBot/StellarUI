@@ -18,7 +18,7 @@ public class SelectionViewModel<TSelectedValKey> : ViewModelBase
     [Reactive]
     public ReactiveCommand<Unit, bool> ToggleSelected { get; private set; }
 
-    protected override void RegisterObservables(CompositeDisposable disposables)
+    protected override void Bind(CompositeDisposable disposables)
     {
         ToggleSelected =
             ReactiveCommand

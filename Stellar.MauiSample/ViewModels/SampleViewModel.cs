@@ -65,7 +65,7 @@ public class SampleViewModel : ViewModelBase
         TestItems = items;
     }
 
-    protected override void RegisterObservables(CompositeDisposable disposables)
+    protected override void Bind(CompositeDisposable disposables)
     {
         GoPopup =
             ReactiveCommand

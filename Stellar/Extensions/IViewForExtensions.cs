@@ -39,7 +39,7 @@ public static class IViewForExtensions
     {
         if (view.ViewModel is ViewModelBase vmb)
         {
-            vmb.RegisterBindings();
+            vmb.Register();
         }
     }
 
@@ -48,7 +48,7 @@ public static class IViewForExtensions
     {
         if (view.ViewModel is ViewModelBase vmb)
         {
-            vmb.UnregisterBindings();
+            vmb.Unregister();
         }
     }
 

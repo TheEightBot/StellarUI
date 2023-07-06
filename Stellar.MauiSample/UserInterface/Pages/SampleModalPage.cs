@@ -66,7 +66,7 @@ public class SampleModalPage : ContentPageBase<SampleViewModel>
                 .Assign(out _mainLayout);
     }
 
-    public override void BindControls(CompositeDisposable disposables)
+    public override void Bind(CompositeDisposable disposables)
     {
         this.BindCommand(ViewModel, vm => vm.GoNext, ui => ui._close, Observables.UnitDefault)
             .DisposeWith(disposables);
