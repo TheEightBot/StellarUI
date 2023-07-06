@@ -42,7 +42,7 @@ public abstract class ViewManager : IDisposable
             view.RegisterViewModelBindings();
 
             _controlBindings.Clear();
-            view.BindControls(_controlBindings);
+            view.Bind(_controlBindings);
 
             Volatile.Write(ref _controlsBound, true);
         }

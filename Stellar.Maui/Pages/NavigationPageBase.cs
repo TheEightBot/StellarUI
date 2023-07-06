@@ -26,7 +26,7 @@ public abstract class NavigationPageBase<TViewModel> : ReactiveNavigationPage<TV
 
     public abstract void SetupUserInterface();
 
-    public abstract void BindControls(CompositeDisposable disposables);
+    public abstract void Bind(CompositeDisposable disposables);
 
     protected override void OnAppearing()
     {

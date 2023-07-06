@@ -26,7 +26,7 @@ public abstract class ContentViewBase<TViewModel> : ReactiveContentView<TViewMod
 
     public abstract void SetupUserInterface();
 
-    public abstract void BindControls(CompositeDisposable disposables);
+    public abstract void Bind(CompositeDisposable disposables);
 
     protected override void OnHandlerChanging(HandlerChangingEventArgs args)
     {
@@ -76,7 +76,7 @@ public abstract class ContentViewBase<TViewModel, TDataModel> : ReactiveContentV
 
     public abstract void SetupUserInterface();
 
-    public abstract void BindControls(CompositeDisposable disposables);
+    public abstract void Bind(CompositeDisposable disposables);
 
     protected abstract void MapDataModelToViewModel(TViewModel viewModel, TDataModel dataModel);
 

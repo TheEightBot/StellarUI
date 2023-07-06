@@ -26,7 +26,7 @@ public abstract class FrameBase<TViewModel> : ReactiveFrame<TViewModel>, IStella
 
     public abstract void SetupUserInterface();
 
-    public abstract void BindControls(CompositeDisposable disposables);
+    public abstract void Bind(CompositeDisposable disposables);
 
     protected override void OnHandlerChanging(HandlerChangingEventArgs args)
     {

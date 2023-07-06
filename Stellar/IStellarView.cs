@@ -16,5 +16,5 @@ public interface IStellarView : IDisposable
 
     public void SetupUserInterface();
 
-    public void BindControls(CompositeDisposable disposables);
+    public void Bind(CompositeDisposable disposables);
 }

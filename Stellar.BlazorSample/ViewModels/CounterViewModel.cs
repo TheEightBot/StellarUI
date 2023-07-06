@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using ReactiveUI.Fody.Helpers;
 using Stellar.ViewModel;
 
@@ -10,7 +10,7 @@ public class CounterViewModel : ViewModelBase
     [Reactive]
     public int Count { get; set; }
 
-    protected override void RegisterObservables(CompositeDisposable disposables)
+    protected override void Bind(CompositeDisposable disposables)
     {
     }
 }

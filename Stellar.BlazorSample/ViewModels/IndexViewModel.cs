@@ -17,7 +17,7 @@ public class IndexViewModel : ViewModelBase
     [Reactive]
     public int ParameterInput { get; set; }
 
-    protected override void RegisterObservables(CompositeDisposable disposables)
+    protected override void Bind(CompositeDisposable disposables)
     {
         Observable
             .Interval(TimeSpan.FromSeconds(1))
