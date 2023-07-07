@@ -17,6 +17,9 @@ public class SampleViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit> GoModal { get; private set; }
 
     [Reactive]
+    public ReactiveCommand<Unit, Unit> GoValidation { get; private set; }
+
+    [Reactive]
     public ReactiveCommand<Unit, Unit> GoNext { get; private set; }
 
     [Reactive]
@@ -73,6 +76,11 @@ public class SampleViewModel : ViewModelBase
                 .DisposeWith(disposables);
 
         GoModal =
+            ReactiveCommand
+                .Create(DefaultAction)
+                .DisposeWith(disposables);
+
+        GoValidation =
             ReactiveCommand
                 .Create(DefaultAction)
                 .DisposeWith(disposables);
