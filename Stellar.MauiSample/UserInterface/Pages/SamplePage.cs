@@ -1,4 +1,4 @@
-using ReactiveMarbles.ObservableEvents;
+using Stellar.MauiSample.ViewModels;
 
 namespace Stellar.MauiSample.UserInterface.Pages;
 
@@ -113,7 +113,7 @@ public class SamplePage : ContentPageBase<ViewModels.SampleViewModel>
                 this,
                 queryParameters: (value, dict) =>
                 {
-                    dict.Add("parametervalue", value);
+                    dict.Add("ParameterValue", value);
                 })
             .DisposeWith(disposables);
 

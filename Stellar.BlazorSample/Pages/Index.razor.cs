@@ -7,7 +7,7 @@ public partial class Index
         this.InitializeStellarComponent();
     }
 
-    public override void BindControls(CompositeDisposable disposables)
+    public override void Bind(CompositeDisposable disposables)
     {
     }
 }

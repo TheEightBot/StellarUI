@@ -19,7 +19,7 @@ public partial class Counter
         this.InitializeStellarComponent();
     }
 
-    public override void BindControls(CompositeDisposable disposables)
+    public override void Bind(CompositeDisposable disposables)
     {
     }
 

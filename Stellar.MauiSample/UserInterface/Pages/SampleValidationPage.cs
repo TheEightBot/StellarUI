@@ -1,3 +1,5 @@
+using Stellar.MauiSample.ViewModels;
+
 namespace Stellar.MauiSample.UserInterface.Pages;
 
 [ServiceRegistration]

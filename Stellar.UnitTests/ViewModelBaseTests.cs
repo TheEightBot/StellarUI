@@ -1,4 +1,5 @@
-﻿using Stellar.ViewModel;
+﻿using System.Reactive.Disposables;
+using Stellar.ViewModel;
 
 namespace Stellar.UnitTests;
 
@@ -60,14 +61,7 @@ public class ViewModelBaseTests
 
     private class TestViewModel : ViewModelBase
     {
-        public bool Initialized { get; private set; }
-
-        protected override void Initialize()
-        {
-            Initialized = true;
-        }
-
-        protected override void RegisterObservables(CompositeDisposable disposables)
+        protected override void Bind(CompositeDisposable disposables)
         {
             // Do nothing
         }
