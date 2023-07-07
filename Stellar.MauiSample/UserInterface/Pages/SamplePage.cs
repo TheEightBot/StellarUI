@@ -13,6 +13,8 @@ public class SamplePage : ContentPageBase<ViewModels.SampleViewModel>
 
     private Button _next;
 
+    private Button _validation;
+
     private Label _parameterValue;
 
     private BoxView _color;
@@ -49,6 +51,13 @@ public class SamplePage : ContentPageBase<ViewModels.SampleViewModel>
                         VerticalOptions = LayoutOptions.Start,
                     }
                         .Assign(out _modal),
+                    new Button
+                    {
+                        Text = "Validation",
+                        HeightRequest = 32,
+                        VerticalOptions = LayoutOptions.Start,
+                    }
+                        .Assign(out _validation),
                     new Button
                     {
                         Text = "Next",
@@ -120,6 +129,13 @@ public class SamplePage : ContentPageBase<ViewModels.SampleViewModel>
 
         this.WhenAnyObservable(x => x.ViewModel.GoModal)
             .NavigateToModalPage<SampleModalPage>(this)
+            .DisposeWith(disposables);
+
+        this.BindCommand(ViewModel, vm => vm.GoValidation, ui => ui._validation, Observables.UnitDefault)
+            .DisposeWith(disposables);
+
+        this.WhenAnyObservable(x => x.ViewModel.GoValidation)
+            .NavigateToPage<SampleValidationPage>(this)
             .DisposeWith(disposables);
 
         this.WhenAnyValue(x => x.ViewModel.ColorArray)

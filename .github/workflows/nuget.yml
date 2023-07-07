@@ -23,13 +23,13 @@ jobs:
         NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
     - name: Install MAUI Workloads
-      run: dotnet workload install maui --ignore-failed-sources        
+      run: dotnet workload install maui --ignore-failed-sources
 
     - name: Semver Parse
       id: version
-      uses: release-kit/semver@v1.0.10        
-        
-    - name: Build Stellar    
+      uses: release-kit/semver@v1.0.10
+
+    - name: Build Stellar
       run: dotnet build Stellar/Stellar.csproj
     - name: Create the package
       run: dotnet pack --configuration Release  /p:AssemblyVersion=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }} /p:Version=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }} Stellar/Stellar.csproj
@@ -55,4 +55,11 @@ jobs:
     - name: Create the package
       run: dotnet pack --configuration Release /p:AssemblyVersion=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }} /p:Version=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }} Stellar.Blazor/Stellar.Blazor.csproj
     - name: Publish the package to GPR
-      run: dotnet nuget push Stellar.Blazor/bin/Release/*.nupkg      
+      run: dotnet nuget push Stellar.Blazor/bin/Release/*.nupkg
+
+    - name: Build Stellar.FluentValidation
+      run: dotnet build Stellar.FluentValidation/Stellar.FluentValidation.csproj
+    - name: Create the package
+      run: dotnet pack --configuration Release /p:AssemblyVersion=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }} /p:Version=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }} Stellar.FluentValidation/Stellar.FluentValidation.csproj
+    - name: Publish the package to GPR
+      run: dotnet nuget push Stellar.FluentValidation/bin/Release/*.nupkg

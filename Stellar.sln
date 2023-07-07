@@ -30,6 +30,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stellar.Blazor", "Stellar.B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stellar.BlazorSample", "Stellar.BlazorSample\Stellar.BlazorSample.csproj", "{0E79ECA7-8EBC-4227-89E9-13EC9CD6B7DC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stellar.FluentValidation", "Stellar.FluentValidation\Stellar.FluentValidation.csproj", "{86F83289-C99B-4AA6-82CF-75553B3A7764}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -64,6 +66,10 @@ Global
 		{0E79ECA7-8EBC-4227-89E9-13EC9CD6B7DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0E79ECA7-8EBC-4227-89E9-13EC9CD6B7DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0E79ECA7-8EBC-4227-89E9-13EC9CD6B7DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86F83289-C99B-4AA6-82CF-75553B3A7764}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86F83289-C99B-4AA6-82CF-75553B3A7764}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86F83289-C99B-4AA6-82CF-75553B3A7764}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86F83289-C99B-4AA6-82CF-75553B3A7764}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
