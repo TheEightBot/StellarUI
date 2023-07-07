@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)..\images\logo.png" Pack="true" PackagePath="\"/>
+    <None Include="..\images\logo.png" Pack="true" PackagePath="\"/>
   </ItemGroup>
 
   <ItemGroup>
