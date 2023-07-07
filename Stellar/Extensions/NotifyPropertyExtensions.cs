@@ -1,7 +1,7 @@
 ﻿using System.Collections.Specialized;
 using System.ComponentModel;
 
-namespace Stellar.Extensions;
+namespace Stellar;
 
 public static class NotifyPropertyExtensions
 {
