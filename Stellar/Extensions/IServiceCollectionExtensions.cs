@@ -22,23 +22,26 @@ public static class IServiceCollectionExtensions
         {
             if (Attribute.GetCustomAttribute(ti, ServiceRegistrationType) is ServiceRegistrationAttribute a)
             {
-                var interfaces = ti.GetInterfaces() ?? Enumerable.Empty<Type>();
-
-                if (interfaces.Any())
+                if (a.RegisterInterfaces)
                 {
-                    foreach (var currInterface in interfaces)
+                    var interfaces = ti.GetInterfaces() ?? Enumerable.Empty<Type>();
+
+                    if (interfaces.Any())
                     {
-                        switch (a.ServiceRegistrationType)
+                        foreach (var currInterface in interfaces)
                         {
-                            case Lifetime.Transient:
-                                services.AddTransient(currInterface, ti);
-                                break;
-                            case Lifetime.Scoped:
-                                services.AddScoped(currInterface, ti);
-                                break;
-                            case Lifetime.Singleton:
-                                services.AddSingleton(currInterface, ti);
-                                break;
+                            switch (a.ServiceRegistrationType)
+                            {
+                                case Lifetime.Transient:
+                                    services.AddTransient(currInterface, ti);
+                                    break;
+                                case Lifetime.Scoped:
+                                    services.AddScoped(currInterface, ti);
+                                    break;
+                                case Lifetime.Singleton:
+                                    services.AddSingleton(currInterface, ti);
+                                    break;
+                            }
                         }
                     }
                 }
@@ -73,6 +76,30 @@ public static class IServiceCollectionExtensions
         {
             if (Attribute.GetCustomAttribute(ti, ServiceRegistrationType) is ServiceRegistrationAttribute a)
             {
+                if (a.RegisterInterfaces)
+                {
+                    var interfaces = ti.GetInterfaces() ?? Enumerable.Empty<Type>();
+
+                    if (interfaces.Any())
+                    {
+                        foreach (var currInterface in interfaces)
+                        {
+                            switch (a.ServiceRegistrationType)
+                            {
+                                case Lifetime.Transient:
+                                    services.AddTransient(currInterface, ti);
+                                    break;
+                                case Lifetime.Scoped:
+                                    services.AddScoped(currInterface, ti);
+                                    break;
+                                case Lifetime.Singleton:
+                                    services.AddSingleton(currInterface, ti);
+                                    break;
+                            }
+                        }
+                    }
+                }
+
                 switch (a.ServiceRegistrationType)
                 {
                     case Lifetime.Transient:
