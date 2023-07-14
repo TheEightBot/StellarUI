@@ -13,7 +13,7 @@ public class ServiceRegistrationAttribute : Attribute
 
 public enum Lifetime
 {
-    Transient,
-    Scoped,
-    Singleton,
+    Transient = 0,
+    Scoped = 1,
+    Singleton = 2,
 }
