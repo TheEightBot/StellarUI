@@ -3,14 +3,14 @@ using Stellar.ViewModel;
 
 namespace Stellar.Maui;
 
-public class MauiViewManager : ViewManager
+public class MauiViewManager<TViewModel> : ViewManager
+    where TViewModel : class
 {
 #if DEBUG
-    private IStellarView? _view;
+    private IStellarView<TViewModel>? _view;
 #endif
 
-    public void HandlerChanging<TViewModel>(IStellarView<TViewModel> view, HandlerChangingEventArgs args)
-        where TViewModel : class
+    public void HandlerChanging(IStellarView<TViewModel> view, HandlerChangingEventArgs args)
     {
         if (args.NewHandler is not null)
         {
@@ -39,7 +39,22 @@ public class MauiViewManager : ViewManager
             return;
         }
 
-        _view.SetupUserInterface();
+        MainThread
+            .BeginInvokeOnMainThread(
+                () =>
+                {
+                    var maintainStatus = _view.ViewManager.Maintain;
+
+                    _view.ViewManager.Maintain = false;
+
+                    _view.ViewManager.UnregisterBindings(_view);
+
+                    _view.ViewManager.Maintain = maintainStatus;
+
+                    _view.SetupUserInterface();
+
+                    _view.ViewManager.RegisterBindings(_view);
+                });
     }
 #endif
 }
