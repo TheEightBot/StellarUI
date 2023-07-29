@@ -9,7 +9,7 @@ public abstract class MultiPageBase<TPage, TViewModel> : ReactiveMultiPage<TPage
     private bool _isDisposed;
 
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public ViewManager ViewManager { get; } = new MauiViewManager();
+    public ViewManager ViewManager { get; } = new MauiViewManager<TViewModel>();
 
     public IObservable<Unit> Activated => ViewManager.Activated;
 
@@ -45,7 +45,7 @@ public abstract class MultiPageBase<TPage, TViewModel> : ReactiveMultiPage<TPage
 
     protected override void OnHandlerChanging(HandlerChangingEventArgs args)
     {
-        ((MauiViewManager)ViewManager).HandlerChanging(this, args);
+        ((MauiViewManager<TViewModel>)ViewManager).HandlerChanging(this, args);
 
         base.OnHandlerChanging(args);
     }

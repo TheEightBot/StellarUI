@@ -8,7 +8,7 @@ public abstract class ShellBase<TViewModel> : ReactiveShell<TViewModel>, IStella
     private bool _isDisposed;
 
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public ViewManager ViewManager { get; } = new MauiViewManager();
+    public ViewManager ViewManager { get; } = new MauiViewManager<TViewModel>();
 
     public IObservable<Unit> Activated => ViewManager.Activated;
 
@@ -44,7 +44,7 @@ public abstract class ShellBase<TViewModel> : ReactiveShell<TViewModel>, IStella
 
     protected override void OnHandlerChanging(HandlerChangingEventArgs args)
     {
-        ((MauiViewManager)ViewManager).HandlerChanging(this, args);
+        ((MauiViewManager<TViewModel>)ViewManager).HandlerChanging(this, args);
 
         base.OnHandlerChanging(args);
     }
