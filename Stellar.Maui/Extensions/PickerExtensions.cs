@@ -378,19 +378,21 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
     // Methods
     private void SetItems(IList<TViewModel> items)
     {
+        _items = (IList)items;
+
         if (_picker is null)
         {
             return;
         }
 
-        _items = (IList)items;
+        var picker = _picker;
 
-        _picker.Dispatcher.Dispatch(
+        picker?.Dispatcher?.Dispatch(
             () =>
             {
                 try
                 {
-                    _picker.ItemsSource = _items;
+                    picker.ItemsSource = _items;
                 }
                 catch (ArgumentException ex)
                 {
@@ -444,7 +446,9 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
 
         if (!fromUi && _picker is not null && (_picker.SelectedItem is null || !EqualityComparer<TViewModel>.Default.Equals(item, this.SelectedItem)))
         {
-            _picker.Dispatcher.Dispatch(() => _picker.SelectedItem = item);
+            var picker = _picker;
+
+            picker?.Dispatcher?.Dispatch(() => picker.SelectedItem = item);
         }
     }
 
