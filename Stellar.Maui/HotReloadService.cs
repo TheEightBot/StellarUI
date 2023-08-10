@@ -1,13 +1,13 @@
-﻿#if DEBUG
-[assembly: System.Reflection.Metadata.MetadataUpdateHandlerAttribute(typeof(Stellar.Maui.HotReloadService))]
+﻿#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
+[assembly: System.Reflection.Metadata.MetadataUpdateHandler(typeof(Stellar.Maui.HotReloadService))]
 
 namespace Stellar.Maui;
 
 public static class HotReloadService
 {
-#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
+    public static bool HotReloadAware { get; set; }
+
     public static event Action<Type[]?>? UpdateApplicationEvent;
-#pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
 
     internal static void ClearCache(Type[]? types)
     {
@@ -18,4 +18,4 @@ public static class HotReloadService
         UpdateApplicationEvent?.Invoke(types);
     }
 }
-#endif
+#pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
