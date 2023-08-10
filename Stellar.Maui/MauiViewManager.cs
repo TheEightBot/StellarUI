@@ -7,7 +7,7 @@ public class MauiViewManager<TViewModel> : ViewManager
     where TViewModel : class
 {
 #if DEBUG
-    private IStellarView<TViewModel>? _view;
+    private IStellarView<TViewModel> _view;
 #endif
 
     public void HandlerChanging(IStellarView<TViewModel> view, HandlerChangingEventArgs args)
@@ -26,13 +26,17 @@ public class MauiViewManager<TViewModel> : ViewManager
         }
 
         HandleDeactivated(view);
+
 #if DEBUG
+        _view = null;
         HotReloadService.UpdateApplicationEvent -= HandleHotReload;
 #endif
     }
 
 #if DEBUG
-    private void HandleHotReload(Type[] updatedTypes)
+#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
+    private void HandleHotReload(Type[]? updatedTypes)
+#pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
     {
         if (_view is null)
         {
