@@ -47,7 +47,8 @@ public static class NotifyPropertyExtensions
                             return Handler;
                         },
                         x => notify.PropertyChanging += x,
-                        x => notify.PropertyChanging -= x);
+                        x => notify.PropertyChanging -= x,
+                        scheduler);
         }
 
         return
@@ -59,8 +60,7 @@ public static class NotifyPropertyExtensions
                         return Handler;
                     },
                     x => notify.PropertyChanging += x,
-                    x => notify.PropertyChanging -= x,
-                    scheduler);
+                    x => notify.PropertyChanging -= x);
     }
 
     public static IObservable<NotifyCollectionChangedEventArgs> ObserveCollectinChanged(this INotifyCollectionChanged notify, IScheduler scheduler = null)
