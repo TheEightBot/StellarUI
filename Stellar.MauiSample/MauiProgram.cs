@@ -20,6 +20,9 @@ public static class MauiProgram
                     })
                 .UseMauiCommunityToolkit()
                 .UseMauiCommunityToolkitMarkup()
+#if DEBUG
+                .EnableHotReload()
+#endif
                 .UseStellarComponents<App>();
 
         /*

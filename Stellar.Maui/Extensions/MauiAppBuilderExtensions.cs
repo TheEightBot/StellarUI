@@ -27,6 +27,13 @@ public static class MauiAppBuilderExtensions
         return mauiAppBuilder;
     }
 
+    public static MauiAppBuilder EnableHotReload(this MauiAppBuilder mauiAppBuilder)
+    {
+        HotReloadService.HotReloadAware = true;
+
+        return mauiAppBuilder;
+    }
+
     private static Task PreCache(MauiAppBuilder mauiAppBuilder, Assembly assembly)
     {
         if (assembly is null)
