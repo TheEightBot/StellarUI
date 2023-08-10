@@ -38,6 +38,8 @@ public static class IStellarViewExtensions
         {
             stellarView.ViewManager.RegisterBindings(stellarView);
         }
+
+        stellarView.ViewManager.OnLifecycle(LifecycleEvent.Loaded);
     }
 
     public static void ManageDispose<TViewModel>(this IStellarView<TViewModel> stellarView, bool disposing, ref bool isDisposed)
@@ -49,6 +51,8 @@ public static class IStellarViewExtensions
 
             if (disposing)
             {
+                stellarView.ViewManager.OnLifecycle(LifecycleEvent.Unloaded);
+
                 stellarView.ViewManager?.Dispose();
                 stellarView.DisposeViewModel();
             }
