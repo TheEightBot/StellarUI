@@ -3,10 +3,10 @@
 public enum LifecycleEvent
 {
     Unknown = 0,
-    Loaded = 1,
+    Initialized = 1,
     Activated = 2,
     IsAppearing = 3,
     IsDisappearing = 4,
     Deactivated = 5,
-    Unloaded = 6,
+    Disposed = 6,
 }

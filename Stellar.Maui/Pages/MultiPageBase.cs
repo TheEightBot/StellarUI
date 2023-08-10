@@ -11,6 +11,8 @@ public abstract class MultiPageBase<TPage, TViewModel> : ReactiveMultiPage<TPage
     [EditorBrowsable(EditorBrowsableState.Never)]
     public ViewManager ViewManager { get; } = new MauiViewManager<TViewModel>();
 
+    public IObservable<Unit> Initialized => ViewManager.Initialized;
+
     public IObservable<Unit> Activated => ViewManager.Activated;
 
     public IObservable<Unit> Deactivated => ViewManager.Deactivated;
@@ -18,6 +20,8 @@ public abstract class MultiPageBase<TPage, TViewModel> : ReactiveMultiPage<TPage
     public IObservable<Unit> IsAppearing => ViewManager.IsAppearing;
 
     public IObservable<Unit> IsDisappearing => ViewManager.IsDisappearing;
+
+    public IObservable<Unit> Disposed => ViewManager.Disposed;
 
     public IObservable<LifecycleEvent> Lifecycle => ViewManager.Lifecycle;
 

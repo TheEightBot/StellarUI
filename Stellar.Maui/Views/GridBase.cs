@@ -10,6 +10,8 @@ public abstract class GridBase<TViewModel> : ReactiveGrid<TViewModel>, IStellarV
     [EditorBrowsable(EditorBrowsableState.Never)]
     public ViewManager ViewManager { get; } = new MauiViewManager<TViewModel>();
 
+    public IObservable<Unit> Initialized => ViewManager.Initialized;
+
     public IObservable<Unit> Activated => ViewManager.Activated;
 
     public IObservable<Unit> Deactivated => ViewManager.Deactivated;
@@ -17,6 +19,8 @@ public abstract class GridBase<TViewModel> : ReactiveGrid<TViewModel>, IStellarV
     public IObservable<Unit> IsAppearing => ViewManager.IsAppearing;
 
     public IObservable<Unit> IsDisappearing => ViewManager.IsDisappearing;
+
+    public IObservable<Unit> Disposed => ViewManager.Disposed;
 
     public IObservable<LifecycleEvent> Lifecycle => ViewManager.Lifecycle;
 
@@ -61,6 +65,8 @@ public abstract class GridBase<TViewModel, TDataModel> : ReactiveGrid<TViewModel
     [EditorBrowsable(EditorBrowsableState.Never)]
     public ViewManager ViewManager { get; } = new MauiViewManager<TViewModel>();
 
+    public IObservable<Unit> Initialized => ViewManager.Initialized;
+
     public IObservable<Unit> Activated => ViewManager.Activated;
 
     public IObservable<Unit> Deactivated => ViewManager.Deactivated;
@@ -68,6 +74,8 @@ public abstract class GridBase<TViewModel, TDataModel> : ReactiveGrid<TViewModel
     public IObservable<Unit> IsAppearing => ViewManager.IsAppearing;
 
     public IObservable<Unit> IsDisappearing => ViewManager.IsDisappearing;
+
+    public IObservable<Unit> Disposed => ViewManager.Disposed;
 
     public IObservable<LifecycleEvent> Lifecycle => ViewManager.Lifecycle;
 
