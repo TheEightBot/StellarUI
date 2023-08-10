@@ -15,6 +15,8 @@ public abstract class ViewManager : IDisposable
 
     private bool _isDisposed;
 
+    public IObservable<Unit> Initialized => _lifecycle.Value.Where(x => x == LifecycleEvent.Initialized).SelectUnit().AsObservable();
+
     public IObservable<Unit> Activated => _lifecycle.Value.Where(x => x == LifecycleEvent.Activated).SelectUnit().AsObservable();
 
     public IObservable<Unit> Deactivated => _lifecycle.Value.Where(x => x == LifecycleEvent.Deactivated).SelectUnit().AsObservable();
@@ -22,6 +24,8 @@ public abstract class ViewManager : IDisposable
     public IObservable<Unit> IsAppearing => _lifecycle.Value.Where(x => x == LifecycleEvent.IsAppearing).SelectUnit().AsObservable();
 
     public IObservable<Unit> IsDisappearing => _lifecycle.Value.Where(x => x == LifecycleEvent.IsDisappearing).SelectUnit().AsObservable();
+
+    public IObservable<Unit> Disposed => _lifecycle.Value.Where(x => x == LifecycleEvent.Disposed).SelectUnit().AsObservable();
 
     public IObservable<LifecycleEvent> Lifecycle => _lifecycle.Value.AsObservable();
 

@@ -12,6 +12,16 @@ public abstract class ComponentBase<TViewModel> : ReactiveComponentBase<TViewMod
     [EditorBrowsable(EditorBrowsableState.Never)]
     public ViewManager ViewManager { get; } = new BlazorViewManager();
 
+    public IObservable<Unit> Initialized => ViewManager.Initialized;
+
+    public IObservable<Unit> IsAppearing => ViewManager.IsAppearing;
+
+    public IObservable<Unit> IsDisappearing => ViewManager.IsDisappearing;
+
+    public IObservable<Unit> Disposed => ViewManager.Disposed;
+
+    public IObservable<LifecycleEvent> Lifecycle => ViewManager.Lifecycle;
+
     public virtual void Initialize()
     {
     }
