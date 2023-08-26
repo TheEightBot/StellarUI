@@ -32,6 +32,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stellar.BlazorSample", "Ste
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stellar.FluentValidation", "Stellar.FluentValidation\Stellar.FluentValidation.csproj", "{86F83289-C99B-4AA6-82CF-75553B3A7764}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stellar.Avalonia", "Stellar.Avalonia\Stellar.Avalonia.csproj", "{21E4F559-87BD-4BDB-809F-04F4F14FB239}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stellar.AvaloniaSample", "Stellar.AvaloniaSample\Stellar.AvaloniaSample.csproj", "{485462B1-6698-4228-A86E-0D35BC95DDA7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +75,14 @@ Global
 		{86F83289-C99B-4AA6-82CF-75553B3A7764}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86F83289-C99B-4AA6-82CF-75553B3A7764}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{86F83289-C99B-4AA6-82CF-75553B3A7764}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21E4F559-87BD-4BDB-809F-04F4F14FB239}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21E4F559-87BD-4BDB-809F-04F4F14FB239}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21E4F559-87BD-4BDB-809F-04F4F14FB239}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21E4F559-87BD-4BDB-809F-04F4F14FB239}.Release|Any CPU.Build.0 = Release|Any CPU
+		{485462B1-6698-4228-A86E-0D35BC95DDA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{485462B1-6698-4228-A86E-0D35BC95DDA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{485462B1-6698-4228-A86E-0D35BC95DDA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{485462B1-6698-4228-A86E-0D35BC95DDA7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -79,6 +91,7 @@ Global
 		{19579D26-E2AD-4B24-BF34-068EEDDB8C92} = {A8B3EF2B-52AA-40D0-A645-E198A2FD4A44}
 		{DD3F54BD-727D-4800-86DD-4F55470065FF} = {B5F05E2A-51D0-453C-8204-5144816A72EC}
 		{0E79ECA7-8EBC-4227-89E9-13EC9CD6B7DC} = {A8B3EF2B-52AA-40D0-A645-E198A2FD4A44}
+		{485462B1-6698-4228-A86E-0D35BC95DDA7} = {A8B3EF2B-52AA-40D0-A645-E198A2FD4A44}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {562BB029-31D3-47C4-99F9-5B6F0189D7D7}
