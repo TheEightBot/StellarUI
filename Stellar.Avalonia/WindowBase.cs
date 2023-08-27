@@ -39,20 +39,11 @@ namespace Stellar.Avalonia
 
         public abstract void Bind(CompositeDisposable disposables);
 
-        protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+        protected override void OnInitialized()
         {
-            base.OnAttachedToVisualTree(e);
+            base.OnInitialized();
 
             ViewManager.HandleActivated(this);
-        }
-
-        protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
-        {
-            ViewManager.OnLifecycle(LifecycleEvent.IsDisappearing);
-
-            ViewManager.HandleDeactivated(this);
-
-            base.OnDetachedFromVisualTree(e);
         }
 
         protected override void OnOpened(EventArgs e)
@@ -65,6 +56,8 @@ namespace Stellar.Avalonia
         protected override void OnClosing(WindowClosingEventArgs e)
         {
             ViewManager.OnLifecycle(LifecycleEvent.IsDisappearing);
+
+            ViewManager.HandleDeactivated(this);
 
             base.OnClosing(e);
         }
