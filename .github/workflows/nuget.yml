@@ -57,6 +57,13 @@ jobs:
     - name: Publish the package to GPR
       run: dotnet nuget push Stellar.Blazor/bin/Release/*.nupkg
 
+    - name: Build Stellar.Avalonia
+      run: dotnet build Stellar.Avalonia/Stellar.Avalonia.csproj
+    - name: Create the package
+      run: dotnet pack --configuration Release /p:AssemblyVersion=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }} /p:Version=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }} Stellar.Avalonia/Stellar.Avalonia.csproj
+    - name: Publish the package to GPR
+      run: dotnet nuget push Stellar.Avalonia/bin/Release/*.nupkg
+
     - name: Build Stellar.FluentValidation
       run: dotnet build Stellar.FluentValidation/Stellar.FluentValidation.csproj
     - name: Create the package

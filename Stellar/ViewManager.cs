@@ -49,6 +49,8 @@ public abstract class ViewManager : IDisposable
             view.Bind(_controlBindings);
 
             Volatile.Write(ref _controlsBound, true);
+
+            OnLifecycle(LifecycleEvent.Initialized);
         }
     }
 
@@ -70,7 +72,7 @@ public abstract class ViewManager : IDisposable
         }
     }
 
-    public void HandleActivated<TViewModel>(IStellarView<TViewModel> view)
+    public virtual void HandleActivated<TViewModel>(IStellarView<TViewModel> view)
         where TViewModel : class
     {
         view.RegisterViewModelBindings();
@@ -80,7 +82,7 @@ public abstract class ViewManager : IDisposable
         OnLifecycle(LifecycleEvent.Activated);
     }
 
-    public void HandleDeactivated<TViewModel>(IStellarView<TViewModel> view)
+    public virtual void HandleDeactivated<TViewModel>(IStellarView<TViewModel> view)
         where TViewModel : class
     {
         OnLifecycle(LifecycleEvent.Deactivated);
