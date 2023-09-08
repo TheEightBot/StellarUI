@@ -1,6 +1,8 @@
 ﻿using System.Reactive.Threading.Tasks;
 using Microsoft.Maui;
 using Microsoft.Maui.Controls;
+using ReactiveUI;
+using Stellar.ViewModel;
 
 namespace Stellar.Maui;
 
@@ -70,6 +72,69 @@ public static class NavigationObservableExtensions
                         var parameters = new Dictionary<string, object>();
                         queryParameters.Invoke(x, parameters);
                         SetViewModelParameters(page, parameters);
+                    }
+
+                    return new NavigationOptions<TPage, TParameter>
+                    {
+                        Page = page,
+                        Parameter = x,
+                        IsAppearingAsync = page.AppearingAsync(),
+                        PreNavigation = preNavigation,
+                        PostNavigation = postNavigation,
+                        Animated = animated,
+                        NavigationRoot = element,
+                    };
+                })
+            .ObserveOn(RxApp.MainThreadScheduler)
+            .SelectMany(
+                static async x =>
+                {
+                    try
+                    {
+                        x.PreNavigation?.Invoke(x.Page, x.Parameter);
+
+                        await Task.WhenAll(
+                            x.IsAppearingAsync,
+                            x.NavigationRoot.Navigation.PushAsync(x.Page, x.Animated));
+
+                        x.PostNavigation?.Invoke(x.Page, x.Parameter);
+                    }
+                    finally
+                    {
+                        Navigating = false;
+                    }
+
+                    return Unit.Default;
+                })
+            .Subscribe();
+    }
+
+    public static IDisposable NavigateToPage<TParameter, TPage, TViewModel>(
+        this IObservable<TParameter> observable,
+        VisualElement element,
+        Action<TPage, TParameter> preNavigation = null,
+        Action<TPage, TParameter> postNavigation = null,
+        Action<TParameter, TViewModel> viewModelMap = null,
+        bool animated = true,
+        bool allowMultiple = false,
+        IScheduler pageCreationScheduler = null,
+        TimeSpan? multiTapThrottleDuration = null)
+        where TPage : Page, IViewFor<TViewModel>
+        where TViewModel : class
+    {
+        return observable
+            .ThrottleFirst(multiTapThrottleDuration ?? DefaultMultiTapThrottleDuration, Schedulers.ShortTermThreadPoolScheduler)
+            .Where(_ => allowMultiple || !Navigating)
+            .Do(static _ => Navigating = true)
+            .ObserveOn(pageCreationScheduler ?? Schedulers.ShortTermThreadPoolScheduler)
+            .Select(
+                x =>
+                {
+                    var page = element.GetPage<TPage>();
+
+                    if (viewModelMap is not null && page.ViewModel is not null)
+                    {
+                        viewModelMap.Invoke(x, page.ViewModel);
                     }
 
                     return new NavigationOptions<TPage, TParameter>
@@ -413,6 +478,68 @@ public static class NavigationObservableExtensions
                         var parameters = new Dictionary<string, object>();
                         queryParameters.Invoke(x, parameters);
                         SetViewModelParameters(page, parameters);
+                    }
+
+                    return new NavigationOptions<TPage, TParameter>
+                    {
+                        Page = page,
+                        Parameter = x,
+                        IsAppearingAsync = page.AppearingAsync(),
+                        PreNavigation = preNavigation,
+                        PostNavigation = postNavigation,
+                        Animated = animated,
+                        NavigationRoot = element,
+                    };
+                })
+            .ObserveOn(RxApp.MainThreadScheduler)
+            .SelectMany(
+                static async x =>
+                {
+                    try
+                    {
+                        x.PreNavigation?.Invoke(x.Page, x.Parameter);
+                        await Task.WhenAll(
+                            x.IsAppearingAsync,
+                            x.NavigationRoot.Navigation.PushModalAsync(x.Page, x.Animated));
+                        x.PostNavigation?.Invoke(x.Page, x.Parameter);
+                    }
+                    finally
+                    {
+                        Navigating = false;
+                    }
+
+                    return Unit.Default;
+                })
+            .Subscribe();
+    }
+
+    public static IDisposable NavigateToModalPage<TParameter, TPage, TViewModel>(
+        this IObservable<TParameter> observable,
+        VisualElement element,
+        Func<TParameter, TPage> pageCreator,
+        Action<TPage, TParameter> preNavigation = null,
+        Action<TPage, TParameter> postNavigation = null,
+        Action<TParameter, TViewModel> viewModelMap = null,
+        bool animated = true,
+        bool allowMultiple = false,
+        IScheduler pageCreationScheduler = null,
+        TimeSpan? multiTapThrottleDuration = null)
+        where TPage : Page, IViewFor<TViewModel>
+        where TViewModel : class
+    {
+        return observable
+            .ThrottleFirst(multiTapThrottleDuration ?? DefaultMultiTapThrottleDuration, Schedulers.ShortTermThreadPoolScheduler)
+            .Where(_ => allowMultiple || !Navigating)
+            .Do(static _ => Navigating = true)
+            .ObserveOn(pageCreationScheduler ?? Schedulers.ShortTermThreadPoolScheduler)
+            .Select(
+                x =>
+                {
+                    var page = pageCreator.Invoke(x);
+
+                    if (viewModelMap is not null && page.ViewModel is not null)
+                    {
+                        viewModelMap.Invoke(x, page.ViewModel);
                     }
 
                     return new NavigationOptions<TPage, TParameter>

@@ -154,6 +154,70 @@ public static class PopupNavigationObservableExtensions
             .Subscribe();
     }
 
+    public static IDisposable NavigateToPopupPage<TParameter, TPage, TViewModel>(
+        this IObservable<TParameter> observable,
+        Func<TParameter, TPage> pageCreator,
+        Action<TPage, TParameter> preNavigation = null,
+        Action<TPage, TParameter> postNavigation = null,
+        Action<TParameter, TViewModel> viewModelMap = null,
+        bool animated = true,
+        bool allowMultiple = false,
+        IScheduler pageCreationScheduler = null,
+        TimeSpan? multiTapThrottleDuration = null)
+        where TPage : PopupPage, IViewFor<TViewModel>
+        where TViewModel : class
+    {
+        return observable
+            .ThrottleFirst(multiTapThrottleDuration ?? DefaultMultiTapThrottleDuration, Schedulers.ShortTermThreadPoolScheduler)
+            .Where(_ => allowMultiple || !Navigating)
+            .Do(static _ => Navigating = true)
+            .ObserveOn(pageCreationScheduler ?? Schedulers.ShortTermThreadPoolScheduler)
+            .Select(
+                x =>
+                {
+                    var page = pageCreator.Invoke(x);
+
+                    if (viewModelMap is not null && page.ViewModel is not null)
+                    {
+                        viewModelMap.Invoke(x, page.ViewModel);
+                    }
+
+                    return new NavigationOptions<TPage, TParameter>
+                    {
+                        Page = page,
+                        Parameter = x,
+                        IsAppearingAsync = page.AppearingAsync(),
+                        PreNavigation = preNavigation,
+                        PostNavigation = postNavigation,
+                        Animated = animated,
+                    };
+                })
+            .ObserveOn(RxApp.MainThreadScheduler)
+            .SelectMany(
+                static async x =>
+                {
+                    try
+                    {
+                        x.PreNavigation?.Invoke(x.Page, x.Parameter);
+
+                        var nav = MopupService.Instance;
+                        await Task.WhenAll(
+                            x.IsAppearingAsync,
+                            nav.PushAsync(x.Page, x.Animated));
+
+                        x.PostNavigation?.Invoke(x.Page, x.Parameter);
+                    }
+                    finally
+                    {
+                        Navigating = false;
+                    }
+
+                    return Unit.Default;
+                })
+            .Do(_ => Navigating = false)
+            .Subscribe();
+    }
+
     public static IDisposable NavigatePopPopupPage<TParameter>(
         this IObservable<TParameter> observable,
         Action<TParameter> preNavigation = null,
