@@ -536,6 +536,16 @@ public static class NavigationObservableExtensions
                 }
             }
         }
+
+        if (page is IQueryAttributable pqa)
+        {
+            pqa.ApplyQueryAttributes(queryParameters);
+        }
+
+        if (viewModel is IQueryAttributable vmqa)
+        {
+            vmqa.ApplyQueryAttributes(queryParameters);
+        }
     }
 
     public record NavigationOptions<TPage, TParameter>
