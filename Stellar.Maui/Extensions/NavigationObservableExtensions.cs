@@ -67,18 +67,12 @@ public static class NavigationObservableExtensions
                 {
                     var page = element.GetPage<TPage>();
 
-                    if (queryParameters is not null)
-                    {
-                        var parameters = new Dictionary<string, object>();
-                        queryParameters.Invoke(x, parameters);
-                        SetViewModelParameters(page, parameters);
-                    }
-
                     return new NavigationOptions<TPage, TParameter>
                     {
                         Page = page,
                         Parameter = x,
                         IsAppearingAsync = page.AppearingAsync(),
+                        QueryParameters = queryParameters,
                         PreNavigation = preNavigation,
                         PostNavigation = postNavigation,
                         Animated = animated,
@@ -91,6 +85,13 @@ public static class NavigationObservableExtensions
                 {
                     try
                     {
+                        if (x.QueryParameters is not null)
+                        {
+                            var parameters = new Dictionary<string, object>();
+                            x.QueryParameters.Invoke(x.Parameter, parameters);
+                            SetViewModelParameters(x.Page, parameters);
+                        }
+
                         x.PreNavigation?.Invoke(x.Page, x.Parameter);
 
                         await Task.WhenAll(
@@ -132,16 +133,12 @@ public static class NavigationObservableExtensions
                 {
                     var page = element.GetPage<TPage>();
 
-                    if (viewModelMap is not null && page.ViewModel is not null)
-                    {
-                        viewModelMap.Invoke(x, page.ViewModel);
-                    }
-
-                    return new NavigationOptions<TPage, TParameter>
+                    return new NavigationOptions<TPage, TParameter, TViewModel>
                     {
                         Page = page,
                         Parameter = x,
                         IsAppearingAsync = page.AppearingAsync(),
+                        ViewModelMap = viewModelMap,
                         PreNavigation = preNavigation,
                         PostNavigation = postNavigation,
                         Animated = animated,
@@ -154,6 +151,11 @@ public static class NavigationObservableExtensions
                 {
                     try
                     {
+                        if (x.ViewModelMap is not null && x.Page.ViewModel is not null)
+                        {
+                            x.ViewModelMap.Invoke(x.Parameter, x.Page.ViewModel);
+                        }
+
                         x.PreNavigation?.Invoke(x.Page, x.Parameter);
 
                         await Task.WhenAll(
@@ -195,18 +197,12 @@ public static class NavigationObservableExtensions
                 {
                     var page = pageCreator.Invoke(x);
 
-                    if (queryParameters is not null)
-                    {
-                        var parameters = new Dictionary<string, object>();
-                        queryParameters.Invoke(x, parameters);
-                        SetViewModelParameters(page, parameters);
-                    }
-
                     return new NavigationOptions<TPage, TParameter>
                     {
                         Page = page,
                         Parameter = x,
                         IsAppearingAsync = page.AppearingAsync(),
+                        QueryParameters = queryParameters,
                         PreNavigation = preNavigation,
                         PostNavigation = postNavigation,
                         Animated = animated,
@@ -219,6 +215,13 @@ public static class NavigationObservableExtensions
                 {
                     try
                     {
+                        if (x.QueryParameters is not null)
+                        {
+                            var parameters = new Dictionary<string, object>();
+                            x.QueryParameters.Invoke(x.Parameter, parameters);
+                            SetViewModelParameters(x.Page, parameters);
+                        }
+
                         x.PreNavigation?.Invoke(x.Page, x.Parameter);
 
                         await Task.WhenAll(
@@ -410,18 +413,12 @@ public static class NavigationObservableExtensions
                 {
                     var page = element.GetPage<TPage>();
 
-                    if (queryParameters is not null)
-                    {
-                        var parameters = new Dictionary<string, object>();
-                        queryParameters.Invoke(x, parameters);
-                        SetViewModelParameters(page, parameters);
-                    }
-
                     return new NavigationOptions<TPage, TParameter>
                     {
                         Page = page,
                         Parameter = x,
                         IsAppearingAsync = page.AppearingAsync(),
+                        QueryParameters = queryParameters,
                         PreNavigation = preNavigation,
                         PostNavigation = postNavigation,
                         Animated = animated,
@@ -434,6 +431,13 @@ public static class NavigationObservableExtensions
                 {
                     try
                     {
+                        if (x.QueryParameters is not null)
+                        {
+                            var parameters = new Dictionary<string, object>();
+                            x.QueryParameters.Invoke(x.Parameter, parameters);
+                            SetViewModelParameters(x.Page, parameters);
+                        }
+
                         x.PreNavigation?.Invoke(x.Page, x.Parameter);
                         await Task.WhenAll(
                             x.IsAppearingAsync,
@@ -473,18 +477,12 @@ public static class NavigationObservableExtensions
                 {
                     var page = pageCreator.Invoke(x);
 
-                    if (queryParameters is not null)
-                    {
-                        var parameters = new Dictionary<string, object>();
-                        queryParameters.Invoke(x, parameters);
-                        SetViewModelParameters(page, parameters);
-                    }
-
                     return new NavigationOptions<TPage, TParameter>
                     {
                         Page = page,
                         Parameter = x,
                         IsAppearingAsync = page.AppearingAsync(),
+                        QueryParameters = queryParameters,
                         PreNavigation = preNavigation,
                         PostNavigation = postNavigation,
                         Animated = animated,
@@ -497,6 +495,13 @@ public static class NavigationObservableExtensions
                 {
                     try
                     {
+                        if (x.QueryParameters is not null)
+                        {
+                            var parameters = new Dictionary<string, object>();
+                            x.QueryParameters.Invoke(x.Parameter, parameters);
+                            SetViewModelParameters(x.Page, parameters);
+                        }
+
                         x.PreNavigation?.Invoke(x.Page, x.Parameter);
                         await Task.WhenAll(
                             x.IsAppearingAsync,
@@ -537,16 +542,12 @@ public static class NavigationObservableExtensions
                 {
                     var page = pageCreator.Invoke(x);
 
-                    if (viewModelMap is not null && page.ViewModel is not null)
-                    {
-                        viewModelMap.Invoke(x, page.ViewModel);
-                    }
-
-                    return new NavigationOptions<TPage, TParameter>
+                    return new NavigationOptions<TPage, TParameter, TViewModel>
                     {
                         Page = page,
                         Parameter = x,
                         IsAppearingAsync = page.AppearingAsync(),
+                        ViewModelMap = viewModelMap,
                         PreNavigation = preNavigation,
                         PostNavigation = postNavigation,
                         Animated = animated,
@@ -559,6 +560,11 @@ public static class NavigationObservableExtensions
                 {
                     try
                     {
+                        if (x.ViewModelMap is not null && x.Page.ViewModel is not null)
+                        {
+                            x.ViewModelMap.Invoke(x.Parameter, x.Page.ViewModel);
+                        }
+
                         x.PreNavigation?.Invoke(x.Page, x.Parameter);
                         await Task.WhenAll(
                             x.IsAppearingAsync,
@@ -675,6 +681,13 @@ public static class NavigationObservableExtensions
         }
     }
 
+    public record NavigationOptions<TPage, TParameter, TViewModel>
+        : NavigationOptions<TPage, TParameter>
+        where TPage : Page
+    {
+        public Action<TParameter, TViewModel> ViewModelMap { get; set; }
+    }
+
     public record NavigationOptions<TPage, TParameter>
         : NavigationOptions<TParameter>
         where TPage : Page
@@ -691,6 +704,8 @@ public static class NavigationObservableExtensions
     public record NavigationOptions<TParameter>
     {
         public TParameter Parameter { get; set; }
+
+        public Action<TParameter, IDictionary<string, object>> QueryParameters { get; set; }
 
         public Action<TParameter> PreNavigation { get; set; }
 

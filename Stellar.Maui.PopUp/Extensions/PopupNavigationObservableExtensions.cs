@@ -47,18 +47,12 @@ public static class PopupNavigationObservableExtensions
                 {
                     var page = Application.Current.GetPage<TPage>();
 
-                    if (queryParameters is not null)
-                    {
-                        var parameters = new Dictionary<string, object>();
-                        queryParameters.Invoke(x, parameters);
-                        SetViewModelParameters(page, parameters);
-                    }
-
                     return new NavigationOptions<TPage, TParameter>
                     {
                         Page = page,
                         Parameter = x,
                         IsAppearingAsync = page.AppearingAsync(),
+                        QueryParameters = queryParameters,
                         PreNavigation = preNavigation,
                         PostNavigation = postNavigation,
                         Animated = animated,
@@ -70,6 +64,13 @@ public static class PopupNavigationObservableExtensions
                 {
                     try
                     {
+                        if (x.QueryParameters is not null)
+                        {
+                            var parameters = new Dictionary<string, object>();
+                            x.QueryParameters.Invoke(x.Parameter, parameters);
+                            SetViewModelParameters(x.Page, parameters);
+                        }
+
                         x.PreNavigation?.Invoke(x.Page, x.Parameter);
 
                         var nav = MopupService.Instance;
@@ -111,18 +112,12 @@ public static class PopupNavigationObservableExtensions
                 {
                     var page = pageCreator.Invoke(x);
 
-                    if (queryParameters is not null)
-                    {
-                        var parameters = new Dictionary<string, object>();
-                        queryParameters.Invoke(x, parameters);
-                        SetViewModelParameters(page, parameters);
-                    }
-
                     return new NavigationOptions<TPage, TParameter>
                     {
                         Page = page,
                         Parameter = x,
                         IsAppearingAsync = page.AppearingAsync(),
+                        QueryParameters = queryParameters,
                         PreNavigation = preNavigation,
                         PostNavigation = postNavigation,
                         Animated = animated,
@@ -134,6 +129,13 @@ public static class PopupNavigationObservableExtensions
                 {
                     try
                     {
+                        if (x.QueryParameters is not null)
+                        {
+                            var parameters = new Dictionary<string, object>();
+                            x.QueryParameters.Invoke(x.Parameter, parameters);
+                            SetViewModelParameters(x.Page, parameters);
+                        }
+
                         x.PreNavigation?.Invoke(x.Page, x.Parameter);
 
                         var nav = MopupService.Instance;
@@ -177,16 +179,12 @@ public static class PopupNavigationObservableExtensions
                 {
                     var page = pageCreator.Invoke(x);
 
-                    if (viewModelMap is not null && page.ViewModel is not null)
-                    {
-                        viewModelMap.Invoke(x, page.ViewModel);
-                    }
-
-                    return new NavigationOptions<TPage, TParameter>
+                    return new NavigationOptions<TPage, TParameter, TViewModel>
                     {
                         Page = page,
                         Parameter = x,
                         IsAppearingAsync = page.AppearingAsync(),
+                        ViewModelMap = viewModelMap,
                         PreNavigation = preNavigation,
                         PostNavigation = postNavigation,
                         Animated = animated,
@@ -198,6 +196,11 @@ public static class PopupNavigationObservableExtensions
                 {
                     try
                     {
+                        if (x.ViewModelMap is not null && x.Page.ViewModel is not null)
+                        {
+                            x.ViewModelMap.Invoke(x.Parameter, x.Page.ViewModel);
+                        }
+
                         x.PreNavigation?.Invoke(x.Page, x.Parameter);
 
                         var nav = MopupService.Instance;
