@@ -1,4 +1,6 @@
 ﻿using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Splat;
 using Splat.Microsoft.Extensions.DependencyInjection;
 
@@ -20,11 +22,31 @@ public static class MauiAppBuilderExtensions
         PlatformRegistrationManager.SetRegistrationNamespaces(RegistrationNamespace.Maui);
         Locator.CurrentMutable.InitializeSplat();
         Locator.CurrentMutable.InitializeReactiveUI();
+
         RxApp.TaskpoolScheduler = Schedulers.ShortTermThreadPoolScheduler;
+
+        mauiAppBuilder.Services.AddSingleton(
+            serviceProvider =>
+            {
+                var dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
+                var mauiScheduler = new MauiScheduler(dispatcher);
+                RxApp.MainThreadScheduler = mauiScheduler;
+                return mauiScheduler;
+            });
+
+        mauiAppBuilder.Services.TryAddEnumerable(ServiceDescriptor.Scoped<IMauiInitializeScopedService, MauiSchedulerInitializer>());
 
         mauiAppBuilder.Services.ConfigureStellarComponents(typeof(TStellarAssembly).GetTypeInfo().Assembly);
 
         return mauiAppBuilder;
+    }
+
+    private class MauiSchedulerInitializer : IMauiInitializeScopedService
+    {
+        public void Initialize(IServiceProvider services)
+        {
+            _ = services.GetRequiredService<MauiScheduler>();
+        }
     }
 
     public static MauiAppBuilder EnableHotReload(this MauiAppBuilder mauiAppBuilder)

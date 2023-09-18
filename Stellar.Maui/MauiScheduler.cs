@@ -4,7 +4,7 @@ namespace Stellar.Maui;
 
 public class MauiScheduler : IScheduler
 {
-    private IDispatcher _dispatcher;
+    private readonly IDispatcher _dispatcher;
 
     public MauiScheduler(IDispatcher dispatcher)
     {
@@ -17,15 +17,25 @@ public class MauiScheduler : IScheduler
     {
         var innerDisp = new SingleAssignmentDisposable();
 
-        _dispatcher
-            .Dispatch(
-                () =>
-                {
-                    if (!innerDisp.IsDisposed)
+        if (_dispatcher.IsDispatchRequired)
+        {
+            _dispatcher
+                .Dispatch(
+                    () =>
                     {
-                        innerDisp.Disposable = action(this, state);
-                    }
-                });
+                        if (!innerDisp.IsDisposed)
+                        {
+                            innerDisp.Disposable = action(this, state);
+                        }
+                    });
+        }
+        else
+        {
+            if (!innerDisp.IsDisposed)
+            {
+                innerDisp.Disposable = action(this, state);
+            }
+        }
 
         return innerDisp;
     }
