@@ -38,7 +38,6 @@ public static class MauiProgram
 
         return
             appBuilder
-                .Build()
-                .ConfigureReactiveUISchedulers();
+                .Build();
     }
 }
