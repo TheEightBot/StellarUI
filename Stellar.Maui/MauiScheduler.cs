@@ -28,13 +28,13 @@ public class MauiScheduler : IScheduler
                             innerDisp.Disposable = action(this, state);
                         }
                     });
+
+            return innerDisp;
         }
-        else
+
+        if (!innerDisp.IsDisposed)
         {
-            if (!innerDisp.IsDisposed)
-            {
-                innerDisp.Disposable = action(this, state);
-            }
+            innerDisp.Disposable = action(this, state);
         }
 
         return innerDisp;
