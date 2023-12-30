@@ -66,7 +66,7 @@ public static class PageExtensions
             page.Appearing -= Page_Appearing;
         }
 
-        void Page_Appearing(object sender, EventArgs e)
+        void Page_Appearing(object? sender, EventArgs e)
         {
             tcs.TrySetResult(true);
         }
@@ -91,7 +91,7 @@ public static class PageExtensions
             page.Disappearing -= Page_Disappearing;
         }
 
-        void Page_Disappearing(object sender, EventArgs e)
+        void Page_Disappearing(object? sender, EventArgs e)
         {
             tcs.TrySetResult(true);
         }

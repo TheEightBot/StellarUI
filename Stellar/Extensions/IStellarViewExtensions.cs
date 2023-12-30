@@ -7,7 +7,7 @@ public static class IStellarViewExtensions
 {
     public static void InitializeStellarComponent<TViewModel>(
         this IStellarView<TViewModel> stellarView,
-        TViewModel viewModel = null,
+        TViewModel? viewModel = null,
         bool resolveViewModel = true,
         bool maintain = false,
         bool delayBindingRegistrationUntilAttached = false)
@@ -58,8 +58,6 @@ public static class IStellarViewExtensions
         }
 
         stellarView.ViewManager.OnLifecycle(LifecycleEvent.Disposed);
-
-        stellarView.ViewManager.Dispose();
 
         stellarView.DisposeViewModel();
     }

@@ -30,40 +30,7 @@ public abstract class ViewCellBase<TViewModel> : ReactiveViewCell<TViewModel>, I
 
     public abstract void Bind(CompositeDisposable disposables);
 
-    protected override void OnHandlerChanging(HandlerChangingEventArgs args)
-    {
-        if (args.OldHandler is not null)
-        {
-            if (HotReloadService.HotReloadAware)
-            {
-                HotReloadService.UpdateApplicationEvent -= HandleHotReload;
-            }
-
-            ViewManager.HandleDeactivated(this);
-
-            this.DisposeView();
-        }
-
-        if (args.NewHandler is not null)
-        {
-            if (HotReloadService.HotReloadAware)
-            {
-                HotReloadService.UpdateApplicationEvent -= HandleHotReload;
-                HotReloadService.UpdateApplicationEvent += HandleHotReload;
-            }
-
-            ViewManager.HandleActivated(this);
-        }
-
-        base.OnHandlerChanging(args);
-    }
-
-    private void HandleHotReload(Type[]? updatedTypes)
-    {
-        this.ReloadView();
-    }
-
-    protected override void OnPropertyChanged(string propertyName = null)
+    protected override void OnPropertyChanged(string? propertyName = null)
     {
         ViewManager.PropertyChanged<ViewCellBase<TViewModel>, TViewModel>(this, propertyName);
 
@@ -101,40 +68,7 @@ public abstract class ViewCellBase<TViewModel, TDataModel> : ReactiveViewCell<TV
 
     protected abstract void MapDataModelToViewModel(TViewModel viewModel, TDataModel dataModel);
 
-    protected override void OnHandlerChanging(HandlerChangingEventArgs args)
-    {
-        if (args.OldHandler is not null)
-        {
-            if (HotReloadService.HotReloadAware)
-            {
-                HotReloadService.UpdateApplicationEvent -= HandleHotReload;
-            }
-
-            ViewManager.HandleDeactivated(this);
-
-            this.DisposeView();
-        }
-
-        if (args.NewHandler is not null)
-        {
-            if (HotReloadService.HotReloadAware)
-            {
-                HotReloadService.UpdateApplicationEvent -= HandleHotReload;
-                HotReloadService.UpdateApplicationEvent += HandleHotReload;
-            }
-
-            ViewManager.HandleActivated(this);
-        }
-
-        base.OnHandlerChanging(args);
-    }
-
-    private void HandleHotReload(Type[]? updatedTypes)
-    {
-        this.ReloadView();
-    }
-
-    protected override void OnPropertyChanged(string propertyName = null)
+    protected override void OnPropertyChanged(string? propertyName = null)
     {
         ViewManager.PropertyChanged<ViewCellBase<TViewModel, TDataModel>, TViewModel>(this, propertyName);
 

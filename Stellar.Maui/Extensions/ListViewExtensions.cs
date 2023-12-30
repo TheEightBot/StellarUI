@@ -12,7 +12,7 @@ public static class ListViewExtensions
                 .FromEvent<EventHandler<ItemTappedEventArgs>, ItemTappedEventArgs>(
                     static eventHandler =>
                     {
-                        void Handler(object sender, ItemTappedEventArgs e) => eventHandler?.Invoke(e);
+                        void Handler(object? sender, ItemTappedEventArgs e) => eventHandler?.Invoke(e);
                         return Handler;
                     },
                     x => listView.ItemTapped += x,
@@ -36,7 +36,7 @@ public static class ListViewExtensions
                 .FromEvent<EventHandler<ItemTappedEventArgs>, ItemTappedEventArgs>(
                     static eventHandler =>
                     {
-                        void Handler(object sender, ItemTappedEventArgs e) => eventHandler?.Invoke(e);
+                        void Handler(object? sender, ItemTappedEventArgs e) => eventHandler?.Invoke(e);
                         return Handler;
                     },
                     x => listView.ItemTapped += x,
@@ -52,7 +52,7 @@ public static class ListViewExtensions
                 .FromEvent<EventHandler<SelectedItemChangedEventArgs>, SelectedItemChangedEventArgs>(
                     static eventHandler =>
                     {
-                        void Handler(object sender, SelectedItemChangedEventArgs e) => eventHandler?.Invoke(e);
+                        void Handler(object? sender, SelectedItemChangedEventArgs e) => eventHandler?.Invoke(e);
                         return Handler;
                     },
                     x => listView.ItemSelected += x,
@@ -76,7 +76,7 @@ public static class ListViewExtensions
                 .FromEvent<EventHandler<SelectedItemChangedEventArgs>, SelectedItemChangedEventArgs>(
                     static eventHandler =>
                     {
-                        void Handler(object sender, SelectedItemChangedEventArgs e) => eventHandler?.Invoke(e);
+                        void Handler(object? sender, SelectedItemChangedEventArgs e) => eventHandler?.Invoke(e);
                         return Handler;
                     },
                     x => listView.ItemSelected += x,

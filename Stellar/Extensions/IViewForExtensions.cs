@@ -8,7 +8,7 @@ public static class IViewForExtensions
 {
     public static void SetupViewModel<TViewModel>(
         this IViewFor<TViewModel> view,
-        TViewModel viewModel = null,
+        TViewModel? viewModel = null,
         bool resolveViewModel = true)
         where TViewModel : class
     {

@@ -4,7 +4,7 @@ namespace Stellar.MauiSample.UserInterface.Views;
 public class SampleView : ContentViewBase<ViewModels.SampleViewModel>
 #pragma warning restore CA1063
 {
-    private BoxView _box;
+    private Label _lbl;
 
     public SampleView()
     {
@@ -19,18 +19,28 @@ public class SampleView : ContentViewBase<ViewModels.SampleViewModel>
     public override void SetupUserInterface()
     {
         Content =
-            new BoxView
+            new Label
             {
             }
-                .Assign(out _box);
+                .Assign(out _lbl);
     }
 
     public override void Bind(CompositeDisposable disposables)
     {
-        this.WhenAnyValue(static x => x.ViewModel.ColorArray)
-            .IsNotNull()
-            .Select(static colorArray => new Color(colorArray[0], colorArray[1], colorArray[2], colorArray[3]))
-            .BindTo(this, static ui => ui._box.BackgroundColor)
+        var colorNotifications =
+            this.WhenAnyValue(static x => x.ViewModel.ColorArray)
+                .IsNotNull()
+                .Select(static colorArray => new Color(colorArray[0], colorArray[1], colorArray[2], colorArray[3]))
+                .Publish()
+                .RefCount();
+
+        colorNotifications
+            .Select(x => x.ToArgbHex())
+            .BindTo(this, static ui => ui._lbl.Text)
+            .DisposeWith(disposables);
+
+        colorNotifications
+            .BindTo(this, static ui => ui._lbl.BackgroundColor)
             .DisposeWith(disposables);
     }
 }

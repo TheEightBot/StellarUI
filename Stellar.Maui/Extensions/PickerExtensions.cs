@@ -13,8 +13,8 @@ public static class PickerExtensions
         this TViewIn view,
         Expression<Func<TViewIn, Picker>> selectPicker,
         IEnumerable<TItemsModel> items,
-        Action<TItemsModel> selectedItemChanged,
-        Func<TItemsModel, bool> selectItem,
+        Action<TItemsModel?> selectedItemChanged,
+        Func<TItemsModel?, bool> selectItem,
         Func<TItemsModel, string> titleSelector)
         where TViewIn : VisualElement
     {
@@ -35,7 +35,7 @@ public static class PickerExtensions
             });
     }
 
-    public static ReactivePickerBinder<TViewModel> Bind<TViewModel>(this Picker picker, IEnumerable<TViewModel> items, Action<TViewModel> selectedItemChanged, Func<TViewModel, bool> selectItem, Func<TViewModel, string> titleSelector)
+    public static ReactivePickerBinder<TViewModel> Bind<TViewModel>(this Picker picker, IEnumerable<TViewModel> items, Action<TViewModel?> selectedItemChanged, Func<TViewModel?, bool> selectItem, Func<TViewModel?, string> titleSelector)
     {
         return new ReactivePickerBinder<TViewModel>(picker, items, selectedItemChanged, selectItem, titleSelector, null);
     }
@@ -44,13 +44,13 @@ public static class PickerExtensions
         this TViewIn view,
         Expression<Func<TViewIn, Picker>> selectPicker,
         IEnumerable<TItemsModel> items,
-        Action<TItemsModel> selectedItemChanged,
-        Func<TItemsModel, bool> selectItem,
+        Action<TItemsModel?> selectedItemChanged,
+        Func<TItemsModel?, bool> selectItem,
         Func<TItemsModel, string> titleSelector,
-        IObservable<TDontCare> signalRefresh = null)
+        IObservable<TDontCare>? signalRefresh = null)
         where TViewIn : VisualElement
     {
-        IObservable<Unit> refresh = null;
+        IObservable<Unit>? refresh = null;
 
         if (signalRefresh is not null)
         {
@@ -78,12 +78,12 @@ public static class PickerExtensions
     public static ReactivePickerBinder<TViewModel> Bind<TViewModel, TDontCare>(
         this Picker picker,
         IEnumerable<TViewModel> items,
-        Action<TViewModel> selectedItemChanged,
-        Func<TViewModel, bool> selectItem,
+        Action<TViewModel?> selectedItemChanged,
+        Func<TViewModel?, bool> selectItem,
         Func<TViewModel, string> titleSelector,
-        IObservable<TDontCare> signalRefresh = null)
+        IObservable<TDontCare>? signalRefresh = null)
     {
-        IObservable<Unit> refresh = null;
+        IObservable<Unit>? refresh = null;
 
         if (signalRefresh is not null)
         {
@@ -97,8 +97,8 @@ public static class PickerExtensions
         this TViewIn view,
         Expression<Func<TViewIn, Picker>> selectPicker,
         IObservable<IEnumerable<TItemsModel>> items,
-        Action<TItemsModel> selectedItemChanged,
-        Func<TItemsModel, bool> selectItem,
+        Action<TItemsModel?> selectedItemChanged,
+        Func<TItemsModel?, bool> selectItem,
         Func<TItemsModel, string> titleSelector)
         where TViewIn : VisualElement
     {
@@ -120,7 +120,7 @@ public static class PickerExtensions
             });
     }
 
-    public static ReactivePickerBinder<TViewModel> Bind<TViewModel>(this Picker picker, IObservable<IEnumerable<TViewModel>> items, Action<TViewModel> selectedItemChanged, Func<TViewModel, bool> selectItem, Func<TViewModel, string> titleSelector)
+    public static ReactivePickerBinder<TViewModel> Bind<TViewModel>(this Picker picker, IObservable<IEnumerable<TViewModel>> items, Action<TViewModel?> selectedItemChanged, Func<TViewModel?, bool> selectItem, Func<TViewModel, string> titleSelector)
     {
         return new ReactivePickerBinder<TViewModel>(picker, items, selectedItemChanged, selectItem, titleSelector, null);
     }
@@ -129,14 +129,14 @@ public static class PickerExtensions
         this TViewIn view,
         Expression<Func<TViewIn, Picker>> selectPicker,
         IObservable<IEnumerable<TItemsModel>> items,
-        Action<TItemsModel> selectedItemChanged,
-        Func<TItemsModel, bool> selectItem,
+        Action<TItemsModel?> selectedItemChanged,
+        Func<TItemsModel?, bool> selectItem,
         Func<TItemsModel, string> titleSelector,
-        IObservable<TDontCare> signalRefresh = null)
+        IObservable<TDontCare>? signalRefresh = null)
         where TViewIn : IViewFor<TViewModel>
         where TViewModel : class
     {
-        IObservable<Unit> refresh = null;
+        IObservable<Unit>? refresh = null;
 
         if (signalRefresh is not null)
         {
@@ -164,12 +164,12 @@ public static class PickerExtensions
     public static ReactivePickerBinder<TViewModel> Bind<TViewModel, TDontCare>(
         this Picker picker,
         IObservable<IEnumerable<TViewModel>> items,
-        Action<TViewModel> selectedItemChanged,
-        Func<TViewModel, bool> selectItem,
+        Action<TViewModel?> selectedItemChanged,
+        Func<TViewModel?, bool> selectItem,
         Func<TViewModel, string> titleSelector,
-        IObservable<TDontCare> signalRefresh = null)
+        IObservable<TDontCare>? signalRefresh = null)
     {
-        IObservable<Unit> refresh = null;
+        IObservable<Unit>? refresh = null;
 
         if (signalRefresh is not null)
         {
@@ -188,24 +188,24 @@ public static class PickerExtensions
 
 public class ReactivePickerBinder<TViewModel> : IDisposable
 {
-    private readonly Action<TViewModel> _selectedItemChanged;
+    private readonly Action<TViewModel?> _selectedItemChanged;
 
-    private readonly Func<TViewModel, bool> _selectItem;
+    private readonly Func<TViewModel?, bool> _selectItem;
 
     private readonly CompositeDisposable _disposableSubscriptions;
 
-    private Picker _picker;
+    private Picker? _picker;
 
-    private IList _items;
+    private IList? _items;
 
-    public TViewModel SelectedItem
+    public TViewModel? SelectedItem
         => _picker?.SelectedItem is not null
             ? (TViewModel)_picker.SelectedItem
-            : default(TViewModel);
+            : default;
 
     public ReactivePickerBinder(Picker picker, IEnumerable<TViewModel> items,
-        Action<TViewModel> selectedItemChanged, Func<TViewModel, bool> selectItem, Func<TViewModel, string> titleSelector,
-        IObservable<Unit> signalViewUpdate = null)
+        Action<TViewModel?> selectedItemChanged, Func<TViewModel?, bool> selectItem, Func<TViewModel, string> titleSelector,
+        IObservable<Unit>? signalViewUpdate = null)
     {
         _picker = picker;
         _picker.ItemDisplayBinding = new Binding(".", BindingMode.OneTime, new TitleSelectorConverter<TViewModel>(titleSelector));
@@ -219,7 +219,7 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
             .FromEvent<EventHandler<FocusEventArgs>, FocusEventArgs>(
                 static eventHandler =>
                 {
-                    void Handler(object sender, FocusEventArgs e) => eventHandler?.Invoke(e);
+                    void Handler(object? sender, FocusEventArgs e) => eventHandler?.Invoke(e);
                     return Handler;
                 },
                 x => _picker.Focused += x,
@@ -273,7 +273,7 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
                                 .FromEvent<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>(
                                     static eventHandler =>
                                     {
-                                        void Handler(object sender, NotifyCollectionChangedEventArgs e) => eventHandler?.Invoke(e);
+                                        void Handler(object? sender, NotifyCollectionChangedEventArgs e) => eventHandler?.Invoke(e);
                                         return Handler;
                                     },
                                     x => incc.CollectionChanged += x,
@@ -290,8 +290,8 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
     }
 
     public ReactivePickerBinder(Picker picker, IObservable<IEnumerable<TViewModel>> items,
-        Action<TViewModel> selectedItemChanged, Func<TViewModel, bool> selectItem, Func<TViewModel, string> titleSelector,
-        IObservable<Unit> signalViewUpdate = null)
+        Action<TViewModel?> selectedItemChanged, Func<TViewModel?, bool> selectItem, Func<TViewModel, string> titleSelector,
+        IObservable<Unit>? signalViewUpdate = null)
     {
         _picker = picker;
 
@@ -306,7 +306,7 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
             .FromEvent<EventHandler<FocusEventArgs>, FocusEventArgs>(
                 static eventHandler =>
                 {
-                    void Handler(object sender, FocusEventArgs e) => eventHandler?.Invoke(e);
+                    void Handler(object? sender, FocusEventArgs e) => eventHandler?.Invoke(e);
                     return Handler;
                 },
                 x => _picker.Focused += x,
@@ -359,7 +359,7 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
                                 .FromEvent<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>(
                                     static eventHandler =>
                                     {
-                                        void Handler(object sender, NotifyCollectionChangedEventArgs e) => eventHandler?.Invoke(e);
+                                        void Handler(object? sender, NotifyCollectionChangedEventArgs e) => eventHandler?.Invoke(e);
                                         return Handler;
                                     },
                                     x => incc.CollectionChanged += x,
@@ -376,9 +376,9 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
     }
 
     // Methods
-    private void SetItems(IList<TViewModel> items)
+    private void SetItems(IList<TViewModel>? items)
     {
-        _items = (IList)items;
+        _items = items is not null ? (IList)items : new List<TViewModel>();
 
         if (_picker is null)
         {
@@ -390,14 +390,7 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
         picker?.Dispatcher?.Dispatch(
             () =>
             {
-                try
-                {
-                    picker.ItemsSource = _items;
-                }
-                catch (ArgumentException ex)
-                {
-                    System.Diagnostics.Debug.WriteLine($"Ex: {ex}");
-                }
+                picker.ItemsSource = _items;
             });
     }
 
@@ -430,17 +423,17 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
         }
     }
 
-    private (bool Success, TViewModel FoundItem) GetItemAt(int index)
+    private (bool Success, TViewModel? FoundItem) GetItemAt(int index)
     {
         if (_items is not null && index <= _items.Count)
         {
-            return (true, (TViewModel)_items[index]);
+            return (true, _items[index] is TViewModel tvm ? tvm : default(TViewModel));
         }
 
         return (false, default(TViewModel));
     }
 
-    private void SelectedItemChanged(TViewModel item, bool fromUi = false)
+    private void SelectedItemChanged(TViewModel? item, bool fromUi = false)
     {
         _selectedItemChanged?.Invoke(item);
 
@@ -478,7 +471,7 @@ internal class TitleSelectorConverter<TViewModel> : IValueConverter
         _titleSelector = titleSelector;
     }
 
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         return
             value is TViewModel viewModel
@@ -486,7 +479,7 @@ internal class TitleSelectorConverter<TViewModel> : IValueConverter
                 : string.Empty;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotImplementedException();
     }

@@ -7,7 +7,7 @@ public static class IViewForExtensions
 {
     public static void SetupViewModel<TViewModel>(
         this IViewFor<TViewModel> view,
-        TViewModel viewModel = null,
+        TViewModel? viewModel = null,
         bool resolveViewModel = true)
         where TViewModel : class
     {
@@ -17,7 +17,14 @@ public static class IViewForExtensions
         }
         else if (view.ViewModel is null && resolveViewModel && view is Element)
         {
-            var resolvedViewModel = IPlatformApplication.Current?.Services.GetService<TViewModel>().ThrowIfNull();
+            var cplat = IPlatformApplication.Current;
+
+            if (cplat is null)
+            {
+                throw new PlatformNotRegisteredException();
+            }
+
+            var resolvedViewModel = cplat.Services.GetRequiredService<TViewModel>().ThrowIfNull();
 
             if (resolvedViewModel is null)
             {

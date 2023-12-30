@@ -8,7 +8,7 @@ public static class IObservableExtensions
             .Select(static _ => Unit.Default);
     }
 
-    public static IObservable<object> AsObject<TSource>(this IObservable<TSource> source)
+    public static IObservable<object?> AsObject<TSource>(this IObservable<TSource> source)
     {
         return source
             .Select(static x => x as object);
@@ -16,7 +16,7 @@ public static class IObservableExtensions
 
     public static IObservable<TSource> IsNotNull<TSource>(this IObservable<TSource> source)
     {
-        return source.Where(static obj => !EqualityComparer<TSource>.Default.Equals(obj, default(TSource)));
+        return source.Where(static obj => !EqualityComparer<TSource>.Default.Equals(obj, default));
     }
 
     public static IObservable<TSource> IsNull<TSource>(this IObservable<TSource> source)
@@ -27,12 +27,12 @@ public static class IObservableExtensions
 
     public static IObservable<TSource> IsDefault<TSource>(this IObservable<TSource> source)
     {
-        return source.Where(static obj => EqualityComparer<TSource>.Default.Equals(obj, default(TSource)));
+        return source.Where(static obj => EqualityComparer<TSource>.Default.Equals(obj, default));
     }
 
     public static IObservable<TSource> IsNotDefault<TSource>(this IObservable<TSource> source)
     {
-        return source.Where(static obj => !EqualityComparer<TSource>.Default.Equals(obj, default(TSource)));
+        return source.Where(static obj => !EqualityComparer<TSource>.Default.Equals(obj, default));
     }
 
     public static IObservable<T?> WhereHasValue<T>(this IObservable<T?> source)
@@ -50,7 +50,7 @@ public static class IObservableExtensions
     public static IObservable<T?> WhereHasValueAndIsNotDefault<T>(this IObservable<T?> source)
         where T : struct
     {
-        return source.Where(x => x.HasValue && !EqualityComparer<T>.Default.Equals(x.Value, default(T)));
+        return source.Where(x => x.HasValue && !EqualityComparer<T>.Default.Equals(x.Value, default));
     }
 
     public static IObservable<T?> WhereHasValueAndIs<T>(this IObservable<T?> source, T comparison)
@@ -110,7 +110,7 @@ public static class IObservableExtensions
         return source.Skip(1);
     }
 
-    public static IObservable<Unit> SelectConcurrent<T>(this IObservable<T> source, Action<T> onNext, int concurrentSubscriptions = 1, IScheduler scheduler = null)
+    public static IObservable<Unit> SelectConcurrent<T>(this IObservable<T> source, Action<T> onNext, int concurrentSubscriptions = 1, IScheduler? scheduler = null)
     {
         if (scheduler is not null)
         {
@@ -131,7 +131,7 @@ public static class IObservableExtensions
             .Merge(concurrentSubscriptions);
     }
 
-    public static IObservable<Unit> SelectConcurrent<T>(this IObservable<T> source, Action<T, CancellationToken> onNext, CancellationToken cancellationToken, int concurrentSubscriptions = 1, IScheduler scheduler = null)
+    public static IObservable<Unit> SelectConcurrent<T>(this IObservable<T> source, Action<T, CancellationToken> onNext, CancellationToken cancellationToken, int concurrentSubscriptions = 1, IScheduler? scheduler = null)
     {
         if (scheduler is not null)
         {
@@ -152,7 +152,7 @@ public static class IObservableExtensions
             .Merge(concurrentSubscriptions);
     }
 
-    public static IObservable<TOut> SelectConcurrent<TIn, TOut>(this IObservable<TIn> source, Func<TIn, TOut> onNext, int concurrentSubscriptions = 1, IScheduler scheduler = null)
+    public static IObservable<TOut> SelectConcurrent<TIn, TOut>(this IObservable<TIn> source, Func<TIn, TOut> onNext, int concurrentSubscriptions = 1, IScheduler? scheduler = null)
     {
         if (scheduler is not null)
         {
@@ -173,7 +173,7 @@ public static class IObservableExtensions
             .Merge(concurrentSubscriptions);
     }
 
-    public static IObservable<TOut> SelectConcurrent<TIn, TOut>(this IObservable<TIn> source, Func<TIn, CancellationToken, TOut> onNext, CancellationToken cancellationToken, int concurrentSubscriptions = 1, IScheduler scheduler = null)
+    public static IObservable<TOut> SelectConcurrent<TIn, TOut>(this IObservable<TIn> source, Func<TIn, CancellationToken, TOut> onNext, CancellationToken cancellationToken, int concurrentSubscriptions = 1, IScheduler? scheduler = null)
     {
         if (scheduler is not null)
         {
@@ -194,7 +194,7 @@ public static class IObservableExtensions
             .Merge(concurrentSubscriptions);
     }
 
-    public static IObservable<Unit> SelectSequential<T>(this IObservable<T> source, Action<T, CancellationToken> onNext, CancellationToken cancellationToken, IScheduler scheduler = null)
+    public static IObservable<Unit> SelectSequential<T>(this IObservable<T> source, Action<T, CancellationToken> onNext, CancellationToken cancellationToken, IScheduler? scheduler = null)
     {
         if (scheduler is not null)
         {
@@ -215,7 +215,7 @@ public static class IObservableExtensions
             .Concat();
     }
 
-    public static IObservable<TOut> SelectSequential<TIn, TOut>(this IObservable<TIn> source, Func<TIn, TOut> onNext, IScheduler scheduler = null)
+    public static IObservable<TOut> SelectSequential<TIn, TOut>(this IObservable<TIn> source, Func<TIn, TOut> onNext, IScheduler? scheduler = null)
     {
         if (scheduler is not null)
         {
@@ -236,7 +236,7 @@ public static class IObservableExtensions
             .Concat();
     }
 
-    public static IObservable<TOut> SelectSequential<TIn, TOut>(this IObservable<TIn> source, Func<TIn, CancellationToken, TOut> onNext, CancellationToken cancellationToken, IScheduler scheduler = null)
+    public static IObservable<TOut> SelectSequential<TIn, TOut>(this IObservable<TIn> source, Func<TIn, CancellationToken, TOut> onNext, CancellationToken cancellationToken, IScheduler? scheduler = null)
     {
         if (scheduler is not null)
         {
@@ -257,7 +257,7 @@ public static class IObservableExtensions
             .Concat();
     }
 
-    public static IObservable<Unit> SelectManyConcurrent<T>(this IObservable<T> source, Func<T, Task> onNext, int concurrentSubscriptions = 1, IScheduler scheduler = null)
+    public static IObservable<Unit> SelectManyConcurrent<T>(this IObservable<T> source, Func<T, Task> onNext, int concurrentSubscriptions = 1, IScheduler? scheduler = null)
     {
         if (scheduler is not null)
         {
@@ -274,7 +274,7 @@ public static class IObservableExtensions
             .Merge(concurrentSubscriptions);
     }
 
-    public static IObservable<Unit> SelectManyConcurrent<T>(this IObservable<T> source, Func<Task> onNext, int concurrentSubscriptions = 1, IScheduler scheduler = null)
+    public static IObservable<Unit> SelectManyConcurrent<T>(this IObservable<T> source, Func<Task> onNext, int concurrentSubscriptions = 1, IScheduler? scheduler = null)
     {
         if (scheduler is not null)
         {
@@ -291,7 +291,7 @@ public static class IObservableExtensions
             .Merge(concurrentSubscriptions);
     }
 
-    public static IObservable<Unit> SelectManyConcurrent<T>(this IObservable<T> source, Func<T, CancellationToken, Task> onNext, int concurrentSubscriptions = 1, IScheduler scheduler = null)
+    public static IObservable<Unit> SelectManyConcurrent<T>(this IObservable<T> source, Func<T, CancellationToken, Task> onNext, int concurrentSubscriptions = 1, IScheduler? scheduler = null)
     {
         if (scheduler is not null)
         {
@@ -308,7 +308,7 @@ public static class IObservableExtensions
             .Merge(concurrentSubscriptions);
     }
 
-    public static IObservable<TOut> SelectManyConcurrent<TIn, TOut>(this IObservable<TIn> source, Func<TIn, Task<TOut>> onNext, int concurrentSubscriptions = 1, IScheduler scheduler = null)
+    public static IObservable<TOut> SelectManyConcurrent<TIn, TOut>(this IObservable<TIn> source, Func<TIn, Task<TOut>> onNext, int concurrentSubscriptions = 1, IScheduler? scheduler = null)
     {
         if (scheduler is not null)
         {
@@ -325,7 +325,7 @@ public static class IObservableExtensions
             .Merge(concurrentSubscriptions);
     }
 
-    public static IObservable<TOut> SelectManyConcurrent<TIn, TOut>(this IObservable<TIn> source, Func<TIn, CancellationToken, Task<TOut>> onNext, int concurrentSubscriptions = 1, IScheduler scheduler = null)
+    public static IObservable<TOut> SelectManyConcurrent<TIn, TOut>(this IObservable<TIn> source, Func<TIn, CancellationToken, Task<TOut>> onNext, int concurrentSubscriptions = 1, IScheduler? scheduler = null)
     {
         if (scheduler is not null)
         {
@@ -342,7 +342,7 @@ public static class IObservableExtensions
             .Merge(concurrentSubscriptions);
     }
 
-    public static IObservable<Unit> SelectManySequential<T>(this IObservable<T> source, Func<T, Task> onNext, IScheduler scheduler = null)
+    public static IObservable<Unit> SelectManySequential<T>(this IObservable<T> source, Func<T, Task> onNext, IScheduler? scheduler = null)
     {
         if (scheduler is not null)
         {
@@ -359,7 +359,7 @@ public static class IObservableExtensions
             .Concat();
     }
 
-    public static IObservable<Unit> SelectManySequential<T>(this IObservable<T> source, Func<Task> onNext, IScheduler scheduler = null)
+    public static IObservable<Unit> SelectManySequential<T>(this IObservable<T> source, Func<Task> onNext, IScheduler? scheduler = null)
     {
         if (scheduler is not null)
         {
@@ -376,7 +376,7 @@ public static class IObservableExtensions
             .Concat();
     }
 
-    public static IObservable<Unit> SelectManySequential<T>(this IObservable<T> source, Func<T, CancellationToken, Task> onNext, IScheduler scheduler = null)
+    public static IObservable<Unit> SelectManySequential<T>(this IObservable<T> source, Func<T, CancellationToken, Task> onNext, IScheduler? scheduler = null)
     {
         if (scheduler is not null)
         {
@@ -393,7 +393,7 @@ public static class IObservableExtensions
             .Concat();
     }
 
-    public static IObservable<TOut> SelectManySequential<TIn, TOut>(this IObservable<TIn> source, Func<TIn, Task<TOut>> onNext, IScheduler scheduler = null)
+    public static IObservable<TOut> SelectManySequential<TIn, TOut>(this IObservable<TIn> source, Func<TIn, Task<TOut>> onNext, IScheduler? scheduler = null)
     {
         if (scheduler is not null)
         {
@@ -410,7 +410,7 @@ public static class IObservableExtensions
             .Concat();
     }
 
-    public static IObservable<TOut> SelectManySequential<TIn, TOut>(this IObservable<TIn> source, Func<TIn, CancellationToken, Task<TOut>> onNext, IScheduler scheduler = null)
+    public static IObservable<TOut> SelectManySequential<TIn, TOut>(this IObservable<TIn> source, Func<TIn, CancellationToken, Task<TOut>> onNext, IScheduler? scheduler = null)
     {
         if (scheduler is not null)
         {
@@ -431,7 +431,7 @@ public static class IObservableExtensions
     {
         return Observable.Create<T>(observer =>
         {
-            Notification<T> outsideNotification = null;
+            Notification<T>? outsideNotification = null;
             var gate = new object();
             bool active = false;
             var cancelable = new MultipleAssignmentDisposable();
@@ -456,7 +456,7 @@ public static class IObservableExtensions
                                         .Schedule(
                                             self =>
                                             {
-                                                Notification<T> localNotification = null;
+                                                Notification<T>? localNotification = null;
                                                 lock (gate)
                                                 {
                                                     localNotification = outsideNotification;
@@ -483,46 +483,46 @@ public static class IObservableExtensions
         });
     }
 
-    public static IObservable<T> ThrottleFirst<T>(this IObservable<T> source, TimeSpan delay, IScheduler scheduler = null)
+    public static IObservable<T?> ThrottleFirst<T>(this IObservable<T?> source, TimeSpan delay, IScheduler? scheduler = null)
     {
-        scheduler ??= Scheduler.Default;
+        IScheduler schedulerOrDefault = scheduler ?? Scheduler.Default;
 
         return source
             .Publish(
                 o =>
                 {
                     return o
-                        .Take(1, scheduler)
-                        .Concat(o.IgnoreElements().TakeUntil(Observable.Return(default(T), scheduler).Delay(delay, scheduler)))
+                        .Take(1, schedulerOrDefault)
+                        .Concat(o.IgnoreElements().TakeUntil(Observable.Return(default(T), schedulerOrDefault).Delay(delay, schedulerOrDefault)))
                         .Repeat()
-                        .TakeUntil(o.IgnoreElements().Concat(Observable.Return(default(T), scheduler)));
+                        .TakeUntil(o.IgnoreElements().Concat(Observable.Return(default(T), schedulerOrDefault)));
                 });
     }
 
-    public static IObservable<T> ThrottleFirst<T>(this IObservable<T> source, Action<T> beforeThrottle, Action<T> afterThrottle, TimeSpan delay, IScheduler beforeAndAfterThrottleScheduler = null, IScheduler scheduler = null)
+    public static IObservable<T?> ThrottleFirst<T>(this IObservable<T?> source, Action<T?> beforeThrottle, Action<T?> afterThrottle, TimeSpan delay, IScheduler? beforeAndAfterThrottleScheduler = null, IScheduler? scheduler = null)
     {
-        scheduler ??= Scheduler.Default;
-        beforeAndAfterThrottleScheduler ??= Scheduler.Default;
+        IScheduler schedulerOrDefault = scheduler ?? Scheduler.Default;
+        IScheduler beforeAndAfterThrottleSchedulerOrDefault = beforeAndAfterThrottleScheduler ?? Scheduler.Default;
 
         return source
             .Publish(
                 o =>
                 {
                     return o
-                        .Take(1, scheduler)
+                        .Take(1, schedulerOrDefault)
                         .Concat(
                             o.IgnoreElements()
                                 .TakeUntil(
-                                    Observable.Return(default(T), scheduler)
-                                        .ObserveOn(beforeAndAfterThrottleScheduler)
+                                    Observable.Return(default(T), schedulerOrDefault)
+                                        .ObserveOn(beforeAndAfterThrottleSchedulerOrDefault)
                                         .Do(beforeThrottle)
-                                        .ObserveOn(scheduler)
-                                        .Delay(delay, scheduler)
-                                        .ObserveOn(beforeAndAfterThrottleScheduler)
+                                        .ObserveOn(schedulerOrDefault)
+                                        .Delay(delay, schedulerOrDefault)
+                                        .ObserveOn(beforeAndAfterThrottleSchedulerOrDefault)
                                         .Do(afterThrottle)
-                                        .ObserveOn(scheduler)))
+                                        .ObserveOn(schedulerOrDefault)))
                         .Repeat()
-                        .TakeUntil(o.IgnoreElements().Concat(Observable.Return(default(T), scheduler)));
+                        .TakeUntil(o.IgnoreElements().Concat(Observable.Return(default(T), schedulerOrDefault)));
                 });
     }
 }

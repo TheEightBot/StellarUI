@@ -93,14 +93,12 @@ public class SimpleSamplePage : ContentPageBase<ViewModels.SampleViewModel>
                     }
                         .Row(5).Column(0)
                         .Assign(out _parameterValue),
-                    /*
-                    new BoxView
+                    new SampleView
                     {
                         HeightRequest = 60,
                         VerticalOptions = LayoutOptions.Start,
                     }
                         .Row(6).Column(0),
-                    */
                     new Picker
                     {
                         VerticalOptions = LayoutOptions.Start,

@@ -47,6 +47,11 @@ public abstract class ViewModelBase : ReactiveObject, IViewModel
         Register();
     }
 
+    ~ViewModelBase()
+    {
+        System.Console.WriteLine("GCing view model base");
+    }
+
     public void Register()
     {
         lock (_vmLock)

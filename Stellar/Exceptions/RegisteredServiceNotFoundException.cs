@@ -18,9 +18,4 @@ public class RegisteredServiceNotFoundException : Exception
         : base(message, innerException)
     {
     }
-
-    protected RegisteredServiceNotFoundException(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-    {
-    }
 }

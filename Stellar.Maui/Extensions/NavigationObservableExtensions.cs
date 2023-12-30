@@ -2,6 +2,7 @@
 using Microsoft.Maui;
 using Microsoft.Maui.Controls;
 using ReactiveUI;
+using Stellar.Exceptions;
 using Stellar.ViewModel;
 
 namespace Stellar.Maui;
@@ -33,12 +34,12 @@ public static class NavigationObservableExtensions
     public static IDisposable NavigateToPage<TPage>(
         this IObservable<Unit> observable,
         VisualElement element,
-        Action<TPage, Unit> preNavigation = null,
-        Action<TPage, Unit> postNavigation = null,
-        Action<Unit, IDictionary<string, object>> queryParameters = null,
+        Action<TPage, Unit>? preNavigation = null,
+        Action<TPage, Unit>? postNavigation = null,
+        Action<Unit, IDictionary<string, object>>? queryParameters = null,
         bool animated = true,
         bool allowMultiple = false,
-        IScheduler pageCreationScheduler = null,
+        IScheduler? pageCreationScheduler = null,
         TimeSpan? multiTapThrottleDuration = null)
         where TPage : Page
     {
@@ -48,12 +49,12 @@ public static class NavigationObservableExtensions
     public static IDisposable NavigateToPage<TParameter, TPage>(
         this IObservable<TParameter> observable,
         VisualElement element,
-        Action<TPage, TParameter> preNavigation = null,
-        Action<TPage, TParameter> postNavigation = null,
-        Action<TParameter, IDictionary<string, object>> queryParameters = null,
+        Action<TPage, TParameter?>? preNavigation = null,
+        Action<TPage, TParameter?>? postNavigation = null,
+        Action<TParameter?, IDictionary<string, object>>? queryParameters = null,
         bool animated = true,
         bool allowMultiple = false,
-        IScheduler pageCreationScheduler = null,
+        IScheduler? pageCreationScheduler = null,
         TimeSpan? multiTapThrottleDuration = null)
         where TPage : Page
     {
@@ -65,18 +66,22 @@ public static class NavigationObservableExtensions
             .Select(
                 x =>
                 {
-                    var page = IPlatformApplication.Current?.Services.GetService<TPage>().ThrowIfNull();
+                    var cplat = IPlatformApplication.Current;
 
-                    return new NavigationOptions<TPage, TParameter>
+                    if (cplat is null)
                     {
-                        Page = page,
+                        throw new PlatformNotRegisteredException();
+                    }
+
+                    var page = cplat.Services.GetRequiredService<TPage>().ThrowIfNull();
+
+                    return new NavigationOptions<TPage, TParameter>(page, page.AppearingAsync(), element)
+                    {
                         Parameter = x,
-                        IsAppearingAsync = page.AppearingAsync(),
                         QueryParameters = queryParameters,
                         PreNavigation = preNavigation,
                         PostNavigation = postNavigation,
                         Animated = animated,
-                        NavigationRoot = element,
                     };
                 })
             .ObserveOn(RxApp.MainThreadScheduler)
@@ -113,12 +118,12 @@ public static class NavigationObservableExtensions
     public static IDisposable NavigateToPage<TParameter, TPage, TViewModel>(
         this IObservable<TParameter> observable,
         VisualElement element,
-        Action<TPage, TParameter> preNavigation = null,
-        Action<TPage, TParameter> postNavigation = null,
-        Action<TParameter, TViewModel> viewModelMap = null,
+        Action<TPage, TParameter?>? preNavigation = null,
+        Action<TPage, TParameter?>? postNavigation = null,
+        Action<TParameter?, TViewModel>? viewModelMap = null,
         bool animated = true,
         bool allowMultiple = false,
-        IScheduler pageCreationScheduler = null,
+        IScheduler? pageCreationScheduler = null,
         TimeSpan? multiTapThrottleDuration = null)
         where TPage : Page, IViewFor<TViewModel>
         where TViewModel : class
@@ -131,18 +136,22 @@ public static class NavigationObservableExtensions
             .Select(
                 x =>
                 {
-                    var page = IPlatformApplication.Current?.Services.GetService<TPage>().ThrowIfNull();
+                    var cplat = IPlatformApplication.Current;
 
-                    return new NavigationOptions<TPage, TParameter, TViewModel>
+                    if (cplat is null)
                     {
-                        Page = page,
+                        throw new PlatformNotRegisteredException();
+                    }
+
+                    var page = cplat.Services.GetRequiredService<TPage>().ThrowIfNull();
+
+                    return new NavigationOptions<TPage, TParameter, TViewModel>(page, page.AppearingAsync(), element)
+                    {
                         Parameter = x,
-                        IsAppearingAsync = page.AppearingAsync(),
                         ViewModelMap = viewModelMap,
                         PreNavigation = preNavigation,
                         PostNavigation = postNavigation,
                         Animated = animated,
-                        NavigationRoot = element,
                     };
                 })
             .ObserveOn(RxApp.MainThreadScheduler)
@@ -177,13 +186,13 @@ public static class NavigationObservableExtensions
     public static IDisposable NavigateToPage<TParameter, TPage>(
         this IObservable<TParameter> observable,
         VisualElement element,
-        Func<TParameter, TPage> pageCreator,
-        Action<TPage, TParameter> preNavigation = null,
-        Action<TPage, TParameter> postNavigation = null,
-        Action<TParameter, IDictionary<string, object>> queryParameters = null,
+        Func<TParameter?, TPage> pageCreator,
+        Action<TPage, TParameter?>? preNavigation = null,
+        Action<TPage, TParameter?>? postNavigation = null,
+        Action<TParameter?, IDictionary<string, object>>? queryParameters = null,
         bool animated = true,
         bool allowMultiple = false,
-        IScheduler pageCreationScheduler = null,
+        IScheduler? pageCreationScheduler = null,
         TimeSpan? multiTapThrottleDuration = null)
         where TPage : Page
     {
@@ -197,16 +206,13 @@ public static class NavigationObservableExtensions
                 {
                     var page = pageCreator.Invoke(x);
 
-                    return new NavigationOptions<TPage, TParameter>
+                    return new NavigationOptions<TPage, TParameter>(page, page.AppearingAsync(), element)
                     {
-                        Page = page,
                         Parameter = x,
-                        IsAppearingAsync = page.AppearingAsync(),
                         QueryParameters = queryParameters,
                         PreNavigation = preNavigation,
                         PostNavigation = postNavigation,
                         Animated = animated,
-                        NavigationRoot = element,
                     };
                 })
             .ObserveOn(RxApp.MainThreadScheduler)
@@ -243,8 +249,8 @@ public static class NavigationObservableExtensions
     public static IDisposable NavigatePopTo<TParameter, TPage>(
         this IObservable<TParameter> observable,
         VisualElement element,
-        Action<TParameter> preNavigation = null,
-        Action<TParameter> postNavigation = null,
+        Action<TParameter?>? preNavigation = null,
+        Action<TParameter?>? postNavigation = null,
         bool animated = true,
         bool allowMultiple = false,
         TimeSpan? multiTapThrottleDuration = null)
@@ -257,13 +263,12 @@ public static class NavigationObservableExtensions
             .Select(
                 x =>
                 {
-                    return new NavigationOptions<TParameter>
+                    return new NavigationOptions<TParameter>(element)
                     {
                         Parameter = x,
                         PreNavigation = preNavigation,
                         PostNavigation = postNavigation,
                         Animated = animated,
-                        NavigationRoot = element,
                     };
                 })
             .ObserveOn(RxApp.MainThreadScheduler)
@@ -289,8 +294,8 @@ public static class NavigationObservableExtensions
     public static IDisposable NavigatePopPage<TParameter>(
         this IObservable<TParameter> observable,
         VisualElement element,
-        Action<TParameter> preNavigation = null,
-        Action<TParameter> postNavigation = null,
+        Action<TParameter?>? preNavigation = null,
+        Action<TParameter?>? postNavigation = null,
         bool animated = true,
         bool allowMultiple = false,
         TimeSpan? multiTapThrottleDuration = null)
@@ -302,13 +307,12 @@ public static class NavigationObservableExtensions
             .Select(
                 x =>
                 {
-                    return new NavigationOptions<TParameter>
+                    return new NavigationOptions<TParameter>(element)
                     {
                         Parameter = x,
                         PreNavigation = preNavigation,
                         PostNavigation = postNavigation,
                         Animated = animated,
-                        NavigationRoot = element,
                     };
                 })
             .ObserveOn(RxApp.MainThreadScheduler)
@@ -334,8 +338,8 @@ public static class NavigationObservableExtensions
     public static IDisposable NavigatePopToRoot<TParameter>(
         this IObservable<TParameter> observable,
         VisualElement element,
-        Action<TParameter> preNavigation = null,
-        Action<TParameter> postNavigation = null,
+        Action<TParameter?>? preNavigation = null,
+        Action<TParameter?>? postNavigation = null,
         bool animated = true,
         bool allowMultiple = false,
         TimeSpan? multiTapThrottleDuration = null)
@@ -347,13 +351,12 @@ public static class NavigationObservableExtensions
             .Select(
                 x =>
                 {
-                    return new NavigationOptions<TParameter>
+                    return new NavigationOptions<TParameter>(element)
                     {
                         Parameter = x,
                         PreNavigation = preNavigation,
                         PostNavigation = postNavigation,
                         Animated = animated,
-                        NavigationRoot = element,
                     };
                 })
             .ObserveOn(RxApp.MainThreadScheduler)
@@ -379,12 +382,12 @@ public static class NavigationObservableExtensions
     public static IDisposable NavigateToModalPage<TPage>(
         this IObservable<Unit> observable,
         VisualElement element,
-        Action<TPage, Unit> preNavigation = null,
-        Action<TPage, Unit> postNavigation = null,
-        Action<Unit, IDictionary<string, object>> queryParameters = null,
+        Action<TPage, Unit>? preNavigation = null,
+        Action<TPage, Unit>? postNavigation = null,
+        Action<Unit, IDictionary<string, object>>? queryParameters = null,
         bool animated = true,
         bool allowMultiple = false,
-        IScheduler pageCreationScheduler = null,
+        IScheduler? pageCreationScheduler = null,
         TimeSpan? multiTapThrottleDuration = null)
         where TPage : Page
     {
@@ -394,12 +397,12 @@ public static class NavigationObservableExtensions
     public static IDisposable NavigateToModalPage<TParameter, TPage>(
         this IObservable<TParameter> observable,
         VisualElement element,
-        Action<TPage, TParameter> preNavigation = null,
-        Action<TPage, TParameter> postNavigation = null,
-        Action<TParameter, IDictionary<string, object>> queryParameters = null,
+        Action<TPage, TParameter?>? preNavigation = null,
+        Action<TPage, TParameter?>? postNavigation = null,
+        Action<TParameter?, IDictionary<string, object>>? queryParameters = null,
         bool animated = true,
         bool allowMultiple = false,
-        IScheduler pageCreationScheduler = null,
+        IScheduler? pageCreationScheduler = null,
         TimeSpan? multiTapThrottleDuration = null)
         where TPage : Page
     {
@@ -411,18 +414,22 @@ public static class NavigationObservableExtensions
             .Select(
                 x =>
                 {
-                    var page = IPlatformApplication.Current?.Services.GetService<TPage>().ThrowIfNull();
+                    var cplat = IPlatformApplication.Current;
 
-                    return new NavigationOptions<TPage, TParameter>
+                    if (cplat is null)
                     {
-                        Page = page,
+                        throw new PlatformNotRegisteredException();
+                    }
+
+                    var page = cplat.Services.GetRequiredService<TPage>().ThrowIfNull();
+
+                    return new NavigationOptions<TPage, TParameter>(page, page.AppearingAsync(), element)
+                    {
                         Parameter = x,
-                        IsAppearingAsync = page.AppearingAsync(),
                         QueryParameters = queryParameters,
                         PreNavigation = preNavigation,
                         PostNavigation = postNavigation,
                         Animated = animated,
-                        NavigationRoot = element,
                     };
                 })
             .ObserveOn(RxApp.MainThreadScheduler)
@@ -457,13 +464,13 @@ public static class NavigationObservableExtensions
     public static IDisposable NavigateToModalPage<TParameter, TPage>(
         this IObservable<TParameter> observable,
         VisualElement element,
-        Func<TParameter, TPage> pageCreator,
-        Action<TPage, TParameter> preNavigation = null,
-        Action<TPage, TParameter> postNavigation = null,
-        Action<TParameter, IDictionary<string, object>> queryParameters = null,
+        Func<TParameter?, TPage> pageCreator,
+        Action<TPage, TParameter?>? preNavigation = null,
+        Action<TPage, TParameter?>? postNavigation = null,
+        Action<TParameter?, IDictionary<string, object>>? queryParameters = null,
         bool animated = true,
         bool allowMultiple = false,
-        IScheduler pageCreationScheduler = null,
+        IScheduler? pageCreationScheduler = null,
         TimeSpan? multiTapThrottleDuration = null)
         where TPage : Page
     {
@@ -477,16 +484,13 @@ public static class NavigationObservableExtensions
                 {
                     var page = pageCreator.Invoke(x);
 
-                    return new NavigationOptions<TPage, TParameter>
+                    return new NavigationOptions<TPage, TParameter>(page, page.AppearingAsync(), element)
                     {
-                        Page = page,
                         Parameter = x,
-                        IsAppearingAsync = page.AppearingAsync(),
                         QueryParameters = queryParameters,
                         PreNavigation = preNavigation,
                         PostNavigation = postNavigation,
                         Animated = animated,
-                        NavigationRoot = element,
                     };
                 })
             .ObserveOn(RxApp.MainThreadScheduler)
@@ -521,13 +525,13 @@ public static class NavigationObservableExtensions
     public static IDisposable NavigateToModalPage<TParameter, TPage, TViewModel>(
         this IObservable<TParameter> observable,
         VisualElement element,
-        Func<TParameter, TPage> pageCreator,
-        Action<TPage, TParameter> preNavigation = null,
-        Action<TPage, TParameter> postNavigation = null,
-        Action<TParameter, TViewModel> viewModelMap = null,
+        Func<TParameter?, TPage> pageCreator,
+        Action<TPage, TParameter?>? preNavigation = null,
+        Action<TPage, TParameter?>? postNavigation = null,
+        Action<TParameter?, TViewModel>? viewModelMap = null,
         bool animated = true,
         bool allowMultiple = false,
-        IScheduler pageCreationScheduler = null,
+        IScheduler? pageCreationScheduler = null,
         TimeSpan? multiTapThrottleDuration = null)
         where TPage : Page, IViewFor<TViewModel>
         where TViewModel : class
@@ -542,16 +546,13 @@ public static class NavigationObservableExtensions
                 {
                     var page = pageCreator.Invoke(x);
 
-                    return new NavigationOptions<TPage, TParameter, TViewModel>
+                    return new NavigationOptions<TPage, TParameter, TViewModel>(page, page.AppearingAsync(), element)
                     {
-                        Page = page,
                         Parameter = x,
-                        IsAppearingAsync = page.AppearingAsync(),
                         ViewModelMap = viewModelMap,
                         PreNavigation = preNavigation,
                         PostNavigation = postNavigation,
                         Animated = animated,
-                        NavigationRoot = element,
                     };
                 })
             .ObserveOn(RxApp.MainThreadScheduler)
@@ -584,8 +585,8 @@ public static class NavigationObservableExtensions
     public static IDisposable NavigatePopModalPage<TParameter>(
         this IObservable<TParameter> observable,
         VisualElement element,
-        Action<TParameter> preNavigation = null,
-        Action<TParameter> postNavigation = null,
+        Action<TParameter?>? preNavigation = null,
+        Action<TParameter?>? postNavigation = null,
         bool animated = true,
         bool allowMultiple = false,
         TimeSpan? multiTapThrottleDuration = null)
@@ -597,13 +598,12 @@ public static class NavigationObservableExtensions
             .Select(
                 x =>
                 {
-                    return new NavigationOptions<TParameter>
+                    return new NavigationOptions<TParameter>(element)
                     {
                         Parameter = x,
                         PreNavigation = preNavigation,
                         PostNavigation = postNavigation,
                         Animated = animated,
-                        NavigationRoot = element,
                     };
                 })
             .ObserveOn(RxApp.MainThreadScheduler)
@@ -685,34 +685,51 @@ public static class NavigationObservableExtensions
         : NavigationOptions<TPage, TParameter>
         where TPage : Page
     {
-        public Action<TParameter, TViewModel> ViewModelMap { get; set; }
+        public NavigationOptions(TPage page, Task isAppearingAsync, VisualElement navigationRoot)
+            : base(page, isAppearingAsync, navigationRoot)
+        {
+        }
+
+        public Action<TParameter?, TViewModel>? ViewModelMap { get; set; }
     }
 
     public record NavigationOptions<TPage, TParameter>
         : NavigationOptions<TParameter>
         where TPage : Page
     {
-        public TPage Page { get; set; }
+        public NavigationOptions(TPage page, Task isAppearingAsync, VisualElement navigationRoot)
+            : base(navigationRoot)
+        {
+            Page = page;
+            IsAppearingAsync = isAppearingAsync;
+        }
 
-        public Task IsAppearingAsync { get; set; }
+        public TPage Page { get; }
 
-        public new Action<TPage, TParameter> PreNavigation { get; set; }
+        public Task IsAppearingAsync { get; }
 
-        public new Action<TPage, TParameter> PostNavigation { get; set; }
+        public new Action<TPage, TParameter?>? PreNavigation { get; set; }
+
+        public new Action<TPage, TParameter?>? PostNavigation { get; set; }
     }
 
     public record NavigationOptions<TParameter>
     {
-        public TParameter Parameter { get; set; }
+        public NavigationOptions(VisualElement navigationRoot)
+        {
+            NavigationRoot = navigationRoot;
+        }
 
-        public Action<TParameter, IDictionary<string, object>> QueryParameters { get; set; }
+        public VisualElement NavigationRoot { get; }
 
-        public Action<TParameter> PreNavigation { get; set; }
+        public TParameter? Parameter { get; set; }
 
-        public Action<TParameter> PostNavigation { get; set; }
+        public Action<TParameter?, IDictionary<string, object>>? QueryParameters { get; set; }
+
+        public Action<TParameter?>? PreNavigation { get; set; }
+
+        public Action<TParameter?>? PostNavigation { get; set; }
 
         public bool Animated { get; set; }
-
-        public VisualElement NavigationRoot { get; set; }
     }
 }

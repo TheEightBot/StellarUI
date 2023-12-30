@@ -7,7 +7,7 @@ public abstract class StyleManager : ReactiveObject
 {
     private readonly ConcurrentDictionary<string, Style> _cachedStyles = new ConcurrentDictionary<string, Style>();
 
-    public void ApplyStylesToApplication(Application app = null)
+    public void ApplyStylesToApplication(Application? app = null)
     {
         var currentApplication = app ?? Application.Current;
 
@@ -26,7 +26,7 @@ public abstract class StyleManager : ReactiveObject
 
     protected abstract void RegisterStyles(Application app);
 
-    protected Style GetStyle(Func<Style> styleCreator, [CallerMemberName] string name = null)
+    protected Style? GetStyle(Func<Style> styleCreator, [CallerMemberName] string? name = null)
     {
         if (name is null)
         {
