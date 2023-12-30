@@ -21,6 +21,8 @@ public class SampleView : ContentViewBase<ViewModels.SampleViewModel>
         Content =
             new Label
             {
+                HorizontalTextAlignment = TextAlignment.Center,
+                VerticalTextAlignment = TextAlignment.Center,
             }
                 .Assign(out _lbl);
     }
@@ -31,7 +33,7 @@ public class SampleView : ContentViewBase<ViewModels.SampleViewModel>
             this.WhenAnyValue(static x => x.ViewModel.ColorArray)
                 .IsNotNull()
                 .Select(static colorArray => new Color(colorArray[0], colorArray[1], colorArray[2], colorArray[3]))
-                .Publish()
+                .Replay(1)
                 .RefCount();
 
         colorNotifications
