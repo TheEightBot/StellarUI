@@ -6,8 +6,6 @@ public abstract class MultiPageBase<TPage, TViewModel> : ReactiveMultiPage<TPage
     where TPage : Page
     where TViewModel : class
 {
-    private bool _isDisposed;
-
     [EditorBrowsable(EditorBrowsableState.Never)]
     public ViewManager ViewManager { get; } = new MauiViewManager<TViewModel>();
 
@@ -49,9 +47,50 @@ public abstract class MultiPageBase<TPage, TViewModel> : ReactiveMultiPage<TPage
 
     protected override void OnHandlerChanging(HandlerChangingEventArgs args)
     {
-        ((MauiViewManager<TViewModel>)ViewManager).HandlerChanging(this, args);
+        if (args.OldHandler is not null)
+        {
+            this.Loaded -= this.Handle_Loaded;
+            this.Unloaded -= this.Handle_Unloaded;
+
+            this.DisposeView();
+        }
+
+        if (args.NewHandler is not null)
+        {
+            this.Loaded -= this.Handle_Loaded;
+            this.Loaded += this.Handle_Loaded;
+
+            this.Unloaded -= this.Handle_Unloaded;
+            this.Unloaded += this.Handle_Unloaded;
+        }
 
         base.OnHandlerChanging(args);
+    }
+
+    private void Handle_Loaded(object sender, EventArgs e)
+    {
+        if (HotReloadService.HotReloadAware)
+        {
+            HotReloadService.UpdateApplicationEvent -= HandleHotReload;
+            HotReloadService.UpdateApplicationEvent += HandleHotReload;
+        }
+
+        ViewManager.HandleActivated(this);
+    }
+
+    private void Handle_Unloaded(object sender, EventArgs e)
+    {
+        if (HotReloadService.HotReloadAware)
+        {
+            HotReloadService.UpdateApplicationEvent -= HandleHotReload;
+        }
+
+        ViewManager.HandleDeactivated(this);
+    }
+
+    private void HandleHotReload(Type[]? updatedTypes)
+    {
+        this.ReloadView();
     }
 
     protected override void OnPropertyChanged(string propertyName = null)
@@ -59,15 +98,5 @@ public abstract class MultiPageBase<TPage, TViewModel> : ReactiveMultiPage<TPage
         ViewManager.PropertyChanged<MultiPageBase<TPage, TViewModel>, TViewModel>(this, propertyName);
 
         base.OnPropertyChanged(propertyName);
-    }
-
-    protected virtual void Dispose(bool disposing) =>
-        this.ManageDispose(disposing, ref _isDisposed);
-
-    public void Dispose()
-    {
-        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
     }
 }

@@ -12,8 +12,6 @@ namespace Stellar.Avalonia
     public abstract class WindowBase<TViewModel> : ReactiveWindow<TViewModel>, IStellarView<TViewModel>
         where TViewModel : class
     {
-        private bool _isDisposed;
-
         [EditorBrowsable(EditorBrowsableState.Never)]
         public ViewManager ViewManager { get; } = new AvaloniaViewManager<TViewModel>();
 
@@ -67,16 +65,6 @@ namespace Stellar.Avalonia
             ViewManager.PropertyChanged<WindowBase<TViewModel>, TViewModel>(this, change.Property.Name);
 
             base.OnPropertyChanged(change);
-        }
-
-        protected virtual void Dispose(bool disposing) =>
-            this.ManageDispose(disposing, ref _isDisposed);
-
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
         }
     }
 }

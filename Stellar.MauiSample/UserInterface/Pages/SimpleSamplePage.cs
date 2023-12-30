@@ -5,7 +5,7 @@ using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 namespace Stellar.MauiSample.UserInterface.Pages;
 
 [ServiceRegistration]
-public class SamplePage : ContentPageBase<ViewModels.SampleViewModel>
+public class SimpleSamplePage : ContentPageBase<ViewModels.SampleViewModel>
 {
     private Grid _mainLayout;
 
@@ -21,15 +21,18 @@ public class SamplePage : ContentPageBase<ViewModels.SampleViewModel>
 
     private Label _parameterValue;
 
-    private SampleView _color;
-
     private Picker _picker;
 
     private ListView _listView;
 
-    public SamplePage()
+    public SimpleSamplePage()
     {
         this.InitializeStellarComponent();
+    }
+
+    ~SimpleSamplePage()
+    {
+        Console.WriteLine("GCing simple sample page");
     }
 
     public override void SetupUserInterface()
@@ -90,20 +93,21 @@ public class SamplePage : ContentPageBase<ViewModels.SampleViewModel>
                     }
                         .Row(5).Column(0)
                         .Assign(out _parameterValue),
-                    new SampleView
+                    /*
+                    new BoxView
                     {
                         HeightRequest = 60,
                         VerticalOptions = LayoutOptions.Start,
                     }
-                        .Row(6).Column(0)
-                        .Assign(out _color),
+                        .Row(6).Column(0),
+                    */
                     new Picker
                     {
                         VerticalOptions = LayoutOptions.Start,
                     }
                         .Row(7).Column(0)
                         .Assign(out _picker),
-
+                    /*
                     new ListView
                     {
                         ItemTemplate = new DataTemplate(typeof(Cells.SampleViewCell)),
@@ -111,6 +115,7 @@ public class SamplePage : ContentPageBase<ViewModels.SampleViewModel>
                     }
                         .Row(8).Column(0)
                         .Assign(out _listView),
+                    */
                 },
             }
                 .Assign(out _mainLayout);
@@ -124,13 +129,8 @@ public class SamplePage : ContentPageBase<ViewModels.SampleViewModel>
         this.OneWayBind(ViewModel, static vm => vm.ParameterValue, static ui => ui._parameterValue.Text, x => $"Parameter: {x}")
             .DisposeWith(disposables);
 
-        Observable
-            .Merge(
-                _listView
-                    .ItemTapped<ViewModels.TestItem>()
-                    .Select(static x => x.Value2),
-                this.WhenAnyObservable(static x => x.ViewModel.GoNext)
-                    .Select(static _ => 0))
+        this.WhenAnyObservable(static x => x.ViewModel.GoNext)
+            .Select(static _ => 0)
             .NavigateToPage<int, SimpleSamplePage>(
                 this,
                 queryParameters: static (value, dict) =>
@@ -158,9 +158,6 @@ public class SamplePage : ContentPageBase<ViewModels.SampleViewModel>
 
         this.WhenAnyObservable(static x => x.ViewModel.GoValidation)
             .NavigateToPage<SampleValidationPage>(this)
-            .DisposeWith(disposables);
-
-        this.OneWayBind(ViewModel, static x => x.TestItems, static ui => ui._listView.ItemsSource)
             .DisposeWith(disposables);
 
         _collect.Events()

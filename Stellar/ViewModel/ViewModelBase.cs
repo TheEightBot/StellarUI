@@ -1,6 +1,8 @@
-﻿namespace Stellar.ViewModel;
+namespace Stellar.ViewModel;
 
-public abstract class ViewModelBase : ReactiveObject, IViewModel, IDisposable
+#pragma warning disable CA1001
+public abstract class ViewModelBase : ReactiveObject, IViewModel
+#pragma warning restore CA1001
 {
     protected static readonly Action DefaultAction = () => { };
 
@@ -76,33 +78,11 @@ public abstract class ViewModelBase : ReactiveObject, IViewModel, IDisposable
         }
     }
 
-    public void Dispose()
-    {
-        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
-    }
-
     protected virtual void Initialize()
     {
     }
 
     protected abstract void Bind(CompositeDisposable disposables);
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (IsDisposed)
-        {
-            return;
-        }
-
-        IsDisposed = true;
-
-        if (disposing)
-        {
-            _viewModelBindings.Dispose();
-        }
-    }
 
     private void InitializeInternal()
     {

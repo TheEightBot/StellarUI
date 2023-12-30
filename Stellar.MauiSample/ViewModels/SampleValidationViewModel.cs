@@ -1,5 +1,4 @@
-﻿using System.Runtime.Serialization;
-using Stellar.MauiSample.Validators;
+﻿using Stellar.MauiSample.Validators;
 
 namespace Stellar.MauiSample.ViewModels;
 
@@ -16,8 +15,8 @@ public class SampleValidationViewModel : ValidatingViewModelBase<SampleValidatio
 
     protected override void Bind(CompositeDisposable disposables)
     {
-        this.WhenAnyValue(x => x.StringValue)
-            .Do(x => System.Diagnostics.Debug.WriteLine($"String Value: {x}"))
+        this.WhenAnyValue(static x => x.StringValue)
+            .Do(static x => System.Diagnostics.Debug.WriteLine($"String Value: {x}"))
             .Subscribe()
             .DisposeWith(disposables);
 

@@ -20,9 +20,7 @@ public class KeyboardReturnKeyTypeNameEffect : Microsoft.Maui.Controls.Platform.
 
     protected override void OnAttached()
     {
-        var editText = Control as EditText;
-
-        if (editText is null)
+        if (Control is not EditText editText)
         {
             return;
         }
@@ -38,9 +36,7 @@ public class KeyboardReturnKeyTypeNameEffect : Microsoft.Maui.Controls.Platform.
 
     protected override void OnDetached()
     {
-        var editText = Control as EditText;
-
-        if (editText is null || editText.Handle == IntPtr.Zero)
+        if (Control is not EditText editText || editText.Handle == IntPtr.Zero)
         {
             return;
         }

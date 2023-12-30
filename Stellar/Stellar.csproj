@@ -1,16 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-	<PropertyGroup>
-		<TargetFramework>net7.0</TargetFramework>
-		<SingleProject>true</SingleProject>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>warnings</Nullable>
-	</PropertyGroup>
-
-	<ItemGroup>
-	  <PackageReference Include="ReactiveUI.Fody" Version="19.4.1" />
-	  <PackageReference Include="ReactiveUI" Version="19.4.1" />
-	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
-	</ItemGroup>
-
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <SingleProject>true</SingleProject>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>warnings</Nullable>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="ReactiveUI.Fody" Version="19.5.31" PrivateAssets="all" />
+        <PackageReference Include="ReactiveUI" Version="19.5.31" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+    </ItemGroup>
 </Project>

@@ -192,11 +192,11 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
 
     private readonly Func<TViewModel, bool> _selectItem;
 
+    private readonly CompositeDisposable _disposableSubscriptions;
+
     private Picker _picker;
 
     private IList _items;
-
-    private CompositeDisposable _disposableSubscriptions;
 
     public TViewModel SelectedItem
         => _picker?.SelectedItem is not null

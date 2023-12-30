@@ -20,7 +20,7 @@ public class SampleViewCell : ViewCellBase<ViewModels.TestItem>
 
     public override void Bind(CompositeDisposable disposables)
     {
-        this.OneWayBind(ViewModel, vm => vm.Value1, ui => ui._name.Text)
+        this.OneWayBind(ViewModel, static vm => vm.Value1, static ui => ui._name.Text)
             .DisposeWith(disposables);
     }
 }

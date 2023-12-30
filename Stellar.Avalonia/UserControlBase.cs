@@ -9,8 +9,6 @@ namespace Stellar.Avalonia;
 public abstract class UserControlBase<TViewModel> : ReactiveUserControl<TViewModel>, IStellarView<TViewModel>
     where TViewModel : class
 {
-    private bool _isDisposed;
-
     [EditorBrowsable(EditorBrowsableState.Never)]
     public ViewManager ViewManager { get; } = new AvaloniaViewManager<TViewModel>();
 
@@ -37,6 +35,8 @@ public abstract class UserControlBase<TViewModel> : ReactiveUserControl<TViewMod
         base.OnAttachedToVisualTree(e);
 
         ViewManager.HandleActivated(this);
+
+        ViewManager.OnLifecycle(LifecycleEvent.IsAppearing);
     }
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
@@ -54,23 +54,11 @@ public abstract class UserControlBase<TViewModel> : ReactiveUserControl<TViewMod
 
         base.OnPropertyChanged(change);
     }
-
-    protected virtual void Dispose(bool disposing) =>
-        this.ManageDispose(disposing, ref _isDisposed);
-
-    public void Dispose()
-    {
-        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
-    }
 }
 
 public abstract class UserControlBase<TViewModel, TDataModel> : ReactiveUserControl<TViewModel>, IStellarView<TViewModel>
     where TViewModel : class
 {
-    private bool _isDisposed;
-
     [EditorBrowsable(EditorBrowsableState.Never)]
     public ViewManager ViewManager { get; } = new AvaloniaViewManager<TViewModel>();
 
@@ -99,6 +87,8 @@ public abstract class UserControlBase<TViewModel, TDataModel> : ReactiveUserCont
         base.OnAttachedToVisualTree(e);
 
         ViewManager.HandleActivated(this);
+
+        ViewManager.OnLifecycle(LifecycleEvent.IsAppearing);
     }
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
@@ -125,15 +115,5 @@ public abstract class UserControlBase<TViewModel, TDataModel> : ReactiveUserCont
         {
             MapDataModelToViewModel(ViewModel, dataModel);
         }
-    }
-
-    protected virtual void Dispose(bool disposing) =>
-        this.ManageDispose(disposing, ref _isDisposed);
-
-    public void Dispose()
-    {
-        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
     }
 }

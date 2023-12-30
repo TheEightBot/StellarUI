@@ -21,10 +21,10 @@ public record ValidationInformation
 
     public bool IsError { get; set; }
 
-    public ValidationInformation(string propertyName, bool isValid = true)
+    public ValidationInformation(string propertyName, bool isError = false)
     {
         this.PropertyName = propertyName;
-        this.IsError = isValid;
+        this.IsError = isError;
     }
 
     public ValidationInformation(string propertyName, string error)

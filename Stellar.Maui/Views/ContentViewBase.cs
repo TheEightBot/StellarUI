@@ -5,8 +5,6 @@ namespace Stellar.Maui.Pages;
 public abstract class ContentViewBase<TViewModel> : ReactiveContentView<TViewModel>, IStellarView<TViewModel>
     where TViewModel : class
 {
-    private bool _isDisposed;
-
     [EditorBrowsable(EditorBrowsableState.Never)]
     public ViewManager ViewManager { get; } = new MauiViewManager<TViewModel>();
 
@@ -34,9 +32,50 @@ public abstract class ContentViewBase<TViewModel> : ReactiveContentView<TViewMod
 
     protected override void OnHandlerChanging(HandlerChangingEventArgs args)
     {
-        ((MauiViewManager<TViewModel>)ViewManager).HandlerChanging(this, args);
+        if (args.OldHandler is not null)
+        {
+            this.Loaded -= this.Handle_Loaded;
+            this.Unloaded -= this.Handle_Unloaded;
+
+            this.DisposeView();
+        }
+
+        if (args.NewHandler is not null)
+        {
+            this.Loaded -= this.Handle_Loaded;
+            this.Loaded += this.Handle_Loaded;
+
+            this.Unloaded -= this.Handle_Unloaded;
+            this.Unloaded += this.Handle_Unloaded;
+        }
 
         base.OnHandlerChanging(args);
+    }
+
+    private void Handle_Loaded(object sender, EventArgs e)
+    {
+        if (HotReloadService.HotReloadAware)
+        {
+            HotReloadService.UpdateApplicationEvent -= HandleHotReload;
+            HotReloadService.UpdateApplicationEvent += HandleHotReload;
+        }
+
+        ViewManager.HandleActivated(this);
+    }
+
+    private void Handle_Unloaded(object sender, EventArgs e)
+    {
+        if (HotReloadService.HotReloadAware)
+        {
+            HotReloadService.UpdateApplicationEvent -= HandleHotReload;
+        }
+
+        ViewManager.HandleDeactivated(this);
+    }
+
+    private void HandleHotReload(Type[]? updatedTypes)
+    {
+        this.ReloadView();
     }
 
     protected override void OnPropertyChanged(string propertyName = null)
@@ -44,23 +83,11 @@ public abstract class ContentViewBase<TViewModel> : ReactiveContentView<TViewMod
         ViewManager.PropertyChanged<ContentViewBase<TViewModel>, TViewModel>(this, propertyName);
         base.OnPropertyChanged(propertyName);
     }
-
-    protected virtual void Dispose(bool disposing) =>
-        this.ManageDispose(disposing, ref _isDisposed);
-
-    public void Dispose()
-    {
-        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
-    }
 }
 
 public abstract class ContentViewBase<TViewModel, TDataModel> : ReactiveContentView<TViewModel>, IStellarView<TViewModel>
     where TViewModel : class
 {
-    private bool _isDisposed;
-
     [EditorBrowsable(EditorBrowsableState.Never)]
     public ViewManager ViewManager { get; } = new MauiViewManager<TViewModel>();
 
@@ -90,9 +117,50 @@ public abstract class ContentViewBase<TViewModel, TDataModel> : ReactiveContentV
 
     protected override void OnHandlerChanging(HandlerChangingEventArgs args)
     {
-        ((MauiViewManager<TViewModel>)ViewManager).HandlerChanging(this, args);
+        if (args.OldHandler is not null)
+        {
+            this.Loaded -= this.Handle_Loaded;
+            this.Unloaded -= this.Handle_Unloaded;
+
+            this.DisposeView();
+        }
+
+        if (args.NewHandler is not null)
+        {
+            this.Loaded -= this.Handle_Loaded;
+            this.Loaded += this.Handle_Loaded;
+
+            this.Unloaded -= this.Handle_Unloaded;
+            this.Unloaded += this.Handle_Unloaded;
+        }
 
         base.OnHandlerChanging(args);
+    }
+
+    private void Handle_Loaded(object sender, EventArgs e)
+    {
+        if (HotReloadService.HotReloadAware)
+        {
+            HotReloadService.UpdateApplicationEvent -= HandleHotReload;
+            HotReloadService.UpdateApplicationEvent += HandleHotReload;
+        }
+
+        ViewManager.HandleActivated(this);
+    }
+
+    private void Handle_Unloaded(object sender, EventArgs e)
+    {
+        if (HotReloadService.HotReloadAware)
+        {
+            HotReloadService.UpdateApplicationEvent -= HandleHotReload;
+        }
+
+        ViewManager.HandleDeactivated(this);
+    }
+
+    private void HandleHotReload(Type[]? updatedTypes)
+    {
+        this.ReloadView();
     }
 
     protected override void OnPropertyChanged(string propertyName = null)
@@ -109,15 +177,5 @@ public abstract class ContentViewBase<TViewModel, TDataModel> : ReactiveContentV
         {
             MapDataModelToViewModel(ViewModel, dataModel);
         }
-    }
-
-    protected virtual void Dispose(bool disposing) =>
-        this.ManageDispose(disposing, ref _isDisposed);
-
-    public void Dispose()
-    {
-        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
     }
 }

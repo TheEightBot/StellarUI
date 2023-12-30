@@ -55,9 +55,9 @@ public static class IViewForExtensions
     public static void DisposeViewModel<TViewModel>(this IViewFor<TViewModel> view)
         where TViewModel : class
     {
-        if (view.ViewModel is ViewModelBase vmb && !vmb.Maintain)
+        if (view.ViewModel is ViewModelBase vmb && !vmb.Maintain && vmb is IDisposable id)
         {
-            vmb.Dispose();
+            id.Dispose();
         }
 
         view.ViewModel = null;
@@ -65,9 +65,9 @@ public static class IViewForExtensions
 
     public static void DisposeView(this IStellarView ve)
     {
-        if (ve is not null && ve is IStellarView isv && !isv.ViewManager.Maintain)
+        if (ve is not null && ve is IStellarView isv && !isv.ViewManager.Maintain && isv is IDisposable id)
         {
-            isv.Dispose();
+            id.Dispose();
         }
     }
 }

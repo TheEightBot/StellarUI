@@ -1,4 +1,4 @@
-﻿using System.Reactive.Subjects;
+using System.Reactive.Subjects;
 using ReactiveUI;
 
 namespace Stellar;
@@ -88,8 +88,6 @@ public abstract class ViewManager : IDisposable
         OnLifecycle(LifecycleEvent.Deactivated);
 
         UnregisterBindings(view);
-
-        view.DisposeView();
     }
 
     public void PropertyChanged<TView, TViewModel>(TView view, string propertyName = null)
