@@ -23,17 +23,17 @@ public class ReactiveFrame<TViewModel> : Frame, IViewFor<TViewModel>
     /// <summary>
     /// Gets or sets the ViewModel to display.
     /// </summary>
-    public TViewModel ViewModel
+    public TViewModel? ViewModel
     {
         get => (TViewModel)GetValue(ViewModelProperty);
         set => SetValue(ViewModelProperty, value);
     }
 
     /// <inheritdoc/>
-    object IViewFor.ViewModel
+    object? IViewFor.ViewModel
     {
         get => ViewModel;
-        set => ViewModel = (TViewModel)value;
+        set => ViewModel = value as TViewModel;
     }
 
     /// <inheritdoc/>

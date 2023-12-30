@@ -1,9 +1,11 @@
-using System.Reactive.Subjects;
+﻿using System.Reactive.Subjects;
 using ReactiveUI;
 
 namespace Stellar;
 
-public abstract class ViewManager : IDisposable
+#pragma warning disable CA1001
+public abstract class ViewManager
+#pragma warning restore CA1001
 {
     private readonly Lazy<Subject<LifecycleEvent>> _lifecycle = new Lazy<Subject<LifecycleEvent>>(() => new Subject<LifecycleEvent>(), LazyThreadSafetyMode.ExecutionAndPublication);
 
@@ -13,17 +15,19 @@ public abstract class ViewManager : IDisposable
 
     private bool _controlsBound;
 
-    private bool _isDisposed;
-
     public IObservable<Unit> Initialized => _lifecycle.Value.Where(x => x == LifecycleEvent.Initialized).SelectUnit().AsObservable();
 
     public IObservable<Unit> Activated => _lifecycle.Value.Where(x => x == LifecycleEvent.Activated).SelectUnit().AsObservable();
 
-    public IObservable<Unit> Deactivated => _lifecycle.Value.Where(x => x == LifecycleEvent.Deactivated).SelectUnit().AsObservable();
+    public IObservable<Unit> Attached => _lifecycle.Value.Where(x => x == LifecycleEvent.Attached).SelectUnit().AsObservable();
 
     public IObservable<Unit> IsAppearing => _lifecycle.Value.Where(x => x == LifecycleEvent.IsAppearing).SelectUnit().AsObservable();
 
     public IObservable<Unit> IsDisappearing => _lifecycle.Value.Where(x => x == LifecycleEvent.IsDisappearing).SelectUnit().AsObservable();
+
+    public IObservable<Unit> Detached => _lifecycle.Value.Where(x => x == LifecycleEvent.Detached).SelectUnit().AsObservable();
+
+    public IObservable<Unit> Deactivated => _lifecycle.Value.Where(x => x == LifecycleEvent.Deactivated).SelectUnit().AsObservable();
 
     public IObservable<Unit> Disposed => _lifecycle.Value.Where(x => x == LifecycleEvent.Disposed).SelectUnit().AsObservable();
 
@@ -32,6 +36,18 @@ public abstract class ViewManager : IDisposable
     public bool Maintain { get; set; }
 
     public bool ControlsBound => Volatile.Read(ref _controlsBound);
+
+    ~ViewManager()
+    {
+        if (_lifecycle.IsValueCreated)
+        {
+            _lifecycle?.Value?.Dispose();
+        }
+
+        _controlBindings.Dispose();
+
+        System.Console.WriteLine("GCing view manager");
+    }
 
     public void RegisterBindings<TViewModel>(IStellarView<TViewModel> view)
         where TViewModel : class
@@ -90,7 +106,7 @@ public abstract class ViewManager : IDisposable
         UnregisterBindings(view);
     }
 
-    public void PropertyChanged<TView, TViewModel>(TView view, string propertyName = null)
+    public void PropertyChanged<TView, TViewModel>(TView view, string? propertyName = null)
         where TView : IViewFor<TViewModel>
         where TViewModel : class
     {
@@ -108,32 +124,5 @@ public abstract class ViewManager : IDisposable
         }
 
         _lifecycle.Value.OnNext(lifecycleEvent);
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (_isDisposed)
-        {
-            return;
-        }
-
-        _isDisposed = true;
-
-        if (disposing)
-        {
-            if (_lifecycle.IsValueCreated)
-            {
-                _lifecycle?.Value?.Dispose();
-            }
-
-            _controlBindings.Dispose();
-        }
-    }
-
-    public void Dispose()
-    {
-        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
     }
 }

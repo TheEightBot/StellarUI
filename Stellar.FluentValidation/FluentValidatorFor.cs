@@ -9,17 +9,14 @@ public abstract class FluentValidatorFor<TNeedsValidation> : AbstractValidator<T
     {
         var result = this.Validate(validation);
 
-        return new()
-        {
-            IsValid = result.IsValid,
-            ValidationInformation =
-                result.Errors
+        return new(
+            result.Errors
                     .Select(err =>
                         new ValidationInformation(err.PropertyName, err.ErrorMessage, err.AttemptedValue)
                         {
                             ErrorCode = err.ErrorCode,
                         })
                     .ToList(),
-        };
+            result.IsValid);
     }
 }

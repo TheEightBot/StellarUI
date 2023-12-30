@@ -3,7 +3,7 @@
         <TargetFramework>net8.0</TargetFramework>
         <SingleProject>true</SingleProject>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>warnings</Nullable>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="ReactiveUI.Fody" Version="19.5.31" PrivateAssets="all" />

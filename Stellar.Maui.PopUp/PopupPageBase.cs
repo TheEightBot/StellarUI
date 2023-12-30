@@ -10,13 +10,21 @@ public abstract class PopupPageBase<TViewModel> : ReactivePopupPage<TViewModel>,
     [EditorBrowsable(EditorBrowsableState.Never)]
     public ViewManager ViewManager { get; set; } = new MauiViewManager<TViewModel>();
 
+    public IObservable<Unit> Initialized => ViewManager.Initialized;
+
     public IObservable<Unit> Activated => ViewManager.Activated;
 
-    public IObservable<Unit> Deactivated => ViewManager.Deactivated;
+    public IObservable<Unit> Attached => ViewManager.Attached;
 
     public IObservable<Unit> IsAppearing => ViewManager.IsAppearing;
 
     public IObservable<Unit> IsDisappearing => ViewManager.IsDisappearing;
+
+    public IObservable<Unit> Detached => ViewManager.Detached;
+
+    public IObservable<Unit> Deactivated => ViewManager.Deactivated;
+
+    public IObservable<Unit> Disposed => ViewManager.Disposed;
 
     public IObservable<LifecycleEvent> Lifecycle => ViewManager.Lifecycle;
 
@@ -44,50 +52,9 @@ public abstract class PopupPageBase<TViewModel> : ReactivePopupPage<TViewModel>,
 
     protected override void OnHandlerChanging(HandlerChangingEventArgs args)
     {
-        if (args.OldHandler is not null)
-        {
-            this.Loaded -= this.Handle_Loaded;
-            this.Unloaded -= this.Handle_Unloaded;
-
-            this.DisposeView();
-        }
-
-        if (args.NewHandler is not null)
-        {
-            this.Loaded -= this.Handle_Loaded;
-            this.Loaded += this.Handle_Loaded;
-
-            this.Unloaded -= this.Handle_Unloaded;
-            this.Unloaded += this.Handle_Unloaded;
-        }
+        ((MauiViewManager<TViewModel>)ViewManager).OnHandlerChanged(this, args);
 
         base.OnHandlerChanging(args);
-    }
-
-    private void Handle_Loaded(object sender, EventArgs e)
-    {
-        if (HotReloadService.HotReloadAware)
-        {
-            HotReloadService.UpdateApplicationEvent -= HandleHotReload;
-            HotReloadService.UpdateApplicationEvent += HandleHotReload;
-        }
-
-        ViewManager.HandleActivated(this);
-    }
-
-    private void Handle_Unloaded(object sender, EventArgs e)
-    {
-        if (HotReloadService.HotReloadAware)
-        {
-            HotReloadService.UpdateApplicationEvent -= HandleHotReload;
-        }
-
-        ViewManager.HandleDeactivated(this);
-    }
-
-    private void HandleHotReload(Type[]? updatedTypes)
-    {
-        this.ReloadView();
     }
 
     protected override void OnPropertyChanged(string propertyName = null)

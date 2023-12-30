@@ -7,16 +7,16 @@ namespace Stellar.ViewModel;
 public class SelectionViewModel<TSelectedValKey> : ViewModelBase
 {
     [Reactive]
-    public TSelectedValKey Key { get; set; }
+    public TSelectedValKey? Key { get; set; }
 
     [Reactive]
-    public string DisplayValue { get; set; }
+    public string? DisplayValue { get; set; }
 
     [Reactive]
     public bool Selected { get; set; }
 
     [Reactive]
-    public ReactiveCommand<Unit, bool> ToggleSelected { get; private set; }
+    public ReactiveCommand<Unit, bool>? ToggleSelected { get; private set; }
 
     protected override void Bind(CompositeDisposable disposables)
     {

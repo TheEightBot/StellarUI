@@ -4,27 +4,35 @@ namespace Stellar;
 
 public record ValidationResult
 {
-    public bool IsValid { get; set; }
+    public bool IsValid { get; }
 
-    public ICollection<ValidationInformation> ValidationInformation { get; set; }
+    public ICollection<ValidationInformation> ValidationInformation { get; }
+
+    public ValidationResult(ICollection<ValidationInformation> validationInformation, bool isValid)
+    {
+        ValidationInformation = validationInformation;
+        IsValid = isValid;
+    }
+
+    public static ValidationResult DefaultValidationResult = new ValidationResult(new List<ValidationInformation>(), true);
 }
 
 public record ValidationInformation
 {
-    public object AttemptedValue { get; set; }
+    public string PropertyName { get; }
 
-    public string ErrorCode { get; set; }
+    public bool IsError { get; }
 
-    public string ErrorMessage { get; set; }
+    public object? AttemptedValue { get; set; }
 
-    public string PropertyName { get; set; }
+    public string? ErrorCode { get; set; }
 
-    public bool IsError { get; set; }
+    public string? ErrorMessage { get; set; }
 
     public ValidationInformation(string propertyName, bool isError = false)
     {
-        this.PropertyName = propertyName;
-        this.IsError = isError;
+        PropertyName = propertyName;
+        IsError = isError;
     }
 
     public ValidationInformation(string propertyName, string error)
@@ -32,11 +40,11 @@ public record ValidationInformation
     {
     }
 
-    public ValidationInformation(string propertyName, string error, object attemptedValue)
+    public ValidationInformation(string propertyName, string error, object? attemptedValue)
     {
-        this.PropertyName = propertyName;
-        this.ErrorMessage = error;
-        this.AttemptedValue = attemptedValue;
-        this.IsError = false;
+        PropertyName = propertyName;
+        ErrorMessage = error;
+        AttemptedValue = attemptedValue;
+        IsError = false;
     }
 }

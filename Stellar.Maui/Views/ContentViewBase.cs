@@ -12,11 +12,15 @@ public abstract class ContentViewBase<TViewModel> : ReactiveContentView<TViewMod
 
     public IObservable<Unit> Activated => ViewManager.Activated;
 
-    public IObservable<Unit> Deactivated => ViewManager.Deactivated;
+    public IObservable<Unit> Attached => ViewManager.Attached;
 
     public IObservable<Unit> IsAppearing => ViewManager.IsAppearing;
 
     public IObservable<Unit> IsDisappearing => ViewManager.IsDisappearing;
+
+    public IObservable<Unit> Detached => ViewManager.Detached;
+
+    public IObservable<Unit> Deactivated => ViewManager.Deactivated;
 
     public IObservable<Unit> Disposed => ViewManager.Disposed;
 
@@ -32,53 +36,12 @@ public abstract class ContentViewBase<TViewModel> : ReactiveContentView<TViewMod
 
     protected override void OnHandlerChanging(HandlerChangingEventArgs args)
     {
-        if (args.OldHandler is not null)
-        {
-            this.Loaded -= this.Handle_Loaded;
-            this.Unloaded -= this.Handle_Unloaded;
-
-            this.DisposeView();
-        }
-
-        if (args.NewHandler is not null)
-        {
-            this.Loaded -= this.Handle_Loaded;
-            this.Loaded += this.Handle_Loaded;
-
-            this.Unloaded -= this.Handle_Unloaded;
-            this.Unloaded += this.Handle_Unloaded;
-        }
+        ((MauiViewManager<TViewModel>)ViewManager).OnHandlerChanged(this, args);
 
         base.OnHandlerChanging(args);
     }
 
-    private void Handle_Loaded(object sender, EventArgs e)
-    {
-        if (HotReloadService.HotReloadAware)
-        {
-            HotReloadService.UpdateApplicationEvent -= HandleHotReload;
-            HotReloadService.UpdateApplicationEvent += HandleHotReload;
-        }
-
-        ViewManager.HandleActivated(this);
-    }
-
-    private void Handle_Unloaded(object sender, EventArgs e)
-    {
-        if (HotReloadService.HotReloadAware)
-        {
-            HotReloadService.UpdateApplicationEvent -= HandleHotReload;
-        }
-
-        ViewManager.HandleDeactivated(this);
-    }
-
-    private void HandleHotReload(Type[]? updatedTypes)
-    {
-        this.ReloadView();
-    }
-
-    protected override void OnPropertyChanged(string propertyName = null)
+    protected override void OnPropertyChanged(string? propertyName = null)
     {
         ViewManager.PropertyChanged<ContentViewBase<TViewModel>, TViewModel>(this, propertyName);
         base.OnPropertyChanged(propertyName);
@@ -95,11 +58,15 @@ public abstract class ContentViewBase<TViewModel, TDataModel> : ReactiveContentV
 
     public IObservable<Unit> Activated => ViewManager.Activated;
 
-    public IObservable<Unit> Deactivated => ViewManager.Deactivated;
+    public IObservable<Unit> Attached => ViewManager.Attached;
 
     public IObservable<Unit> IsAppearing => ViewManager.IsAppearing;
 
     public IObservable<Unit> IsDisappearing => ViewManager.IsDisappearing;
+
+    public IObservable<Unit> Detached => ViewManager.Detached;
+
+    public IObservable<Unit> Deactivated => ViewManager.Deactivated;
 
     public IObservable<Unit> Disposed => ViewManager.Disposed;
 
@@ -117,53 +84,12 @@ public abstract class ContentViewBase<TViewModel, TDataModel> : ReactiveContentV
 
     protected override void OnHandlerChanging(HandlerChangingEventArgs args)
     {
-        if (args.OldHandler is not null)
-        {
-            this.Loaded -= this.Handle_Loaded;
-            this.Unloaded -= this.Handle_Unloaded;
-
-            this.DisposeView();
-        }
-
-        if (args.NewHandler is not null)
-        {
-            this.Loaded -= this.Handle_Loaded;
-            this.Loaded += this.Handle_Loaded;
-
-            this.Unloaded -= this.Handle_Unloaded;
-            this.Unloaded += this.Handle_Unloaded;
-        }
+        ((MauiViewManager<TViewModel>)ViewManager).OnHandlerChanged(this, args);
 
         base.OnHandlerChanging(args);
     }
 
-    private void Handle_Loaded(object sender, EventArgs e)
-    {
-        if (HotReloadService.HotReloadAware)
-        {
-            HotReloadService.UpdateApplicationEvent -= HandleHotReload;
-            HotReloadService.UpdateApplicationEvent += HandleHotReload;
-        }
-
-        ViewManager.HandleActivated(this);
-    }
-
-    private void Handle_Unloaded(object sender, EventArgs e)
-    {
-        if (HotReloadService.HotReloadAware)
-        {
-            HotReloadService.UpdateApplicationEvent -= HandleHotReload;
-        }
-
-        ViewManager.HandleDeactivated(this);
-    }
-
-    private void HandleHotReload(Type[]? updatedTypes)
-    {
-        this.ReloadView();
-    }
-
-    protected override void OnPropertyChanged(string propertyName = null)
+    protected override void OnPropertyChanged(string? propertyName = null)
     {
         ViewManager.PropertyChanged<ContentViewBase<TViewModel, TDataModel>, TViewModel>(this, propertyName);
         base.OnPropertyChanged(propertyName);

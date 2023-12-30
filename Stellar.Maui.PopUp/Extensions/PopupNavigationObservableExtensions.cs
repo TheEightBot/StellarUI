@@ -1,11 +1,11 @@
 ﻿using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
-using System.Reactive.Threading.Tasks;
-using Microsoft.Maui.Controls;
 using Mopups.Pages;
 using Mopups.Services;
 using ReactiveUI;
+using Stellar.Exceptions;
+using Stellar.Maui.Exceptions;
 using static Stellar.Maui.NavigationObservableExtensions;
 
 namespace Stellar.Maui;
@@ -45,13 +45,18 @@ public static class PopupNavigationObservableExtensions
             .Select(
                 x =>
                 {
-                    var page = IPlatformApplication.Current?.Services.GetService<TPage>().ThrowIfNull();
+                    var cplat = IPlatformApplication.Current;
 
-                    return new NavigationOptions<TPage, TParameter>
+                    if (cplat is null)
                     {
-                        Page = page,
+                        throw new PlatformNotRegisteredException();
+                    }
+
+                    var page = cplat.Services.GetRequiredService<TPage>().ThrowIfNull();
+
+                    return new NavigationOptions<TPage, TParameter>(page, page.AppearingAsync(), page)
+                    {
                         Parameter = x,
-                        IsAppearingAsync = page.AppearingAsync(),
                         QueryParameters = queryParameters,
                         PreNavigation = preNavigation,
                         PostNavigation = postNavigation,
@@ -73,10 +78,9 @@ public static class PopupNavigationObservableExtensions
 
                         x.PreNavigation?.Invoke(x.Page, x.Parameter);
 
-                        var nav = MopupService.Instance;
                         await Task.WhenAll(
                             x.IsAppearingAsync,
-                            nav.PushAsync(x.Page, x.Animated));
+                            MopupService.Instance.PushAsync(x.Page, x.Animated));
 
                         x.PostNavigation?.Invoke(x.Page, x.Parameter);
                     }
@@ -112,11 +116,9 @@ public static class PopupNavigationObservableExtensions
                 {
                     var page = pageCreator.Invoke(x);
 
-                    return new NavigationOptions<TPage, TParameter>
+                    return new NavigationOptions<TPage, TParameter>(page, page.AppearingAsync(), page)
                     {
-                        Page = page,
                         Parameter = x,
-                        IsAppearingAsync = page.AppearingAsync(),
                         QueryParameters = queryParameters,
                         PreNavigation = preNavigation,
                         PostNavigation = postNavigation,
@@ -138,10 +140,9 @@ public static class PopupNavigationObservableExtensions
 
                         x.PreNavigation?.Invoke(x.Page, x.Parameter);
 
-                        var nav = MopupService.Instance;
                         await Task.WhenAll(
                             x.IsAppearingAsync,
-                            nav.PushAsync(x.Page, x.Animated));
+                            MopupService.Instance.PushAsync(x.Page, x.Animated));
 
                         x.PostNavigation?.Invoke(x.Page, x.Parameter);
                     }
@@ -179,11 +180,9 @@ public static class PopupNavigationObservableExtensions
                 {
                     var page = pageCreator.Invoke(x);
 
-                    return new NavigationOptions<TPage, TParameter, TViewModel>
+                    return new NavigationOptions<TPage, TParameter, TViewModel>(page, page.AppearingAsync(), page)
                     {
-                        Page = page,
                         Parameter = x,
-                        IsAppearingAsync = page.AppearingAsync(),
                         ViewModelMap = viewModelMap,
                         PreNavigation = preNavigation,
                         PostNavigation = postNavigation,
@@ -203,10 +202,9 @@ public static class PopupNavigationObservableExtensions
 
                         x.PreNavigation?.Invoke(x.Page, x.Parameter);
 
-                        var nav = MopupService.Instance;
                         await Task.WhenAll(
                             x.IsAppearingAsync,
-                            nav.PushAsync(x.Page, x.Animated));
+                            MopupService.Instance.PushAsync(x.Page, x.Animated));
 
                         x.PostNavigation?.Invoke(x.Page, x.Parameter);
                     }
@@ -236,7 +234,14 @@ public static class PopupNavigationObservableExtensions
             .Select(
                 x =>
                 {
-                    return new NavigationOptions<TParameter>
+                    var mainPage = Application.Current?.MainPage;
+
+                    if (mainPage is null)
+                    {
+                        throw new MainPageNotFoundException();
+                    }
+
+                    return new NavigationOptions<TParameter>(mainPage)
                     {
                         Parameter = x,
                         PreNavigation = preNavigation,
@@ -251,8 +256,7 @@ public static class PopupNavigationObservableExtensions
                     try
                     {
                         x.PreNavigation?.Invoke(x.Parameter);
-                        var nav = MopupService.Instance;
-                        await nav.PopAsync(x.Animated);
+                        await MopupService.Instance.PopAsync(x.Animated);
                         x.PostNavigation?.Invoke(x.Parameter);
                     }
                     finally
@@ -280,7 +284,14 @@ public static class PopupNavigationObservableExtensions
             .Select(
                 x =>
                 {
-                    return new NavigationOptions<TParameter>
+                    var mainPage = Application.Current?.MainPage;
+
+                    if (mainPage is null)
+                    {
+                        throw new MainPageNotFoundException();
+                    }
+
+                    return new NavigationOptions<TParameter>(mainPage)
                     {
                         Parameter = x,
                         PreNavigation = preNavigation,
@@ -295,8 +306,7 @@ public static class PopupNavigationObservableExtensions
                     try
                     {
                         x.PreNavigation?.Invoke(x.Parameter);
-                        var nav = MopupService.Instance;
-                        await nav.PopAllAsync(x.Animated);
+                        await MopupService.Instance.PopAllAsync(x.Animated);
                         x.PostNavigation?.Invoke(x.Parameter);
                     }
                     finally
@@ -326,9 +336,15 @@ public static class PopupNavigationObservableExtensions
             .Select(
                 x =>
                 {
-                    return new NavigationOptions<TPage, TParameter>
+                    var mainPage = Application.Current?.MainPage;
+
+                    if (mainPage is null)
                     {
-                        Page = page,
+                        throw new MainPageNotFoundException();
+                    }
+
+                    return new NavigationOptions<TPage, TParameter>(page, Task.CompletedTask, mainPage)
+                    {
                         Parameter = x,
                         PreNavigation = preNavigation,
                         PostNavigation = postNavigation,
@@ -342,8 +358,7 @@ public static class PopupNavigationObservableExtensions
                     try
                     {
                         x.PreNavigation?.Invoke(x.Page, x.Parameter);
-                        var nav = MopupService.Instance;
-                        await nav.RemovePageAsync(x.Page, x.Animated);
+                        await MopupService.Instance.RemovePageAsync(x.Page, x.Animated);
                         x.PostNavigation?.Invoke(x.Page, x.Parameter);
                     }
                     finally

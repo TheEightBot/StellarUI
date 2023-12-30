@@ -8,7 +8,7 @@ public class ReactiveListView : ListView
 {
     private readonly ConcurrentDictionary<Cell, IDisposable> _cellActivators = new ConcurrentDictionary<Cell, IDisposable>();
 
-    private Action<CompositeDisposable, Cell, int> _cellActivatedAction;
+    private Action<CompositeDisposable, Cell, int>? _cellActivatedAction;
 
     public ReactiveListView(Type cellType, ListViewCachingStrategy cachingStrategy = ListViewCachingStrategy.RecycleElement)
         : this(cachingStrategy)

@@ -14,7 +14,7 @@ namespace Stellar.Maui.Platforms.Android.Effects;
 public class KeyboardReturnKeyTypeNameEffect : Microsoft.Maui.Controls.Platform.PlatformEffect
 {
     private ImeAction _startingAction;
-    private string _startingImeActionLabel;
+    private string? _startingImeActionLabel;
 
     public static string EffectName => EffectNames.KeyboardReturnKeyTypeNameEffect;
 
@@ -90,7 +90,7 @@ public class KeyboardReturnKeyTypeNameEffect : Microsoft.Maui.Controls.Platform.
         }
     }
 
-    private void EditText_EditorAction(object sender, TextView.EditorActionEventArgs e)
+    private void EditText_EditorAction(object? sender, TextView.EditorActionEventArgs e)
     {
         if (e.ActionId.Equals(ImeAction.Next))
         {

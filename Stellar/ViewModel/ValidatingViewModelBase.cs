@@ -25,12 +25,12 @@ public abstract class ValidatingViewModelBase<TNeedsValidation> : ViewModelBase
         Validator = validator;
     }
 
-    protected IDisposable RegisterValidation<TDoesntMatter>(IObservable<TDoesntMatter> validationTrigger, IScheduler observationScheduler = null, TimeSpan? changeThrottleDuration = null)
+    protected IDisposable RegisterValidation<TDoesntMatter>(IObservable<TDoesntMatter> validationTrigger, IScheduler? observationScheduler = null, TimeSpan? changeThrottleDuration = null)
     {
         return RegisterValidation(validationTrigger.Select(_ => Unit.Default), observationScheduler, changeThrottleDuration);
     }
 
-    protected IDisposable RegisterValidation(IObservable<Unit> validationTrigger = null, IScheduler observationScheduler = null, TimeSpan? changeThrottleDuration = null)
+    protected IDisposable RegisterValidation(IObservable<Unit>? validationTrigger = null, IScheduler? observationScheduler = null, TimeSpan? changeThrottleDuration = null)
     {
         var validatorDisposable = new SerialDisposable();
 
@@ -39,7 +39,7 @@ public abstract class ValidatingViewModelBase<TNeedsValidation> : ViewModelBase
                 .FromEvent<PropertyChangedEventHandler, PropertyChangedEventArgs>(
                     static eventHandler =>
                     {
-                        void Handler(object sender, PropertyChangedEventArgs e) => eventHandler?.Invoke(e);
+                        void Handler(object? sender, PropertyChangedEventArgs e) => eventHandler?.Invoke(e);
                         return Handler;
                     },
                     x => this.PropertyChanged += x,
@@ -52,7 +52,16 @@ public abstract class ValidatingViewModelBase<TNeedsValidation> : ViewModelBase
             validationTrigger
                 .ObserveOn(RxApp.TaskpoolScheduler)
                 .ThrottleFirst(changeThrottleDuration ?? DefaultValidationChangeThrottleDuration, RxApp.TaskpoolScheduler)
-                .Select(_ => Validator?.Validate(this as TNeedsValidation) ?? new ValidationResult())
+                .Select(
+                    _ =>
+                    {
+                        if (this is not TNeedsValidation nv || Validator is null)
+                        {
+                            return ValidationResult.DefaultValidationResult;
+                        }
+
+                        return Validator.Validate(nv);
+                    })
                 .ObserveOn(observationScheduler ?? RxApp.MainThreadScheduler)
                 .Do(
                     validationResult =>
@@ -86,7 +95,7 @@ public abstract class ValidatingViewModelBase<TNeedsValidation> : ViewModelBase
                 .FromEvent<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>(
                     static eventHandler =>
                     {
-                        void Handler(object sender, NotifyCollectionChangedEventArgs e) => eventHandler?.Invoke(e);
+                        void Handler(object? sender, NotifyCollectionChangedEventArgs e) => eventHandler?.Invoke(e);
                         return Handler;
                     },
                     x => ValidationErrors.CollectionChanged += x,
