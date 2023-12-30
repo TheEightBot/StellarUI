@@ -23,9 +23,7 @@ public class ShowKeyboardDoneButtonProperty
 
     private static void OnKeyboardDoneButtonChanged(BindableObject bindable, object oldValue, object newValue)
     {
-        var ve = bindable as VisualElement;
-
-        if (ve is null)
+        if (bindable is not VisualElement ve)
         {
             return;
         }

@@ -65,7 +65,7 @@ public static class NavigationObservableExtensions
             .Select(
                 x =>
                 {
-                    var page = element.GetPage<TPage>();
+                    var page = IPlatformApplication.Current?.Services.GetService<TPage>().ThrowIfNull();
 
                     return new NavigationOptions<TPage, TParameter>
                     {
@@ -131,7 +131,7 @@ public static class NavigationObservableExtensions
             .Select(
                 x =>
                 {
-                    var page = element.GetPage<TPage>();
+                    var page = IPlatformApplication.Current?.Services.GetService<TPage>().ThrowIfNull();
 
                     return new NavigationOptions<TPage, TParameter, TViewModel>
                     {
@@ -411,7 +411,7 @@ public static class NavigationObservableExtensions
             .Select(
                 x =>
                 {
-                    var page = element.GetPage<TPage>();
+                    var page = IPlatformApplication.Current?.Services.GetService<TPage>().ThrowIfNull();
 
                     return new NavigationOptions<TPage, TParameter>
                     {
@@ -641,7 +641,7 @@ public static class NavigationObservableExtensions
         var queryProperties =
             type.GetProperties()
                 .Where(prop =>
-                    Attribute.IsDefined(prop, typeof(QueryParameterAttribute)) &&
+                    prop.GetCustomAttributes(typeof(QueryParameterAttribute), true).Length > 0 &&
                     prop.CanWrite &&
                     (prop.SetMethod?.IsPublic ?? false));
 

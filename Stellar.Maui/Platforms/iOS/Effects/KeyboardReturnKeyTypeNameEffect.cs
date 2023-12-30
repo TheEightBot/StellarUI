@@ -17,9 +17,7 @@ public class KeyboardReturnKeyTypeNameEffect : PlatformEffect
 
     protected override void OnAttached()
     {
-        var textField = this.Control as UITextField;
-
-        if (textField is null)
+        if (this.Control is not UITextField textField)
         {
             return;
         }
@@ -33,9 +31,7 @@ public class KeyboardReturnKeyTypeNameEffect : PlatformEffect
 
     protected override void OnDetached()
     {
-        var textField = this.Control as UITextField;
-
-        if (textField is null)
+        if (this.Control is not UITextField textField)
         {
             return;
         }

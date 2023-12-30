@@ -7,24 +7,7 @@ namespace Stellar.Maui;
 
 public static class VisualElementExtensions
 {
-    public static TPage GetPage<TPage>(this Element element)
-        where TPage : Page
-    {
-        return ServiceProvider.GetService<TPage>().ThrowIfNull();
-    }
-
-    public static TViewModel GetViewModel<TViewModel>(this Element element)
-        where TViewModel : ViewModelBase
-    {
-        return ServiceProvider.GetService<TViewModel>().ThrowIfNull();
-    }
-
-    public static TService GetService<TService>(this Element element)
-    {
-        return ServiceProvider.GetService<TService>().ThrowIfNull();
-    }
-
-    private static T ThrowIfNull<T>(this T obj)
+    public static T ThrowIfNull<T>(this T obj)
     {
         if (obj is null)
         {
@@ -34,5 +17,31 @@ public static class VisualElementExtensions
         }
 
         return obj;
+    }
+
+    public static void ReloadView<TViewModel>(this IStellarView<TViewModel> view)
+        where TViewModel : class
+    {
+        if (!HotReloadService.HotReloadAware)
+        {
+            return;
+        }
+
+        MainThread
+            .BeginInvokeOnMainThread(
+                () =>
+                {
+                    var maintainStatus = view.ViewManager.Maintain;
+
+                    view.ViewManager.Maintain = false;
+
+                    view.ViewManager.UnregisterBindings(view);
+
+                    view.ViewManager.Maintain = maintainStatus;
+
+                    view.SetupUserInterface();
+
+                    view.ViewManager.RegisterBindings(view);
+                });
     }
 }

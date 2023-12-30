@@ -15,9 +15,9 @@ public static class IViewForExtensions
         {
             view.ViewModel = viewModel;
         }
-        else if (view.ViewModel is null && resolveViewModel && view is Element element)
+        else if (view.ViewModel is null && resolveViewModel && view is Element)
         {
-            var resolvedViewModel = element.GetService<TViewModel>();
+            var resolvedViewModel = IPlatformApplication.Current?.Services.GetService<TViewModel>().ThrowIfNull();
 
             if (resolvedViewModel is null)
             {

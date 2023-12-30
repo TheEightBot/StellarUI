@@ -98,6 +98,11 @@ public class TestItem : INotifyPropertyChanged
     public event PropertyChangedEventHandler PropertyChanged;
 #pragma warning restore CS0067
 
+    ~TestItem()
+    {
+        Console.WriteLine("TestItem Finalized");
+    }
+
     public string Value1 { get; set; }
 
     public int Value2 { get; set; }

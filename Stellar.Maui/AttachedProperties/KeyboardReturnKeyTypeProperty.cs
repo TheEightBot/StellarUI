@@ -36,9 +36,7 @@ public static class KeyboardReturnKeyTypeProperty
 
     private static void OnNextVisualElementChanged(BindableObject bindable, object oldValue, object newValue)
     {
-        var ve = bindable as VisualElement;
-
-        if (ve is null)
+        if (bindable is not VisualElement ve)
         {
             return;
         }
@@ -70,9 +68,7 @@ public static class KeyboardReturnKeyTypeProperty
 
     private static void OnKeyboardReturnKeyTypeChanged(BindableObject bindable, object oldValue, object newValue)
     {
-        var ve = bindable as VisualElement;
-
-        if (ve is null)
+        if (bindable is not VisualElement ve)
         {
             return;
         }

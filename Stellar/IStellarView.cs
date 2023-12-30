@@ -7,7 +7,7 @@ public interface IStellarView<TViewModel> : IViewFor<TViewModel>, IStellarView
 {
 }
 
-public interface IStellarView : IDisposable
+public interface IStellarView
 {
     [EditorBrowsable(EditorBrowsableState.Never)]
     public ViewManager ViewManager { get; }

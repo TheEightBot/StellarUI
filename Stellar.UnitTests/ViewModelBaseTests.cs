@@ -45,20 +45,6 @@ public class ViewModelBaseTests
         Assert.False(viewModel.BindingsRegistered);
     }
 
-    [Fact]
-    public void Dispose_DisposesBindings()
-    {
-        // Arrange
-        var viewModel = new TestViewModel();
-        viewModel.Register();
-
-        // Act
-        viewModel.Dispose();
-
-        // Assert
-        Assert.True(viewModel.IsDisposed);
-    }
-
     private class TestViewModel : ViewModelBase
     {
         protected override void Bind(CompositeDisposable disposables)

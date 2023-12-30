@@ -60,18 +60,18 @@ public class SampleValidationPage : ContentPageBase<ViewModels.SampleValidationV
 
     public override void Bind(CompositeDisposable disposables)
     {
-        this.Bind(ViewModel, vm => vm.StringValue, ui => ui._value.Text)
+        this.Bind(ViewModel, static vm => vm.StringValue, static ui => ui._value.Text)
             .DisposeWith(disposables);
 
-        this.WhenAnyValue(x => x.ViewModel.StringValue)
-            .Select(x => $"Value: '{x}'")
-            .BindTo(this, ui => ui._valueLabel.Text)
+        this.WhenAnyValue(static x => x.ViewModel.StringValue)
+            .Select(static x => $"Value: '{x}'")
+            .BindTo(this, static ui => ui._valueLabel.Text)
             .DisposeWith(disposables);
 
-        this.OneWayBind(ViewModel, vm => vm.IsValid, ui => ui._isValidLabel.Text, x => $"Is Valid: {x}")
+        this.OneWayBind(ViewModel, static vm => vm.IsValid, static ui => ui._isValidLabel.Text, x => $"Is Valid: {x}")
             .DisposeWith(disposables);
 
-        this.OneWayBind(ViewModel, vm => vm.IsValid, ui => ui._color.Color, x => x ? Colors.Chartreuse : Colors.Fuchsia)
+        this.OneWayBind(ViewModel, static vm => vm.IsValid, static ui => ui._color.Color, static x => x ? Colors.Chartreuse : Colors.Fuchsia)
             .DisposeWith(disposables);
     }
 }

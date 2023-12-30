@@ -1,9 +1,8 @@
 ﻿namespace Stellar.Maui;
 
-public abstract class ApplicationBase : Application, IDisposable
+public abstract class ApplicationBase : Application
 {
     private readonly Lazy<Subject<ApplicationLifecycleEvent>> _lifecycle = new Lazy<Subject<ApplicationLifecycleEvent>>(() => new Subject<ApplicationLifecycleEvent>(), LazyThreadSafetyMode.ExecutionAndPublication);
-    private bool _isDisposed;
 
     public IObservable<Unit> IsStarting => _lifecycle.Value.Where(x => x == ApplicationLifecycleEvent.IsStarting).SelectUnit().AsObservable();
 
@@ -47,32 +46,5 @@ public abstract class ApplicationBase : Application, IDisposable
         }
 
         _lifecycle.Value.OnNext(ApplicationLifecycleEvent.IsSleeping);
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (_isDisposed)
-        {
-            return;
-        }
-
-        _isDisposed = true;
-
-        if (disposing)
-        {
-            if (!_lifecycle.IsValueCreated)
-            {
-                return;
-            }
-
-            _lifecycle.Value?.Dispose();
-        }
-    }
-
-    public void Dispose()
-    {
-        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
     }
 }

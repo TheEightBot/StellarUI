@@ -68,28 +68,28 @@ public class SampleModalPage : ContentPageBase<SampleViewModel>
 
     public override void Bind(CompositeDisposable disposables)
     {
-        this.BindCommand(ViewModel, vm => vm.GoNext, ui => ui._close, Observables.UnitDefault)
+        this.BindCommand(ViewModel, static vm => vm.GoNext, static ui => ui._close, Observables.UnitDefault)
             .DisposeWith(disposables);
 
-        this.WhenAnyObservable(x => x.ViewModel.GoNext)
+        this.WhenAnyObservable(static x => x.ViewModel.GoNext)
             .NavigatePopModalPage(this)
             .DisposeWith(disposables);
 
-        this.WhenAnyValue(x => x.ViewModel.ColorArray)
+        this.WhenAnyValue(static x => x.ViewModel.ColorArray)
             .IsNotNull()
-            .Select(colorArray => new Color(colorArray[0], colorArray[1], colorArray[2], colorArray[3]))
-            .BindTo(this, ui => ui._color.BackgroundColor)
+            .Select(static colorArray => new Color(colorArray[0], colorArray[1], colorArray[2], colorArray[3]))
+            .BindTo(this, static ui => ui._color.BackgroundColor)
             .DisposeWith(disposables);
 
         _picker
             .Bind(
-                this.WhenAnyValue(x => x.ViewModel.TestItems),
+                this.WhenAnyValue(static x => x.ViewModel.TestItems),
                 x => this.ViewModel.SelectedTestItem = x,
                 x => this.ViewModel.SelectedTestItem == x,
                 x => x.Value1)
             .DisposeWith(disposables);
 
-        this.OneWayBind(ViewModel, vm => vm.TestItems, ui => ui._listView.ItemsSource)
+        this.OneWayBind(ViewModel, static vm => vm.TestItems, static ui => ui._listView.ItemsSource)
             .DisposeWith(disposables);
     }
 }

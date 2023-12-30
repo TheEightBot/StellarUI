@@ -45,17 +45,22 @@ public static class IStellarViewExtensions
     public static void ManageDispose<TViewModel>(this IStellarView<TViewModel> stellarView, bool disposing, ref bool isDisposed)
         where TViewModel : class
     {
-        if (!isDisposed)
+        if (isDisposed)
         {
-            isDisposed = true;
-
-            if (disposing)
-            {
-                stellarView.ViewManager.OnLifecycle(LifecycleEvent.Disposed);
-
-                stellarView.ViewManager?.Dispose();
-                stellarView.DisposeViewModel();
-            }
+            return;
         }
+
+        isDisposed = true;
+
+        if (!disposing)
+        {
+            return;
+        }
+
+        stellarView.ViewManager.OnLifecycle(LifecycleEvent.Disposed);
+
+        stellarView.ViewManager.Dispose();
+
+        stellarView.DisposeViewModel();
     }
 }

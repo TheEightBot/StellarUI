@@ -5,8 +5,6 @@ namespace Stellar.Maui.Views;
 public abstract class ViewCellBase<TViewModel> : ReactiveViewCell<TViewModel>, IStellarView<TViewModel>
     where TViewModel : class
 {
-    private bool _isDisposed;
-
     [EditorBrowsable(EditorBrowsableState.Never)]
     public ViewManager ViewManager { get; } = new MauiViewManager<TViewModel>();
 
@@ -34,9 +32,35 @@ public abstract class ViewCellBase<TViewModel> : ReactiveViewCell<TViewModel>, I
 
     protected override void OnHandlerChanging(HandlerChangingEventArgs args)
     {
-        ((MauiViewManager<TViewModel>)ViewManager).HandlerChanging(this, args);
+        if (args.OldHandler is not null)
+        {
+            if (HotReloadService.HotReloadAware)
+            {
+                HotReloadService.UpdateApplicationEvent -= HandleHotReload;
+            }
+
+            ViewManager.HandleDeactivated(this);
+
+            this.DisposeView();
+        }
+
+        if (args.NewHandler is not null)
+        {
+            if (HotReloadService.HotReloadAware)
+            {
+                HotReloadService.UpdateApplicationEvent -= HandleHotReload;
+                HotReloadService.UpdateApplicationEvent += HandleHotReload;
+            }
+
+            ViewManager.HandleActivated(this);
+        }
 
         base.OnHandlerChanging(args);
+    }
+
+    private void HandleHotReload(Type[]? updatedTypes)
+    {
+        this.ReloadView();
     }
 
     protected override void OnPropertyChanged(string propertyName = null)
@@ -45,23 +69,11 @@ public abstract class ViewCellBase<TViewModel> : ReactiveViewCell<TViewModel>, I
 
         base.OnPropertyChanged(propertyName);
     }
-
-    protected virtual void Dispose(bool disposing) =>
-        this.ManageDispose(disposing, ref _isDisposed);
-
-    public void Dispose()
-    {
-        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
-    }
 }
 
 public abstract class ViewCellBase<TViewModel, TDataModel> : ReactiveViewCell<TViewModel>, IStellarView<TViewModel>
     where TViewModel : class
 {
-    private bool _isDisposed;
-
     [EditorBrowsable(EditorBrowsableState.Never)]
     public ViewManager ViewManager { get; } = new MauiViewManager<TViewModel>();
 
@@ -91,9 +103,35 @@ public abstract class ViewCellBase<TViewModel, TDataModel> : ReactiveViewCell<TV
 
     protected override void OnHandlerChanging(HandlerChangingEventArgs args)
     {
-        ((MauiViewManager<TViewModel>)ViewManager).HandlerChanging(this, args);
+        if (args.OldHandler is not null)
+        {
+            if (HotReloadService.HotReloadAware)
+            {
+                HotReloadService.UpdateApplicationEvent -= HandleHotReload;
+            }
+
+            ViewManager.HandleDeactivated(this);
+
+            this.DisposeView();
+        }
+
+        if (args.NewHandler is not null)
+        {
+            if (HotReloadService.HotReloadAware)
+            {
+                HotReloadService.UpdateApplicationEvent -= HandleHotReload;
+                HotReloadService.UpdateApplicationEvent += HandleHotReload;
+            }
+
+            ViewManager.HandleActivated(this);
+        }
 
         base.OnHandlerChanging(args);
+    }
+
+    private void HandleHotReload(Type[]? updatedTypes)
+    {
+        this.ReloadView();
     }
 
     protected override void OnPropertyChanged(string propertyName = null)
@@ -111,15 +149,5 @@ public abstract class ViewCellBase<TViewModel, TDataModel> : ReactiveViewCell<TV
         {
             MapDataModelToViewModel(ViewModel, dataModel);
         }
-    }
-
-    protected virtual void Dispose(bool disposing) =>
-        this.ManageDispose(disposing, ref _isDisposed);
-
-    public void Dispose()
-    {
-        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
     }
 }

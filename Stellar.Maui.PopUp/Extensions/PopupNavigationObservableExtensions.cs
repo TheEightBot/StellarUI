@@ -45,7 +45,7 @@ public static class PopupNavigationObservableExtensions
             .Select(
                 x =>
                 {
-                    var page = Application.Current.GetPage<TPage>();
+                    var page = IPlatformApplication.Current?.Services.GetService<TPage>().ThrowIfNull();
 
                     return new NavigationOptions<TPage, TParameter>
                     {
