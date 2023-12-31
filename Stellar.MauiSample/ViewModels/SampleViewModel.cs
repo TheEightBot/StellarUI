@@ -43,6 +43,11 @@ public class SampleViewModel : ViewModelBase, ILifecycleEventAware
         _testService = testService;
     }
 
+    ~SampleViewModel()
+    {
+        Console.WriteLine("SimpleSampleViewModel Finalized");
+    }
+
     protected override void Initialize()
     {
         var rng = new Random(Guid.NewGuid().GetHashCode());

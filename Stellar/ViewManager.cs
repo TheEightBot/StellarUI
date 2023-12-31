@@ -45,8 +45,6 @@ public abstract class ViewManager
         }
 
         _controlBindings.Dispose();
-
-        System.Console.WriteLine("GCing view manager");
     }
 
     public void RegisterBindings<TViewModel>(IStellarView<TViewModel> view)
