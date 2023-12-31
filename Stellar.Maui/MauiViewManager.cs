@@ -6,7 +6,7 @@ namespace Stellar.Maui;
 public class MauiViewManager<TViewModel> : ViewManager
     where TViewModel : class
 {
-    private WeakReference? _reloadView;
+    private WeakReference<object?>? _reloadView;
 
     public void OnHandlerChanged<TVisualElement>(TVisualElement visualElement, HandlerChangingEventArgs args)
         where TVisualElement : VisualElement, IStellarView<TViewModel>, IStellarView
@@ -36,7 +36,7 @@ public class MauiViewManager<TViewModel> : ViewManager
     {
         if (HotReloadService.HotReloadAware)
         {
-            _reloadView = new WeakReference(sender);
+            _reloadView = new WeakReference<object?>(sender);
             HotReloadService.UpdateApplicationEvent -= HandleHotReload;
             HotReloadService.UpdateApplicationEvent += HandleHotReload;
         }
@@ -66,7 +66,7 @@ public class MauiViewManager<TViewModel> : ViewManager
 
     private void HandleHotReload(Type[]? updatedTypes)
     {
-        if (!(_reloadView?.IsAlive ?? false) || _reloadView?.Target is not IStellarView<TViewModel> isv)
+        if (_reloadView is null || _reloadView.TryGetTarget(out var target) || target is not IStellarView<TViewModel> isv)
         {
             return;
         }
