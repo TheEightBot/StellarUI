@@ -41,7 +41,12 @@ public class MauiViewManager<TViewModel> : ViewManager
             HotReloadService.UpdateApplicationEvent += HandleHotReload;
         }
 
-        OnLifecycle(LifecycleEvent.Attached);
+        if (sender is not IStellarView<TViewModel> isv)
+        {
+            return;
+        }
+
+        OnLifecycle(isv, LifecycleEvent.Attached);
     }
 
     private void Handle_Unloaded(object? sender, EventArgs e)
@@ -51,7 +56,12 @@ public class MauiViewManager<TViewModel> : ViewManager
             HotReloadService.UpdateApplicationEvent -= HandleHotReload;
         }
 
-        OnLifecycle(LifecycleEvent.Detached);
+        if (sender is not IStellarView<TViewModel> isv)
+        {
+            return;
+        }
+
+        OnLifecycle(isv, LifecycleEvent.Detached);
     }
 
     private void HandleHotReload(Type[]? updatedTypes)
