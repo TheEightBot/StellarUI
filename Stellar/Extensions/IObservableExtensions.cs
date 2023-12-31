@@ -59,9 +59,22 @@ public static class IObservableExtensions
         return source.Where(x => x.HasValue && EqualityComparer<T>.Default.Equals(x.Value, comparison));
     }
 
-    public static IObservable<string> IsNotNullOrEmpty(this IObservable<string> source)
+    public static IObservable<string> IsNotEmpty(this IObservable<string> source)
     {
         return source.Where(static str => !string.IsNullOrEmpty(str));
+    }
+
+    public static IObservable<string> IsNotNullOrEmpty(this IObservable<string?> source)
+    {
+        return source.Where(static str => !string.IsNullOrEmpty(str))
+            .Select(str => str!);
+    }
+
+    public static IObservable<string> IsNotNull(this IObservable<string?> source)
+    {
+        return source
+            .Where(static str => str is not null)
+            .Select(str => str!);
     }
 
     public static IObservable<T> GetValueOrDefault<T>(this IObservable<T?> source, T defaultValue = default(T))
