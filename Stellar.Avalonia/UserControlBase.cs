@@ -36,12 +36,12 @@ public abstract class UserControlBase<TViewModel> : ReactiveUserControl<TViewMod
 
         ViewManager.HandleActivated(this);
 
-        ViewManager.OnLifecycle(LifecycleEvent.IsAppearing);
+        ViewManager.OnLifecycle(this, LifecycleEvent.IsAppearing);
     }
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
-        ViewManager.OnLifecycle(LifecycleEvent.IsDisappearing);
+        ViewManager.OnLifecycle(this, LifecycleEvent.IsDisappearing);
 
         ViewManager.HandleDeactivated(this);
 
@@ -88,12 +88,12 @@ public abstract class UserControlBase<TViewModel, TDataModel> : ReactiveUserCont
 
         ViewManager.HandleActivated(this);
 
-        ViewManager.OnLifecycle(LifecycleEvent.IsAppearing);
+        ViewManager.OnLifecycle(this, LifecycleEvent.IsAppearing);
     }
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
-        ViewManager.OnLifecycle(LifecycleEvent.IsDisappearing);
+        ViewManager.OnLifecycle(this, LifecycleEvent.IsDisappearing);
 
         ViewManager.HandleDeactivated(this);
 

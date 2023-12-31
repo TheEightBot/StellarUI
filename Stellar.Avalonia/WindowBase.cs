@@ -48,12 +48,12 @@ namespace Stellar.Avalonia
         {
             base.OnOpened(e);
 
-            ViewManager.OnLifecycle(LifecycleEvent.IsAppearing);
+            ViewManager.OnLifecycle(this, LifecycleEvent.IsAppearing);
         }
 
         protected override void OnClosing(WindowClosingEventArgs e)
         {
-            ViewManager.OnLifecycle(LifecycleEvent.IsDisappearing);
+            ViewManager.OnLifecycle(this, LifecycleEvent.IsDisappearing);
 
             ViewManager.HandleDeactivated(this);
 

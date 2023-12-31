@@ -38,12 +38,12 @@ public abstract class FlyoutPageBase<TViewModel> : ReactiveMasterDetailPage<TVie
     {
         base.OnAppearing();
 
-        ViewManager.OnLifecycle(LifecycleEvent.IsAppearing);
+        ViewManager.OnLifecycle(this, LifecycleEvent.IsAppearing);
     }
 
     protected override void OnDisappearing()
     {
-        ViewManager.OnLifecycle(LifecycleEvent.IsDisappearing);
+        ViewManager.OnLifecycle(this, LifecycleEvent.IsDisappearing);
 
         base.OnDisappearing();
     }

@@ -66,7 +66,7 @@ public abstract class ViewManager
 
             Volatile.Write(ref _controlsBound, true);
 
-            OnLifecycle(LifecycleEvent.Initialized);
+            OnLifecycle(view, LifecycleEvent.Initialized);
         }
     }
 
@@ -95,13 +95,13 @@ public abstract class ViewManager
 
         RegisterBindings(view);
 
-        OnLifecycle(LifecycleEvent.Activated);
+        OnLifecycle(view, LifecycleEvent.Activated);
     }
 
     public virtual void HandleDeactivated<TViewModel>(IStellarView<TViewModel> view)
         where TViewModel : class
     {
-        OnLifecycle(LifecycleEvent.Deactivated);
+        OnLifecycle(view, LifecycleEvent.Deactivated);
 
         UnregisterBindings(view);
     }
@@ -116,8 +116,14 @@ public abstract class ViewManager
         }
     }
 
-    public void OnLifecycle(LifecycleEvent lifecycleEvent)
+    public void OnLifecycle<TViewModel>(IStellarView<TViewModel> view, LifecycleEvent lifecycleEvent)
+        where TViewModel : class
     {
+        if (view.ViewModel is ILifecycleEventAware lea)
+        {
+            lea.OnLifecycleEvent(lifecycleEvent);
+        }
+
         if (!_lifecycle.IsValueCreated)
         {
             return;

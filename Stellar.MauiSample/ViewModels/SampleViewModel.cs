@@ -4,7 +4,7 @@ using Stellar.MauiSample.Services;
 namespace Stellar.MauiSample.ViewModels;
 
 [ServiceRegistration]
-public class SampleViewModel : ViewModelBase
+public class SampleViewModel : ViewModelBase, ILifecycleEventAware
 {
     private readonly TestService _testService;
 
@@ -89,6 +89,11 @@ public class SampleViewModel : ViewModelBase
             ReactiveCommand
                 .Create(DefaultAction)
                 .DisposeWith(disposables);
+    }
+
+    public void OnLifecycleEvent(LifecycleEvent lifecycleEvent)
+    {
+        Console.WriteLine($"LifecycleEvent: {lifecycleEvent}");
     }
 }
 
