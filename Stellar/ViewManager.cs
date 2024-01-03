@@ -7,7 +7,9 @@ namespace Stellar;
 public abstract class ViewManager
 #pragma warning restore CA1001
 {
-    private readonly Lazy<Subject<LifecycleEvent>> _lifecycle = new Lazy<Subject<LifecycleEvent>>(() => new Subject<LifecycleEvent>(), LazyThreadSafetyMode.ExecutionAndPublication);
+    private readonly Lazy<Subject<LifecycleEvent>> _lifecycleEvents = new Lazy<Subject<LifecycleEvent>>(() => new Subject<LifecycleEvent>(), LazyThreadSafetyMode.ExecutionAndPublication);
+
+    private readonly Lazy<Subject<NavigationEvent>> _navigationEvents = new Lazy<Subject<NavigationEvent>>(() => new Subject<NavigationEvent>(), LazyThreadSafetyMode.ExecutionAndPublication);
 
     private readonly object _bindingLock = new();
 
@@ -15,23 +17,29 @@ public abstract class ViewManager
 
     private bool _controlsBound;
 
-    public IObservable<Unit> Initialized => _lifecycle.Value.Where(x => x == LifecycleEvent.Initialized).SelectUnit().AsObservable();
+    public IObservable<Unit> Initialized => _lifecycleEvents.Value.Where(x => x == LifecycleEvent.Initialized).SelectUnit().AsObservable();
 
-    public IObservable<Unit> Activated => _lifecycle.Value.Where(x => x == LifecycleEvent.Activated).SelectUnit().AsObservable();
+    public IObservable<Unit> Activated => _lifecycleEvents.Value.Where(x => x == LifecycleEvent.Activated).SelectUnit().AsObservable();
 
-    public IObservable<Unit> Attached => _lifecycle.Value.Where(x => x == LifecycleEvent.Attached).SelectUnit().AsObservable();
+    public IObservable<Unit> Attached => _lifecycleEvents.Value.Where(x => x == LifecycleEvent.Attached).SelectUnit().AsObservable();
 
-    public IObservable<Unit> IsAppearing => _lifecycle.Value.Where(x => x == LifecycleEvent.IsAppearing).SelectUnit().AsObservable();
+    public IObservable<Unit> IsAppearing => _lifecycleEvents.Value.Where(x => x == LifecycleEvent.IsAppearing).SelectUnit().AsObservable();
 
-    public IObservable<Unit> IsDisappearing => _lifecycle.Value.Where(x => x == LifecycleEvent.IsDisappearing).SelectUnit().AsObservable();
+    public IObservable<Unit> IsDisappearing => _lifecycleEvents.Value.Where(x => x == LifecycleEvent.IsDisappearing).SelectUnit().AsObservable();
 
-    public IObservable<Unit> Detached => _lifecycle.Value.Where(x => x == LifecycleEvent.Detached).SelectUnit().AsObservable();
+    public IObservable<Unit> Detached => _lifecycleEvents.Value.Where(x => x == LifecycleEvent.Detached).SelectUnit().AsObservable();
 
-    public IObservable<Unit> Deactivated => _lifecycle.Value.Where(x => x == LifecycleEvent.Deactivated).SelectUnit().AsObservable();
+    public IObservable<Unit> Deactivated => _lifecycleEvents.Value.Where(x => x == LifecycleEvent.Deactivated).SelectUnit().AsObservable();
 
-    public IObservable<Unit> Disposed => _lifecycle.Value.Where(x => x == LifecycleEvent.Disposed).SelectUnit().AsObservable();
+    public IObservable<Unit> Disposed => _lifecycleEvents.Value.Where(x => x == LifecycleEvent.Disposed).SelectUnit().AsObservable();
 
-    public IObservable<LifecycleEvent> Lifecycle => _lifecycle.Value.AsObservable();
+    public IObservable<LifecycleEvent> LifecycleEvents => _lifecycleEvents.Value.AsObservable();
+
+    public IObservable<Unit> NavigatedTo => _navigationEvents.Value.Where(x => x == NavigationEvent.NavigatedTo).SelectUnit().AsObservable();
+
+    public IObservable<Unit> NavigatedFrom => _navigationEvents.Value.Where(x => x == NavigationEvent.NavigatedFrom).SelectUnit().AsObservable();
+
+    public IObservable<NavigationEvent> NavigationEvents => _navigationEvents.Value.AsObservable();
 
     public bool Maintain { get; set; }
 
@@ -39,9 +47,9 @@ public abstract class ViewManager
 
     ~ViewManager()
     {
-        if (_lifecycle.IsValueCreated)
+        if (_lifecycleEvents.IsValueCreated)
         {
-            _lifecycle?.Value?.Dispose();
+            _lifecycleEvents?.Value?.Dispose();
         }
 
         _controlBindings.Dispose();
@@ -122,11 +130,27 @@ public abstract class ViewManager
             lea.OnLifecycleEvent(lifecycleEvent);
         }
 
-        if (!_lifecycle.IsValueCreated)
+        if (!_lifecycleEvents.IsValueCreated)
         {
             return;
         }
 
-        _lifecycle.Value.OnNext(lifecycleEvent);
+        _lifecycleEvents.Value.OnNext(lifecycleEvent);
+    }
+
+    public void OnNavigating<TViewModel>(IStellarView<TViewModel> view, NavigationEvent navigationEvent)
+        where TViewModel : class
+    {
+        if (view.ViewModel is INavigationEventAware nea)
+        {
+            nea.OnNavigationEvent(navigationEvent);
+        }
+
+        if (!_navigationEvents.IsValueCreated)
+        {
+            return;
+        }
+
+        _navigationEvents.Value.OnNext(navigationEvent);
     }
 }

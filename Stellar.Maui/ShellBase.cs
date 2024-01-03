@@ -20,7 +20,7 @@ public abstract class ShellBase<TViewModel> : ReactiveShell<TViewModel>, IStella
 
     public IObservable<Unit> IsDisappearing => ViewManager.IsDisappearing;
 
-    public IObservable<LifecycleEvent> Lifecycle => ViewManager.Lifecycle;
+    public IObservable<LifecycleEvent> LifecycleEvents => ViewManager.LifecycleEvents;
 
     public virtual void Initialize()
     {

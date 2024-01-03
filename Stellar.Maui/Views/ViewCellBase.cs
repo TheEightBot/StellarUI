@@ -20,7 +20,7 @@ public abstract class ViewCellBase<TViewModel> : ReactiveViewCell<TViewModel>, I
 
     public IObservable<Unit> Disposed => ViewManager.Disposed;
 
-    public IObservable<LifecycleEvent> Lifecycle => ViewManager.Lifecycle;
+    public IObservable<LifecycleEvent> LifecycleEvents => ViewManager.LifecycleEvents;
 
     public virtual void Initialize()
     {
@@ -56,7 +56,7 @@ public abstract class ViewCellBase<TViewModel, TDataModel> : ReactiveViewCell<TV
 
     public IObservable<Unit> Disposed => ViewManager.Disposed;
 
-    public IObservable<LifecycleEvent> Lifecycle => ViewManager.Lifecycle;
+    public IObservable<LifecycleEvent> LifecycleEvents => ViewManager.LifecycleEvents;
 
     public virtual void Initialize()
     {

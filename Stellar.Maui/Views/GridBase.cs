@@ -24,7 +24,7 @@ public abstract class GridBase<TViewModel> : ReactiveGrid<TViewModel>, IStellarV
 
     public IObservable<Unit> Disposed => ViewManager.Disposed;
 
-    public IObservable<LifecycleEvent> Lifecycle => ViewManager.Lifecycle;
+    public IObservable<LifecycleEvent> LifecycleEvents => ViewManager.LifecycleEvents;
 
     public virtual void Initialize()
     {
@@ -71,7 +71,7 @@ public abstract class GridBase<TViewModel, TDataModel> : ReactiveGrid<TViewModel
 
     public IObservable<Unit> Disposed => ViewManager.Disposed;
 
-    public IObservable<LifecycleEvent> Lifecycle => ViewManager.Lifecycle;
+    public IObservable<LifecycleEvent> LifecycleEvents => ViewManager.LifecycleEvents;
 
     public virtual void Initialize()
     {

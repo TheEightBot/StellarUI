@@ -24,7 +24,7 @@ public abstract class ContentViewBase<TViewModel> : ReactiveContentView<TViewMod
 
     public IObservable<Unit> Disposed => ViewManager.Disposed;
 
-    public IObservable<LifecycleEvent> Lifecycle => ViewManager.Lifecycle;
+    public IObservable<LifecycleEvent> LifecycleEvents => ViewManager.LifecycleEvents;
 
     public virtual void Initialize()
     {
@@ -70,7 +70,7 @@ public abstract class ContentViewBase<TViewModel, TDataModel> : ReactiveContentV
 
     public IObservable<Unit> Disposed => ViewManager.Disposed;
 
-    public IObservable<LifecycleEvent> Lifecycle => ViewManager.Lifecycle;
+    public IObservable<LifecycleEvent> LifecycleEvents => ViewManager.LifecycleEvents;
 
     public virtual void Initialize()
     {

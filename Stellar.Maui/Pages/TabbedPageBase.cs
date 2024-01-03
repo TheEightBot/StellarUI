@@ -24,7 +24,9 @@ public abstract class TabbedPageBase<TViewModel> : ReactiveTabbedPage<TViewModel
 
     public IObservable<Unit> Disposed => ViewManager.Disposed;
 
-    public IObservable<LifecycleEvent> Lifecycle => ViewManager.Lifecycle;
+    public IObservable<LifecycleEvent> LifecycleEvents => ViewManager.LifecycleEvents;
+
+    public IObservable<NavigationEvent> NavigationEvents => ViewManager.NavigationEvents;
 
     public virtual void Initialize()
     {
@@ -60,5 +62,17 @@ public abstract class TabbedPageBase<TViewModel> : ReactiveTabbedPage<TViewModel
         ViewManager.PropertyChanged<TabbedPageBase<TViewModel>, TViewModel>(this, propertyName);
 
         base.OnPropertyChanged(propertyName);
+    }
+
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
+    {
+        ViewManager.OnNavigating(this, NavigationEvent.NavigatedTo);
+        base.OnNavigatedTo(args);
+    }
+
+    protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
+    {
+        ViewManager.OnNavigating(this, NavigationEvent.NavigatedFrom);
+        base.OnNavigatedFrom(args);
     }
 }

@@ -24,7 +24,7 @@ public abstract class FrameBase<TViewModel> : ReactiveFrame<TViewModel>, IStella
 
     public IObservable<Unit> Disposed => ViewManager.Disposed;
 
-    public IObservable<LifecycleEvent> Lifecycle => ViewManager.Lifecycle;
+    public IObservable<LifecycleEvent> LifecycleEvents => ViewManager.LifecycleEvents;
 
     public virtual void Initialize()
     {

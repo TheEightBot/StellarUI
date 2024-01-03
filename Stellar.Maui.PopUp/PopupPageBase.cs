@@ -26,7 +26,9 @@ public abstract class PopupPageBase<TViewModel> : ReactivePopupPage<TViewModel>,
 
     public IObservable<Unit> Disposed => ViewManager.Disposed;
 
-    public IObservable<LifecycleEvent> Lifecycle => ViewManager.Lifecycle;
+    public IObservable<LifecycleEvent> LifecycleEvents => ViewManager.LifecycleEvents;
+
+    public IObservable<NavigationEvent> NavigationEvents => ViewManager.NavigationEvents;
 
     public virtual void Initialize()
     {
