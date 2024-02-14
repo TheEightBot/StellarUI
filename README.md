@@ -1,2 +1,2 @@
-# EightBot.Stellar
+# Stellar
  MAUI Application Core Framework
