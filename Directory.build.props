@@ -9,9 +9,7 @@
         <RepositoryUrl>https://github.com/TheEightBot/Stellar</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageTags>.NET MAUI;MVVM;Reactive UI;Reactive Extensions;Eight-Bot</PackageTags>
-        <Description>
-			This is the core MVVM Framework components used by Eight-Bot for building apps. A highly opinionated ReactiveUI on Rails.
-        </Description>
+        <Description>This is the core MVVM Framework components used by Eight-Bot for building apps. A highly opinionated ReactiveUI on Rails.</Description>
         <PackageIcon>logo.png</PackageIcon>
     </PropertyGroup>
     <ItemGroup>
@@ -22,7 +20,7 @@
                           Version="8.0.0"
                           PrivateAssets="all" />
         <PackageReference Include="Roslynator.Analyzers"
-                          Version="4.7.0"
+                          Version="4.9.0"
                           PrivateAssets="All" />
     </ItemGroup>
     <ItemGroup>

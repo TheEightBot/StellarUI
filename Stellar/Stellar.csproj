@@ -6,8 +6,8 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="ReactiveUI.Fody" Version="19.5.31" PrivateAssets="all" />
-        <PackageReference Include="ReactiveUI" Version="19.5.31" />
+        <PackageReference Include="ReactiveUI.Fody" Version="19.5.39" PrivateAssets="all" />
+        <PackageReference Include="ReactiveUI" Version="19.5.39" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     </ItemGroup>
 </Project>
