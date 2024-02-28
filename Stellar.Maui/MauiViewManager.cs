@@ -8,60 +8,48 @@ public class MauiViewManager<TViewModel> : ViewManager
 {
     private WeakReference<object?>? _reloadView;
 
-    public void OnHandlerChanged<TVisualElement>(TVisualElement visualElement, HandlerChangingEventArgs args)
-        where TVisualElement : VisualElement, IStellarView<TViewModel>, IStellarView
+    public override void PropertyChanged<TView, TViewModel>(TView view, string? propertyName = null)
     {
-        if (args.OldHandler is not null)
-        {
-            visualElement.Loaded -= this.Handle_Loaded;
-            visualElement.Unloaded -= this.Handle_Unloaded;
+        base.PropertyChanged<TView, TViewModel>(view, propertyName);
 
-            HandleDeactivated(visualElement);
-            visualElement.DisposeView();
-        }
-
-        if (args.NewHandler is not null)
-        {
-            HandleActivated(visualElement);
-
-            visualElement.Loaded -= this.Handle_Loaded;
-            visualElement.Loaded += this.Handle_Loaded;
-
-            visualElement.Unloaded -= this.Handle_Unloaded;
-            visualElement.Unloaded += this.Handle_Unloaded;
-        }
-    }
-
-    private void Handle_Loaded(object? sender, EventArgs e)
-    {
-        if (HotReloadService.HotReloadAware)
-        {
-            _reloadView = new WeakReference<object?>(sender);
-            HotReloadService.UpdateApplicationEvent -= HandleHotReload;
-            HotReloadService.UpdateApplicationEvent += HandleHotReload;
-        }
-
-        if (sender is not IStellarView<TViewModel> isv)
+        if (propertyName is null || !propertyName.Equals(nameof(VisualElement.Window)) || view is not VisualElement ve)
         {
             return;
         }
 
-        OnLifecycle(isv, LifecycleEvent.Attached);
-    }
-
-    private void Handle_Unloaded(object? sender, EventArgs e)
-    {
-        if (HotReloadService.HotReloadAware)
+        if (ve.Window is not null)
         {
-            HotReloadService.UpdateApplicationEvent -= HandleHotReload;
-        }
+            if (HotReloadService.HotReloadAware)
+            {
+                this._reloadView = new WeakReference<object?>(view);
+                HotReloadService.UpdateApplicationEvent -= this.HandleHotReload;
+                HotReloadService.UpdateApplicationEvent += this.HandleHotReload;
+            }
 
-        if (sender is not IStellarView<TViewModel> isv)
+            if (view is not IStellarView<TViewModel> isv)
+            {
+                return;
+            }
+
+            this.HandleActivated(isv);
+            this.OnLifecycle(isv, LifecycleEvent.Attached);
+        }
+        else
         {
-            return;
-        }
+            if (HotReloadService.HotReloadAware)
+            {
+                HotReloadService.UpdateApplicationEvent -= this.HandleHotReload;
+            }
 
-        OnLifecycle(isv, LifecycleEvent.Detached);
+            if (view is not IStellarView<TViewModel> isv)
+            {
+                return;
+            }
+
+            this.OnLifecycle(isv, LifecycleEvent.Detached);
+            this.HandleDeactivated(isv);
+            isv.DisposeView();
+        }
     }
 
     private void HandleHotReload(Type[]? updatedTypes)

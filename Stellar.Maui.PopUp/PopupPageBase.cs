@@ -52,13 +52,6 @@ public abstract class PopupPageBase<TViewModel> : ReactivePopupPage<TViewModel>,
         base.OnDisappearing();
     }
 
-    protected override void OnHandlerChanging(HandlerChangingEventArgs args)
-    {
-        ((MauiViewManager<TViewModel>)ViewManager).OnHandlerChanged(this, args);
-
-        base.OnHandlerChanging(args);
-    }
-
     protected override void OnPropertyChanged(string propertyName = null)
     {
         ViewManager.PropertyChanged<PopupPageBase<TViewModel>, TViewModel>(this, propertyName);
