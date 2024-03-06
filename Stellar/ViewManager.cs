@@ -112,7 +112,7 @@ public abstract class ViewManager
         UnregisterBindings(view);
     }
 
-    public void PropertyChanged<TView, TViewModel>(TView view, string? propertyName = null)
+    public virtual void PropertyChanged<TView, TViewModel>(TView view, string? propertyName = null)
         where TView : IViewFor<TViewModel>
         where TViewModel : class
     {

@@ -50,13 +50,6 @@ public abstract class ContentPageBase<TViewModel> : ReactiveContentPage<TViewMod
         base.OnDisappearing();
     }
 
-    protected override void OnHandlerChanging(HandlerChangingEventArgs args)
-    {
-        ((MauiViewManager<TViewModel>)ViewManager).OnHandlerChanged(this, args);
-
-        base.OnHandlerChanging(args);
-    }
-
     protected override void OnPropertyChanged(string? propertyName = null)
     {
         ViewManager.PropertyChanged<ContentPageBase<TViewModel>, TViewModel>(this, propertyName);

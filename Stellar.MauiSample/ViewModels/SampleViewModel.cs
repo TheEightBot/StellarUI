@@ -10,6 +10,8 @@ public class SampleViewModel : ViewModelBase, ILifecycleEventAware
 
     private long _parameterValue;
 
+    private Guid _id;
+
     [Reactive]
     public ReactiveCommand<Unit, Unit> GoPopup { get; private set; }
 
@@ -41,6 +43,8 @@ public class SampleViewModel : ViewModelBase, ILifecycleEventAware
     public SampleViewModel(TestService testService)
     {
         _testService = testService;
+
+        this._id = Guid.NewGuid();
     }
 
     ~SampleViewModel()
@@ -98,7 +102,7 @@ public class SampleViewModel : ViewModelBase, ILifecycleEventAware
 
     public void OnLifecycleEvent(LifecycleEvent lifecycleEvent)
     {
-        Console.WriteLine($"LifecycleEvent: {lifecycleEvent}");
+        Console.WriteLine($"LifecycleEvent:\t{this._id}\t{lifecycleEvent}");
     }
 }
 

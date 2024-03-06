@@ -34,13 +34,6 @@ public abstract class GridBase<TViewModel> : ReactiveGrid<TViewModel>, IStellarV
 
     public abstract void Bind(CompositeDisposable disposables);
 
-    protected override void OnHandlerChanging(HandlerChangingEventArgs args)
-    {
-        ((MauiViewManager<TViewModel>)ViewManager).OnHandlerChanged(this, args);
-
-        base.OnHandlerChanging(args);
-    }
-
     protected override void OnPropertyChanged(string? propertyName = null)
     {
         ViewManager.PropertyChanged<GridBase<TViewModel>, TViewModel>(this, propertyName);
@@ -82,13 +75,6 @@ public abstract class GridBase<TViewModel, TDataModel> : ReactiveGrid<TViewModel
     public abstract void Bind(CompositeDisposable disposables);
 
     protected abstract void MapDataModelToViewModel(TViewModel viewModel, TDataModel dataModel);
-
-    protected override void OnHandlerChanging(HandlerChangingEventArgs args)
-    {
-        ((MauiViewManager<TViewModel>)ViewManager).OnHandlerChanged(this, args);
-
-        base.OnHandlerChanging(args);
-    }
 
     protected override void OnPropertyChanged(string? propertyName = null)
     {
