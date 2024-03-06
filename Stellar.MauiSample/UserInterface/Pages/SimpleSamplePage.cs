@@ -105,7 +105,6 @@ public class SimpleSamplePage : ContentPageBase<ViewModels.SampleViewModel>
                     }
                         .Row(7).Column(0)
                         .Assign(out _picker),
-                    /*
                     new ListView
                     {
                         ItemTemplate = new DataTemplate(typeof(Cells.SampleViewCell)),
@@ -113,7 +112,6 @@ public class SimpleSamplePage : ContentPageBase<ViewModels.SampleViewModel>
                     }
                         .Row(8).Column(0)
                         .Assign(out _listView),
-                    */
                 },
             }
                 .Assign(out _mainLayout);
@@ -152,6 +150,9 @@ public class SimpleSamplePage : ContentPageBase<ViewModels.SampleViewModel>
             .DisposeWith(disposables);
 
         this.BindCommand(ViewModel, static vm => vm.GoValidation, static ui => ui._validation, Observables.UnitDefault)
+            .DisposeWith(disposables);
+
+        this.OneWayBind(ViewModel, static x => x.TestItems, static ui => ui._listView.ItemsSource)
             .DisposeWith(disposables);
 
         this.WhenAnyObservable(static x => x.ViewModel.GoValidation)
