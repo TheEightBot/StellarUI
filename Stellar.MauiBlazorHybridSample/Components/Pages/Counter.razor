@@ -1,0 +1,15 @@
+﻿@page "/counter/"
+@page "/counter/{Count:long}"
+
+@inherits Stellar.Blazor.ComponentBase<ViewModels.CounterViewModel>
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Counter</h1>
+
+<p role="status">Current count: @ViewModel.Count</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+<button class="btn btn-primary" @onclick="Navigate">Click To Win</button>
+
