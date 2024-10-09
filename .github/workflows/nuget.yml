@@ -18,7 +18,6 @@ jobs:
     - uses: actions/setup-dotnet@v3
       with:
         dotnet-version: '8.x'
-        source-url: https://api.nuget.org/v3/index.json
 
     - uses: maxim-lobanov/setup-xcode@v1
       with:
