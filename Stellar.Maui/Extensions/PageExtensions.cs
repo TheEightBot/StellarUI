@@ -1,4 +1,6 @@
-﻿namespace Stellar.Maui;
+﻿using System.Runtime.CompilerServices;
+
+namespace Stellar.Maui;
 
 public static class PageExtensions
 {

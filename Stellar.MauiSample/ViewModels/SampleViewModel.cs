@@ -4,7 +4,7 @@ using Stellar.MauiSample.Services;
 namespace Stellar.MauiSample.ViewModels;
 
 [ServiceRegistration]
-public class SampleViewModel(TestService testService)
+public partial class SampleViewModel(TestService testService)
     : ViewModelBase, ILifecycleEventAware
 {
     public TestService TestService { get; } = testService;
@@ -14,25 +14,25 @@ public class SampleViewModel(TestService testService)
     private long _parameterValue;
 
     [Reactive]
-    public ReactiveCommand<Unit, Unit> GoPopup { get; private set; }
+    private ReactiveCommand<Unit, Unit> _goPopup;
 
     [Reactive]
-    public ReactiveCommand<Unit, Unit> GoModal { get; private set; }
+    private ReactiveCommand<Unit, Unit> _goModal;
 
     [Reactive]
-    public ReactiveCommand<Unit, Unit> GoValidation { get; private set; }
+    private ReactiveCommand<Unit, Unit> _goValidation;
 
     [Reactive]
-    public ReactiveCommand<Unit, Unit> GoNext { get; private set; }
+    private ReactiveCommand<Unit, Unit> _goNext;
 
     [Reactive]
-    public byte[] ColorArray { get; private set; }
+    private byte[] _colorArray;
 
     [Reactive]
-    public IEnumerable<TestItem> TestItems { get; private set; }
+    private IEnumerable<TestItem> _testItems;
 
     [Reactive]
-    public TestItem SelectedTestItem { get; set; }
+    private TestItem _selectedTestItem;
 
     [QueryParameter]
     public long ParameterValue

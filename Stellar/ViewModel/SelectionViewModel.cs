@@ -1,22 +1,21 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
-using ReactiveUI.Fody.Helpers;
 
 namespace Stellar.ViewModel;
 
-public class SelectionViewModel<TSelectedValKey> : ViewModelBase
+public partial class SelectionViewModel<TSelectedValKey> : ViewModelBase
 {
     [Reactive]
-    public TSelectedValKey? Key { get; set; }
+    private TSelectedValKey? _key;
 
     [Reactive]
-    public string? DisplayValue { get; set; }
+    public string? _displayValue;
 
     [Reactive]
-    public bool Selected { get; set; }
+    public bool _selected;
 
     [Reactive]
-    public ReactiveCommand<Unit, bool>? ToggleSelected { get; private set; }
+    private ReactiveCommand<Unit, bool>? _toggleSelected;
 
     protected override void Bind(CompositeDisposable disposables)
     {

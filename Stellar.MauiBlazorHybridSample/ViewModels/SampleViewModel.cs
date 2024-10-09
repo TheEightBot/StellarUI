@@ -4,42 +4,37 @@ using Stellar.MauiSample.Services;
 namespace Stellar.MauiBlazorHybridSample.ViewModels;
 
 [ServiceRegistration]
-public class SampleViewModel(TestService testService)
+public partial class SampleViewModel(TestService testService)
     : ViewModelBase, ILifecycleEventAware
 {
     public TestService TestService { get; } = testService;
 
     private readonly Guid _id = Guid.NewGuid();
 
+    [Reactive]
+    private ReactiveCommand<Unit, Unit> _goPopup;
+
+    [Reactive]
+    private ReactiveCommand<Unit, Unit> _goModal;
+
+    [Reactive]
+    private ReactiveCommand<Unit, Unit> _goValidation;
+
+    [Reactive]
+    private ReactiveCommand<Unit, Unit> _goNext;
+
+    [Reactive]
+    private byte[] _colorArray;
+
+    [Reactive]
+    private IEnumerable<TestItem> _testItems;
+
+    [Reactive]
+    private TestItem _selectedTestItem;
+
+    [Reactive]
+    [property: QueryParameter]
     private long _parameterValue;
-
-    [Reactive]
-    public ReactiveCommand<Unit, Unit> GoPopup { get; private set; }
-
-    [Reactive]
-    public ReactiveCommand<Unit, Unit> GoModal { get; private set; }
-
-    [Reactive]
-    public ReactiveCommand<Unit, Unit> GoValidation { get; private set; }
-
-    [Reactive]
-    public ReactiveCommand<Unit, Unit> GoNext { get; private set; }
-
-    [Reactive]
-    public byte[] ColorArray { get; private set; }
-
-    [Reactive]
-    public IEnumerable<TestItem> TestItems { get; private set; }
-
-    [Reactive]
-    public TestItem SelectedTestItem { get; set; }
-
-    [QueryParameter]
-    public long ParameterValue
-    {
-        get => this._parameterValue;
-        set => this.RaiseAndSetIfChanged(ref this._parameterValue, value);
-    }
 
     ~SampleViewModel()
     {

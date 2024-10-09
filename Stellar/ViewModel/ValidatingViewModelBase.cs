@@ -3,22 +3,22 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq.Expressions;
-using ReactiveUI.Fody.Helpers;
 using Splat;
 
 namespace Stellar.ViewModel;
 
-public abstract class ValidatingViewModelBase<TNeedsValidation> : ViewModelBase
+public abstract partial class ValidatingViewModelBase<TNeedsValidation> : ViewModelBase
     where TNeedsValidation : class
 {
-    public static TimeSpan DefaultValidationChangeThrottleDuration = TimeSpan.FromMilliseconds(17 * 4);
+    public static TimeSpan DefaultValidationChangeThrottleDuration { get; set; } = TimeSpan.FromMilliseconds(17 * 4);
 
     protected readonly IProvideValidation<TNeedsValidation> Validator;
 
+    /*TODO: SetModifier = AccessModifier.Protected*/
     [Reactive]
-    public bool IsValid { get; private set; }
+    private bool _isValid;
 
-    public ObservableCollection<ValidationInformation> ValidationErrors { get; } = new ObservableCollection<ValidationInformation>();
+    public ObservableCollection<ValidationInformation> ValidationErrors { get; } = new();
 
     public ValidatingViewModelBase(IProvideValidation<TNeedsValidation> validator)
     {

@@ -3,10 +3,10 @@ using System.Diagnostics.Metrics;
 namespace Stellar.MauiBlazorHybridSample.ViewModels;
 
 [ServiceRegistration]
-public class CounterViewModel : ViewModelBase
+public partial class CounterViewModel : ViewModelBase
 {
     [Reactive]
-    public long Count { get; set; }
+    private long _count;
 
     protected override void Bind(CompositeDisposable disposables)
     {
