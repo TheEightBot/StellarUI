@@ -6,16 +6,24 @@
 		<SingleProject>true</SingleProject>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>warnings</Nullable>
+		<PackageId>StellarUI.Avalonia</PackageId>
+		<AssemblyName>StellarUI.Avalonia</AssemblyName>
+		<RootNamespace>StellarUI.Avalonia</RootNamespace>
+		<Title>Stellar UI - Avalonia</Title>
+		<Copyright>Eight-Bot 2024</Copyright>
+		<PackageLicenseUrl>https://github.com/TheEightBot/StellarUI/blob/main/LICENSE</PackageLicenseUrl>
+		<RepositoryUrl>https://github.com/TheEightBot/StellarUI</RepositoryUrl>
+		<PackageTags>Avalonia;MVVM;Reactive UI;Reactive Extensions;Eight-Bot</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="11.0.7" />
-    <PackageReference Include="Avalonia.Desktop" Version="11.0.7" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.7" />
-    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.7" />
+    <PackageReference Include="Avalonia" Version="11.1.4" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.1.4" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.1.4" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.1.4" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.7" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.7" />
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.1.4" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="11.1.4" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Stellar\Stellar.csproj" />

@@ -1,5 +1,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Routing;
 using ReactiveUI.Blazor;
 
 namespace Stellar.Blazor;
@@ -8,6 +10,9 @@ public abstract class ComponentBase<TViewModel> : ReactiveComponentBase<TViewMod
     where TViewModel : class, INotifyPropertyChanged
 {
     private bool _isDisposed;
+
+    [Inject]
+    private NavigationManager Navigation { get; set; }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
     public ViewManager ViewManager { get; } = new BlazorViewManager();
@@ -36,6 +41,9 @@ public abstract class ComponentBase<TViewModel> : ReactiveComponentBase<TViewMod
     {
         ViewManager.HandleActivated(this);
 
+        Navigation.LocationChanged -= LocationChanged;
+        Navigation.LocationChanged += LocationChanged;
+
         base.OnInitialized();
     }
 
@@ -46,9 +54,17 @@ public abstract class ComponentBase<TViewModel> : ReactiveComponentBase<TViewMod
         base.OnPropertyChanged(propertyName);
     }
 
+    private void LocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        string navigationMethod = e.IsNavigationIntercepted ? "HTML" : "code";
+        System.Diagnostics.Debug.WriteLine($"Notified of navigation via {navigationMethod} to {e.Location}");
+    }
+
     protected override void Dispose(bool disposing)
     {
         this.ManageDispose(disposing, ref _isDisposed);
+
+        Navigation.LocationChanged -= LocationChanged;
 
         base.Dispose(disposing);
     }

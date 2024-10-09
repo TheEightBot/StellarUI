@@ -1,6 +1,4 @@
-﻿using ReactiveUI.Fody.Helpers;
-
-namespace Stellar;
+﻿namespace Stellar;
 
 public record ValidationResult
 {

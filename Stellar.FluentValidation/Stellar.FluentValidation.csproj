@@ -4,12 +4,19 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <PackageId>StellarUI.FluentValidation</PackageId>
+    <Title>Stellar UI - FluentValidation</Title>
+    <Authors>Eight-Bot</Authors>
+    <Copyright>Eight-Bot 2024</Copyright>
+    <PackageLicenseUrl>https://github.com/TheEightBot/StellarUI/blob/main/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/TheEightBot/StellarUI</RepositoryUrl>
+    <PackageTags>.NET;FluentValidation;MVVM;Reactive UI;Reactive Extensions;Eight-Bot</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Stellar\Stellar.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="11.9.0" />
+    <PackageReference Include="FluentValidation" Version="11.10.0" />
   </ItemGroup>
 </Project>

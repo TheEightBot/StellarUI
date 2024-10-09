@@ -4,10 +4,17 @@
         <SingleProject>true</SingleProject>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <PackageId>StellarUI</PackageId>
+        <Title>Stellar UI</Title>
+        <Authors>Eight-Bot</Authors>
+        <Copyright>Eight-Bot 2024</Copyright>
+        <PackageLicenseUrl>https://github.com/TheEightBot/StellarUI/blob/main/LICENSE</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/TheEightBot/StellarUI/blob/main/LICENSE</RepositoryUrl>
+        <PackageTags>.NET UI;MVVM;Reactive UI;Reactive Extensions;Eight-Bot</PackageTags>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="ReactiveUI.Fody" Version="19.5.39" PrivateAssets="all" />
-        <PackageReference Include="ReactiveUI" Version="19.5.39" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+        <PackageReference Include="ReactiveUI" Version="20.1.63" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
+        <PackageReference Include="ReactiveUI.SourceGenerators" Version="1.1.31" />
     </ItemGroup>
 </Project>

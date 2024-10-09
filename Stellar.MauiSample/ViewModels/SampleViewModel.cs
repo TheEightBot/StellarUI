@@ -4,47 +4,41 @@ using Stellar.MauiSample.Services;
 namespace Stellar.MauiSample.ViewModels;
 
 [ServiceRegistration]
-public class SampleViewModel : ViewModelBase, ILifecycleEventAware
+public partial class SampleViewModel(TestService testService)
+    : ViewModelBase, ILifecycleEventAware
 {
-    private readonly TestService _testService;
+    public TestService TestService { get; } = testService;
+
+    private readonly Guid _id = Guid.NewGuid();
 
     private long _parameterValue;
 
-    private Guid _id;
+    [Reactive]
+    private ReactiveCommand<Unit, Unit> _goPopup;
 
     [Reactive]
-    public ReactiveCommand<Unit, Unit> GoPopup { get; private set; }
+    private ReactiveCommand<Unit, Unit> _goModal;
 
     [Reactive]
-    public ReactiveCommand<Unit, Unit> GoModal { get; private set; }
+    private ReactiveCommand<Unit, Unit> _goValidation;
 
     [Reactive]
-    public ReactiveCommand<Unit, Unit> GoValidation { get; private set; }
+    private ReactiveCommand<Unit, Unit> _goNext;
 
     [Reactive]
-    public ReactiveCommand<Unit, Unit> GoNext { get; private set; }
+    private byte[] _colorArray;
 
     [Reactive]
-    public byte[] ColorArray { get; private set; }
+    private IEnumerable<TestItem> _testItems;
 
     [Reactive]
-    public IEnumerable<TestItem> TestItems { get; private set; }
-
-    [Reactive]
-    public TestItem SelectedTestItem { get; set; }
+    private TestItem _selectedTestItem;
 
     [QueryParameter]
     public long ParameterValue
     {
         get => _parameterValue;
         set => this.RaiseAndSetIfChanged(ref _parameterValue, value);
-    }
-
-    public SampleViewModel(TestService testService)
-    {
-        _testService = testService;
-
-        this._id = Guid.NewGuid();
     }
 
     ~SampleViewModel()

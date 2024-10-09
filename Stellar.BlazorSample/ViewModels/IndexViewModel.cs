@@ -1,21 +1,16 @@
-﻿using System;
-using System.Reactive.Disposables;
-using System.Reactive.Linq;
-using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
-using Stellar.ViewModel;
+﻿using Stellar.ViewModel;
 
 namespace Stellar.BlazorSample.ViewModels;
 
 [ServiceRegistration(Lifetime.Singleton)]
-public class IndexViewModel : ViewModelBase
+public partial class IndexViewModel : ViewModelBase
 {
     [Reactive]
-    public string? Interval { get; set; }
+    private string? _interval;
 
-    [QueryParameter]
     [Reactive]
-    public int ParameterInput { get; set; }
+    [property: QueryParameter]
+    private int _parameterInput;
 
     protected override void Bind(CompositeDisposable disposables)
     {

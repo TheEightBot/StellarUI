@@ -4,11 +4,20 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <PackageId>StellarUI.Blazor</PackageId>
+    <AssemblyName>StellarUI.Blazor</AssemblyName>
+    <RootNamespace>StellarUI.Blazor</RootNamespace>
+    <RepositoryUrl>https://github.com/TheEightBot/StellarUI/blob/main/LICENSE</RepositoryUrl>
+    <Title>Stellar UI - Blazor</Title>
+    <Authors>Eight-Bot</Authors>
+    <Copyright>Eight-Bot 2024</Copyright>
+    <PackageLicenseUrl>https://github.com/TheEightBot/StellarUI/blob/main/LICENSE</PackageLicenseUrl>
+    <PackageTags>.NET Blazor;MVVM;Reactive UI;Reactive Extensions;Eight-Bot</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ReactiveUI.Blazor" Version="19.5.39" />
-    <PackageReference Include="Splat.Microsoft.Extensions.DependencyInjection" Version="14.8.12" />
+    <PackageReference Include="ReactiveUI.Blazor" Version="20.1.63" />
+    <PackageReference Include="Splat.Microsoft.Extensions.DependencyInjection" Version="15.2.22" />
   </ItemGroup>
 
   	<ItemGroup>

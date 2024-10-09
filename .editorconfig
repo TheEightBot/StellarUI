@@ -172,6 +172,9 @@ csharp_space_between_method_declaration_parameter_list_parentheses = false
 csharp_space_between_parentheses = false
 csharp_space_between_square_brackets = false
 
+# attributes
+place_attribute_on_same_line = always
+
 # analyzers
 # CA1851: Possible multiple enumerations of 'IEnumerable' collection - https://github.com/dotnet/roslyn-analyzers/issues/6379
 dotnet_diagnostic.CA1851.severity = suggestion
