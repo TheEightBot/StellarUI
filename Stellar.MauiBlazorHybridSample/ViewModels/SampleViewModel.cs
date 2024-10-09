@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using Stellar.MauiSample.Services;
 
-namespace Stellar.MauiSample.ViewModels;
+namespace Stellar.MauiBlazorHybridSample.ViewModels;
 
 [ServiceRegistration]
 public class SampleViewModel(TestService testService)
@@ -37,8 +37,8 @@ public class SampleViewModel(TestService testService)
     [QueryParameter]
     public long ParameterValue
     {
-        get => _parameterValue;
-        set => this.RaiseAndSetIfChanged(ref _parameterValue, value);
+        get => this._parameterValue;
+        set => this.RaiseAndSetIfChanged(ref this._parameterValue, value);
     }
 
     ~SampleViewModel()
@@ -52,7 +52,7 @@ public class SampleViewModel(TestService testService)
 
         var colors = new byte[4];
         rng.NextBytes(colors);
-        ColorArray = colors;
+        this.ColorArray = colors;
 
         var items = new List<TestItem>();
 
@@ -66,29 +66,29 @@ public class SampleViewModel(TestService testService)
                 });
         }
 
-        SelectedTestItem = items.ElementAt(rng.Next(0, items.Count - 1));
+        this.SelectedTestItem = items.ElementAt(rng.Next(0, items.Count - 1));
 
-        TestItems = items;
+        this.TestItems = items;
     }
 
     protected override void Bind(CompositeDisposable disposables)
     {
-        GoPopup =
+        this.GoPopup =
             ReactiveCommand
                 .Create(DefaultAction)
                 .DisposeWith(disposables);
 
-        GoModal =
+        this.GoModal =
             ReactiveCommand
                 .Create(DefaultAction)
                 .DisposeWith(disposables);
 
-        GoValidation =
+        this.GoValidation =
             ReactiveCommand
                 .Create(DefaultAction)
                 .DisposeWith(disposables);
 
-        GoNext =
+        this.GoNext =
             ReactiveCommand
                 .Create(DefaultAction)
                 .DisposeWith(disposables);
@@ -111,7 +111,7 @@ public class TestItem : INotifyPropertyChanged
         Console.WriteLine("TestItem Finalized");
     }
 
-    public string Value1 { get; set; }
+    public string Value1 { get; set; } = string.Empty;
 
     public int Value2 { get; set; }
 }
