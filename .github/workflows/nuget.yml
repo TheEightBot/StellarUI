@@ -83,3 +83,12 @@ jobs:
       run: dotnet nuget push Stellar.FluentValidation/bin/Release/*.nupkg -k $NUGET_AUTH_TOKEN -s https://api.nuget.org/v3/index.json
       env:
           NUGET_AUTH_TOKEN: ${{ secrets.NUGET_TOKEN }}
+
+    - name: Build Stellar.DiskDataCache
+      run: dotnet build Stellar.DiskDataCache/Stellar.DiskDataCache.csproj
+    - name: Create the package
+      run: dotnet pack --configuration Release /p:AssemblyVersion=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }} /p:Version=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }} Stellar.DiskDataCache/Stellar.DiskDataCache.csproj
+    - name: Publish the package to NuGet
+      run: dotnet nuget push Stellar.DiskDataCache/bin/Release/*.nupkg -k $NUGET_AUTH_TOKEN -s https://api.nuget.org/v3/index.json
+      env:
+          NUGET_AUTH_TOKEN: ${{ secrets.NUGET_TOKEN }}

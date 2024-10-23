@@ -44,6 +44,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "[Build]", "[Build]", "{24D8
 		.github\workflows\nuget.yml = .github\workflows\nuget.yml
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stellar.DiskDataCache", "Stellar.DiskDataCache\Stellar.DiskDataCache.csproj", "{5E618949-5F8B-4A2D-B64F-E97597A44F1B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -95,6 +97,10 @@ Global
 		{28B50E85-4243-480C-8BC2-896B013BD4B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28B50E85-4243-480C-8BC2-896B013BD4B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28B50E85-4243-480C-8BC2-896B013BD4B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E618949-5F8B-4A2D-B64F-E97597A44F1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E618949-5F8B-4A2D-B64F-E97597A44F1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E618949-5F8B-4A2D-B64F-E97597A44F1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E618949-5F8B-4A2D-B64F-E97597A44F1B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
