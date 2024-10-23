@@ -65,6 +65,30 @@ public class DiskCache : IDataCache, IDisposable
         return await this.DeserializeJsonFromFileAsync<T>(groupKey, cacheKey ?? typeof(T).Name).ConfigureAwait(false);
     }
 
+    public async Task<IEnumerable<T>> RetrieveManyAsync<T>(string groupKey)
+    {
+        var files = GetCacheDirectory(groupKey)?.EnumerateFiles().ToArray();
+
+        if (files is null || files.Length == 0)
+        {
+            return Enumerable.Empty<T>();
+        }
+
+        var items = new List<T>();
+
+        foreach (var file in files)
+        {
+            var deserializedItem = await DeserializeJsonFromFileAsync<T>(groupKey, file.Name).ConfigureAwait(false);
+
+            if (deserializedItem is not null)
+            {
+                items.Add(deserializedItem);
+            }
+        }
+
+        return items;
+    }
+
     public async Task<bool> RemoveAsync<T>(string? cacheKey = null, string? groupKey = null)
     {
         using var lease = await _writeLimiter.AcquireAsync().ConfigureAwait(false);
@@ -97,7 +121,7 @@ public class DiskCache : IDataCache, IDisposable
         }
     }
 
-    private async Task<T?> DeserializeJsonFromFileAsync<T>(string cacheDirectoryName, string fileName)
+    private async Task<T?> DeserializeJsonFromFileAsync<T>(string? cacheDirectoryName, string fileName)
     {
         using var lease = await _readLimiter.AcquireAsync().ConfigureAwait(false);
 
@@ -133,7 +157,7 @@ public class DiskCache : IDataCache, IDisposable
         new FileInfo(fullTemp).MoveTo(fullFinal);
     }
 
-    private Stream CreateFile(string cacheDirectoryName, string fileName)
+    private Stream CreateFile(string? cacheDirectoryName, string fileName)
     {
         var cacheDirectory = GetCacheDirectory(cacheDirectoryName);
 
@@ -145,7 +169,7 @@ public class DiskCache : IDataCache, IDisposable
                 : new FileStream(filePath, FileMode.Create);
     }
 
-    private Stream GetFile(string cacheDirectoryName, string fileName)
+    private Stream GetFile(string? cacheDirectoryName, string fileName)
     {
         var cacheDirectory = GetCacheDirectory(cacheDirectoryName);
 
@@ -156,7 +180,7 @@ public class DiskCache : IDataCache, IDisposable
             : Stream.Null;
     }
 
-    private void RemoveFile(string cacheDirectoryName, string fileName)
+    private void RemoveFile(string? cacheDirectoryName, string fileName)
     {
         var cacheDirectory = GetCacheDirectory(cacheDirectoryName);
 
