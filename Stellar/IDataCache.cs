@@ -8,6 +8,8 @@ public interface IDataCache
 
     Task<T?> RetrieveAsync<T>(string? cacheKey = null, string? groupKey = null);
 
+    Task<IEnumerable<T>> RetrieveManyAsync<T>(string groupKey);
+
     Task<bool> RemoveAsync<T>(string? cacheKey = null, string? groupKey = null);
 
     Task ClearCacheAsync(string? groupKey = null);
