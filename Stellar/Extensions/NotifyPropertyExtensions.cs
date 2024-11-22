@@ -63,7 +63,7 @@ public static class NotifyPropertyExtensions
                     x => notify.PropertyChanging -= x);
     }
 
-    public static IObservable<NotifyCollectionChangedEventArgs> ObserveCollectinChanged(this INotifyCollectionChanged notify, IScheduler? scheduler = null)
+    public static IObservable<NotifyCollectionChangedEventArgs> ObserveCollectionChanged(this INotifyCollectionChanged notify, IScheduler? scheduler = null)
     {
         if (scheduler is not null)
         {
