@@ -11,16 +11,13 @@ on:
 jobs:
   build:
 
-    runs-on: macos-13-xl
+    runs-on: macos-14
 
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-dotnet@v3
       with:
         dotnet-version: '8.x'
-        source-url: https://api.nuget.org/v3/index.json
-      env:
-        NUGET_AUTH_TOKEN: ${{secrets.NUGET_TOKEN}}
 
     - uses: maxim-lobanov/setup-xcode@v1
       with:
@@ -37,40 +34,61 @@ jobs:
       run: dotnet build Stellar/Stellar.csproj
     - name: Create the package
       run: dotnet pack --configuration Release  /p:AssemblyVersion=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }} /p:Version=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }} Stellar/Stellar.csproj
-    - name: Publish the package to GPR
-      run: dotnet nuget push Stellar/bin/Release/*.nupkg
+    - name: Publish the package to NuGet
+      run: dotnet nuget push Stellar/bin/Release/*.nupkg -k $NUGET_AUTH_TOKEN -s https://api.nuget.org/v3/index.json
+      env:
+          NUGET_AUTH_TOKEN: ${{ secrets.NUGET_TOKEN }}
 
     - name: Build Stellar.Maui
       run: dotnet build Stellar.Maui/Stellar.Maui.csproj
     - name: Create the package
       run: dotnet pack --configuration Release /p:AssemblyVersion=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }} /p:Version=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }} Stellar.Maui/Stellar.Maui.csproj
-    - name: Publish the package to GPR
-      run: dotnet nuget push Stellar.Maui/bin/Release/*.nupkg
+    - name: Publish the package to NuGet
+      run: dotnet nuget push Stellar.Maui/bin/Release/*.nupkg -k $NUGET_AUTH_TOKEN -s https://api.nuget.org/v3/index.json
+      env:
+          NUGET_AUTH_TOKEN: ${{ secrets.NUGET_TOKEN }}
 
     - name: Build Stellar.Maui.PopUp
       run: dotnet build Stellar.Maui.PopUp/Stellar.Maui.PopUp.csproj
     - name: Create the package
       run: dotnet pack --configuration Release  /p:AssemblyVersion=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }} /p:Version=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }} Stellar.Maui.PopUp/Stellar.Maui.PopUp.csproj
-    - name: Publish the package to GPR
-      run: dotnet nuget push Stellar.Maui.PopUp/bin/Release/*.nupkg
+    - name: Publish the package to NuGet
+      run: dotnet nuget push Stellar.Maui.PopUp/bin/Release/*.nupkg -k $NUGET_AUTH_TOKEN -s https://api.nuget.org/v3/index.json
+      env:
+          NUGET_AUTH_TOKEN: ${{ secrets.NUGET_TOKEN }}
 
     - name: Build Stellar.Blazor
       run: dotnet build Stellar.Blazor/Stellar.Blazor.csproj
     - name: Create the package
       run: dotnet pack --configuration Release /p:AssemblyVersion=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }} /p:Version=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }} Stellar.Blazor/Stellar.Blazor.csproj
-    - name: Publish the package to GPR
-      run: dotnet nuget push Stellar.Blazor/bin/Release/*.nupkg
+    - name: Publish the package to NuGet
+      run: dotnet nuget push Stellar.Blazor/bin/Release/*.nupkg -k $NUGET_AUTH_TOKEN -s https://api.nuget.org/v3/index.json
+      env:
+          NUGET_AUTH_TOKEN: ${{ secrets.NUGET_TOKEN }}
 
     - name: Build Stellar.Avalonia
       run: dotnet build Stellar.Avalonia/Stellar.Avalonia.csproj
     - name: Create the package
       run: dotnet pack --configuration Release /p:AssemblyVersion=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }} /p:Version=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }} Stellar.Avalonia/Stellar.Avalonia.csproj
-    - name: Publish the package to GPR
-      run: dotnet nuget push Stellar.Avalonia/bin/Release/*.nupkg
+    - name: Publish the package to NuGet
+      run: dotnet nuget push Stellar.Avalonia/bin/Release/*.nupkg -k $NUGET_AUTH_TOKEN -s https://api.nuget.org/v3/index.json
+      env:
+          NUGET_AUTH_TOKEN: ${{ secrets.NUGET_TOKEN }}
 
     - name: Build Stellar.FluentValidation
       run: dotnet build Stellar.FluentValidation/Stellar.FluentValidation.csproj
     - name: Create the package
       run: dotnet pack --configuration Release /p:AssemblyVersion=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }} /p:Version=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }} Stellar.FluentValidation/Stellar.FluentValidation.csproj
-    - name: Publish the package to GPR
-      run: dotnet nuget push Stellar.FluentValidation/bin/Release/*.nupkg
+    - name: Publish the package to NuGet
+      run: dotnet nuget push Stellar.FluentValidation/bin/Release/*.nupkg -k $NUGET_AUTH_TOKEN -s https://api.nuget.org/v3/index.json
+      env:
+          NUGET_AUTH_TOKEN: ${{ secrets.NUGET_TOKEN }}
+
+    - name: Build Stellar.DiskDataCache
+      run: dotnet build Stellar.DiskDataCache/Stellar.DiskDataCache.csproj
+    - name: Create the package
+      run: dotnet pack --configuration Release /p:AssemblyVersion=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }} /p:Version=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}.${{ steps.version.outputs.patch }} Stellar.DiskDataCache/Stellar.DiskDataCache.csproj
+    - name: Publish the package to NuGet
+      run: dotnet nuget push Stellar.DiskDataCache/bin/Release/*.nupkg -k $NUGET_AUTH_TOKEN -s https://api.nuget.org/v3/index.json
+      env:
+          NUGET_AUTH_TOKEN: ${{ secrets.NUGET_TOKEN }}
