@@ -3,14 +3,14 @@ using Stellar.ViewModel;
 
 namespace Stellar.Maui;
 
-public class MauiViewManager<TViewModel> : ViewManager
+public class MauiViewManager<TViewModel> : ViewManager<TViewModel>
     where TViewModel : class
 {
     private WeakReference<object?>? _reloadView;
 
-    public override void PropertyChanged<TView, TViewModel>(TView view, string? propertyName = null)
+    public override void PropertyChanged<TView>(TView view, string? propertyName = null)
     {
-        base.PropertyChanged<TView, TViewModel>(view, propertyName);
+        base.PropertyChanged(view, propertyName);
 
         if (propertyName is null || !propertyName.Equals(nameof(VisualElement.Window)) || view is not VisualElement ve)
         {

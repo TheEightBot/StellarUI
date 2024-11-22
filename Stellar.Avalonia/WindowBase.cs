@@ -13,7 +13,7 @@ namespace Stellar.Avalonia
         where TViewModel : class
     {
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public ViewManager ViewManager { get; } = new AvaloniaViewManager<TViewModel>();
+        public ViewManager<TViewModel> ViewManager { get; } = new AvaloniaViewManager<TViewModel>();
 
         public IObservable<Unit> WindowInitialized => ViewManager.Initialized;
 
@@ -62,7 +62,7 @@ namespace Stellar.Avalonia
 
         protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
         {
-            ViewManager.PropertyChanged<WindowBase<TViewModel>, TViewModel>(this, change.Property.Name);
+            ViewManager.PropertyChanged(this, change.Property.Name);
 
             base.OnPropertyChanged(change);
         }

@@ -3,6 +3,7 @@ using ReactiveUI;
 
 namespace Stellar.Blazor;
 
-public class BlazorViewManager : ViewManager
+public class BlazorViewManager<TViewModel> : ViewManager<TViewModel>
+    where TViewModel : class
 {
 }

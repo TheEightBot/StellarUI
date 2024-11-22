@@ -234,7 +234,7 @@ public static class PopupNavigationObservableExtensions
             .Select(
                 x =>
                 {
-                    var mainPage = Application.Current?.MainPage;
+                    var mainPage = Application.Current.Windows[0].Page;
 
                     if (mainPage is null)
                     {
@@ -284,7 +284,7 @@ public static class PopupNavigationObservableExtensions
             .Select(
                 x =>
                 {
-                    var mainPage = Application.Current?.MainPage;
+                    var mainPage = Application.Current.Windows[0].Page;
 
                     if (mainPage is null)
                     {
@@ -336,7 +336,7 @@ public static class PopupNavigationObservableExtensions
             .Select(
                 x =>
                 {
-                    var mainPage = Application.Current?.MainPage;
+                    var mainPage = Application.Current.Windows[0].Page;
 
                     if (mainPage is null)
                     {

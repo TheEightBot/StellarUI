@@ -6,7 +6,7 @@ public abstract class ContentPageBase<TViewModel> : ReactiveContentPage<TViewMod
     where TViewModel : class
 {
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public ViewManager ViewManager { get; } = new MauiViewManager<TViewModel>();
+    public ViewManager<TViewModel> ViewManager { get; } = new MauiViewManager<TViewModel>();
 
     public IObservable<Unit> Initialized => ViewManager.Initialized;
 
@@ -52,7 +52,7 @@ public abstract class ContentPageBase<TViewModel> : ReactiveContentPage<TViewMod
 
     protected override void OnPropertyChanged(string? propertyName = null)
     {
-        ViewManager.PropertyChanged<ContentPageBase<TViewModel>, TViewModel>(this, propertyName);
+        ViewManager.PropertyChanged(this, propertyName);
 
         base.OnPropertyChanged(propertyName);
     }

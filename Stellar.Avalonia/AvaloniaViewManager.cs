@@ -3,24 +3,24 @@ using Avalonia.Threading;
 
 namespace Stellar.Avalonia;
 
-public class AvaloniaViewManager<TViewViewModel> : ViewManager
-    where TViewViewModel : class
+public class AvaloniaViewManager<TViewModel> : ViewManager<TViewModel>
+    where TViewModel : class
 {
-    private IStellarView<TViewViewModel> _view;
+    private IStellarView<TViewModel> _view;
 
-    public override void HandleActivated<TViewModel>(IStellarView<TViewModel> view)
+    public override void HandleActivated(IStellarView<TViewModel> view)
     {
         base.HandleActivated(view);
 
         if (HotReloadService.HotReloadAware)
         {
-            _view = view as IStellarView<TViewViewModel>;
+            _view = view as IStellarView<TViewModel>;
             HotReloadService.UpdateApplicationEvent -= HandleHotReload;
             HotReloadService.UpdateApplicationEvent += HandleHotReload;
         }
     }
 
-    public override void HandleDeactivated<TViewModel>(IStellarView<TViewModel> view)
+    public override void HandleDeactivated(IStellarView<TViewModel> view)
     {
         if (HotReloadService.HotReloadAware)
         {

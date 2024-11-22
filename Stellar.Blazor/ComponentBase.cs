@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
@@ -12,10 +13,10 @@ public abstract class ComponentBase<TViewModel> : ReactiveComponentBase<TViewMod
     private bool _isDisposed;
 
     [Inject]
-    private NavigationManager Navigation { get; set; }
+    protected NavigationManager Navigation { get; private set; }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public ViewManager ViewManager { get; } = new BlazorViewManager();
+    public ViewManager<TViewModel> ViewManager { get; } = new BlazorViewManager<TViewModel>();
 
     public IObservable<Unit> Initialized => ViewManager.Initialized;
 
@@ -49,7 +50,7 @@ public abstract class ComponentBase<TViewModel> : ReactiveComponentBase<TViewMod
 
     protected override void OnPropertyChanged([CallerMemberName] string? propertyName = null)
     {
-        ViewManager.PropertyChanged<ComponentBase<TViewModel>, TViewModel>(this, propertyName);
+        ViewManager.PropertyChanged(this, propertyName);
 
         base.OnPropertyChanged(propertyName);
     }

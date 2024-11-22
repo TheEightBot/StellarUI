@@ -11,7 +11,7 @@ public abstract class LayoutComponentBase<TViewModel> : ReactiveLayoutComponentB
     private bool _isDisposed;
 
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public ViewManager ViewManager { get; } = new BlazorViewManager();
+    public ViewManager<TViewModel> ViewManager { get; } = new BlazorViewManager<TViewModel>();
 
     public IObservable<Unit> Initialized => ViewManager.Initialized;
 
@@ -42,7 +42,7 @@ public abstract class LayoutComponentBase<TViewModel> : ReactiveLayoutComponentB
 
     protected override void OnPropertyChanged([CallerMemberName] string? propertyName = null)
     {
-        ViewManager.PropertyChanged<LayoutComponentBase<TViewModel>, TViewModel>(this, propertyName);
+        ViewManager.PropertyChanged(this, propertyName);
 
         base.OnPropertyChanged(propertyName);
     }

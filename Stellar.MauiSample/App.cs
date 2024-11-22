@@ -5,9 +5,16 @@ namespace Stellar.MauiSample;
 
 public class App : ApplicationBase
 {
+    private UserInterface.Pages.SamplePage _page;
+
     public App(UserInterface.Pages.SamplePage page)
     {
         this.On<iOS>().SetHandleControlUpdatesOnMainThread(true);
-        MainPage = new Microsoft.Maui.Controls.NavigationPage(page);
+        _page = page;
+    }
+
+    protected override Window CreateWindow(IActivationState activationState)
+    {
+        return new Window(new Microsoft.Maui.Controls.NavigationPage(_page));
     }
 }

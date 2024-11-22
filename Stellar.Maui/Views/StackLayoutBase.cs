@@ -6,7 +6,7 @@ public abstract class StackLayoutBase<TViewModel> : ReactiveStackLayout<TViewMod
     where TViewModel : class
 {
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public ViewManager ViewManager { get; } = new MauiViewManager<TViewModel>();
+    public ViewManager<TViewModel> ViewManager { get; } = new MauiViewManager<TViewModel>();
 
     public IObservable<Unit> Initialized => ViewManager.Initialized;
 
@@ -36,7 +36,7 @@ public abstract class StackLayoutBase<TViewModel> : ReactiveStackLayout<TViewMod
 
     protected override void OnPropertyChanged(string? propertyName = null)
     {
-        ViewManager.PropertyChanged<StackLayoutBase<TViewModel>, TViewModel>(this, propertyName);
+        ViewManager.PropertyChanged(this, propertyName);
 
         base.OnPropertyChanged(propertyName);
     }
@@ -46,7 +46,7 @@ public abstract class StackLayoutBase<TViewModel, TDataModel> : ReactiveGrid<TVi
     where TViewModel : class
 {
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public ViewManager ViewManager { get; } = new MauiViewManager<TViewModel>();
+    public ViewManager<TViewModel> ViewManager { get; } = new MauiViewManager<TViewModel>();
 
     public IObservable<Unit> Initialized => ViewManager.Initialized;
 
@@ -78,7 +78,7 @@ public abstract class StackLayoutBase<TViewModel, TDataModel> : ReactiveGrid<TVi
 
     protected override void OnPropertyChanged(string? propertyName = null)
     {
-        ViewManager.PropertyChanged<StackLayoutBase<TViewModel, TDataModel>, TViewModel>(this, propertyName);
+        ViewManager.PropertyChanged(this, propertyName);
         base.OnPropertyChanged(propertyName);
     }
 

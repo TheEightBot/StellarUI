@@ -60,7 +60,7 @@ public class DiskCache : IDataCache, IDisposable
         await this.SerializeJsonToFileAsync(groupKey, cacheKey?.Invoke(item) ?? typeof(T).Name, item).ConfigureAwait(false);
     }
 
-    public async Task StoreManyAsync<T>(IEnumerable<T> items, string groupKey = null)
+    public async Task StoreManyAsync<T>(IEnumerable<T> items, string? groupKey = null)
     {
         foreach (var item in items)
         {
@@ -68,7 +68,7 @@ public class DiskCache : IDataCache, IDisposable
         }
     }
 
-    public async Task StoreManyAsync<T>(IEnumerable<T> items, Func<T, string> cacheKey, string groupKey = null)
+    public async Task StoreManyAsync<T>(IEnumerable<T> items, Func<T, string> cacheKey, string? groupKey = null)
     {
         foreach (var item in items)
         {
