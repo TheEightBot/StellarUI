@@ -60,7 +60,7 @@ public abstract partial class ValidatingViewModelBase<TNeedsValidation> : ViewMo
                             return ValidationResult.DefaultValidationResult;
                         }
 
-                        return Validator.Validate(nv);
+                        return Validator.PerformValidate(nv);
                     })
                 .ObserveOn(observationScheduler ?? RxApp.MainThreadScheduler)
                 .Do(

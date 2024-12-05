@@ -5,7 +5,7 @@ namespace Stellar.FluentValidation;
 public abstract class FluentValidatorFor<TNeedsValidation> : AbstractValidator<TNeedsValidation>, IProvideValidation<TNeedsValidation>
     where TNeedsValidation : class
 {
-    ValidationResult IProvideValidation<TNeedsValidation>.Validate(TNeedsValidation validation)
+    ValidationResult IProvideValidation<TNeedsValidation>.PerformValidate(TNeedsValidation validation)
     {
         var result = this.Validate(validation);
 
