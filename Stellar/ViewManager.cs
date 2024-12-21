@@ -4,7 +4,8 @@ using ReactiveUI;
 namespace Stellar;
 
 #pragma warning disable CA1001
-public abstract class ViewManager
+public abstract class ViewManager<TViewModel>
+    where TViewModel : class
 #pragma warning restore CA1001
 {
     private readonly Lazy<Subject<LifecycleEvent>> _lifecycleEvents = new Lazy<Subject<LifecycleEvent>>(() => new Subject<LifecycleEvent>(), LazyThreadSafetyMode.ExecutionAndPublication);
@@ -55,8 +56,7 @@ public abstract class ViewManager
         _controlBindings.Dispose();
     }
 
-    public void RegisterBindings<TViewModel>(IStellarView<TViewModel> view)
-        where TViewModel : class
+    public void RegisterBindings(IStellarView<TViewModel> view)
     {
         lock (_bindingLock)
         {
@@ -76,8 +76,7 @@ public abstract class ViewManager
         }
     }
 
-    public void UnregisterBindings<TViewModel>(IStellarView<TViewModel> view)
-        where TViewModel : class
+    public void UnregisterBindings(IStellarView<TViewModel> view)
     {
         lock (_bindingLock)
         {
@@ -94,8 +93,7 @@ public abstract class ViewManager
         }
     }
 
-    public virtual void HandleActivated<TViewModel>(IStellarView<TViewModel> view)
-        where TViewModel : class
+    public virtual void HandleActivated(IStellarView<TViewModel> view)
     {
         view.RegisterViewModelBindings();
 
@@ -104,17 +102,15 @@ public abstract class ViewManager
         OnLifecycle(view, LifecycleEvent.Activated);
     }
 
-    public virtual void HandleDeactivated<TViewModel>(IStellarView<TViewModel> view)
-        where TViewModel : class
+    public virtual void HandleDeactivated(IStellarView<TViewModel> view)
     {
         OnLifecycle(view, LifecycleEvent.Deactivated);
 
         UnregisterBindings(view);
     }
 
-    public virtual void PropertyChanged<TView, TViewModel>(TView view, string? propertyName = null)
+    public virtual void PropertyChanged<TView>(TView view, string? propertyName = null)
         where TView : IViewFor<TViewModel>
-        where TViewModel : class
     {
         if (propertyName == nameof(IViewFor<TViewModel>.ViewModel) && view.ViewModel is not null)
         {
@@ -122,8 +118,7 @@ public abstract class ViewManager
         }
     }
 
-    public void OnLifecycle<TViewModel>(IStellarView<TViewModel> view, LifecycleEvent lifecycleEvent)
-        where TViewModel : class
+    public void OnLifecycle(IStellarView<TViewModel> view, LifecycleEvent lifecycleEvent)
     {
         if (view.ViewModel is ILifecycleEventAware lea)
         {
@@ -138,8 +133,7 @@ public abstract class ViewManager
         _lifecycleEvents.Value.OnNext(lifecycleEvent);
     }
 
-    public void OnNavigating<TViewModel>(IStellarView<TViewModel> view, NavigationEvent navigationEvent)
-        where TViewModel : class
+    public void OnNavigating(IStellarView<TViewModel> view, NavigationEvent navigationEvent)
     {
         if (view.ViewModel is INavigationEventAware nea)
         {

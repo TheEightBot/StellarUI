@@ -10,7 +10,7 @@ public abstract class UserControlBase<TViewModel> : ReactiveUserControl<TViewMod
     where TViewModel : class
 {
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public ViewManager ViewManager { get; } = new AvaloniaViewManager<TViewModel>();
+    public ViewManager<TViewModel> ViewManager { get; } = new AvaloniaViewManager<TViewModel>();
 
     public IObservable<Unit> UserControlInitialized => ViewManager.Initialized;
 
@@ -50,7 +50,7 @@ public abstract class UserControlBase<TViewModel> : ReactiveUserControl<TViewMod
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
-        ViewManager.PropertyChanged<UserControlBase<TViewModel>, TViewModel>(this, change.Property.Name);
+        ViewManager.PropertyChanged(this, change.Property.Name);
 
         base.OnPropertyChanged(change);
     }
@@ -60,7 +60,7 @@ public abstract class UserControlBase<TViewModel, TDataModel> : ReactiveUserCont
     where TViewModel : class
 {
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public ViewManager ViewManager { get; } = new AvaloniaViewManager<TViewModel>();
+    public ViewManager<TViewModel> ViewManager { get; } = new AvaloniaViewManager<TViewModel>();
 
     public IObservable<Unit> UserControlInitialized => ViewManager.Initialized;
 
@@ -102,7 +102,7 @@ public abstract class UserControlBase<TViewModel, TDataModel> : ReactiveUserCont
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
-        ViewManager.PropertyChanged<UserControlBase<TViewModel, TDataModel>, TViewModel>(this, change.Property.Name);
+        ViewManager.PropertyChanged(this, change.Property.Name);
 
         base.OnPropertyChanged(change);
     }

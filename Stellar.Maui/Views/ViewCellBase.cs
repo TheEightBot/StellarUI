@@ -6,7 +6,7 @@ public abstract class ViewCellBase<TViewModel> : ReactiveViewCell<TViewModel>, I
     where TViewModel : class
 {
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public ViewManager ViewManager { get; } = new MauiViewManager<TViewModel>();
+    public ViewManager<TViewModel> ViewManager { get; } = new MauiViewManager<TViewModel>();
 
     public IObservable<Unit> Initialized => ViewManager.Initialized;
 
@@ -32,7 +32,7 @@ public abstract class ViewCellBase<TViewModel> : ReactiveViewCell<TViewModel>, I
 
     protected override void OnPropertyChanged(string? propertyName = null)
     {
-        ViewManager.PropertyChanged<ViewCellBase<TViewModel>, TViewModel>(this, propertyName);
+        ViewManager.PropertyChanged(this, propertyName);
 
         base.OnPropertyChanged(propertyName);
     }
@@ -42,7 +42,7 @@ public abstract class ViewCellBase<TViewModel, TDataModel> : ReactiveViewCell<TV
     where TViewModel : class
 {
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public ViewManager ViewManager { get; } = new MauiViewManager<TViewModel>();
+    public ViewManager<TViewModel> ViewManager { get; } = new MauiViewManager<TViewModel>();
 
     public IObservable<Unit> Initialized => ViewManager.Initialized;
 
@@ -70,7 +70,7 @@ public abstract class ViewCellBase<TViewModel, TDataModel> : ReactiveViewCell<TV
 
     protected override void OnPropertyChanged(string? propertyName = null)
     {
-        ViewManager.PropertyChanged<ViewCellBase<TViewModel, TDataModel>, TViewModel>(this, propertyName);
+        ViewManager.PropertyChanged(this, propertyName);
 
         base.OnPropertyChanged(propertyName);
     }

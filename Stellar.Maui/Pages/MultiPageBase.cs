@@ -7,7 +7,7 @@ public abstract class MultiPageBase<TPage, TViewModel> : ReactiveMultiPage<TPage
     where TViewModel : class
 {
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public ViewManager ViewManager { get; } = new MauiViewManager<TViewModel>();
+    public ViewManager<TViewModel> ViewManager { get; } = new MauiViewManager<TViewModel>();
 
     public IObservable<Unit> Initialized => ViewManager.Initialized;
 
@@ -53,7 +53,7 @@ public abstract class MultiPageBase<TPage, TViewModel> : ReactiveMultiPage<TPage
 
     protected override void OnPropertyChanged(string? propertyName = null)
     {
-        ViewManager.PropertyChanged<MultiPageBase<TPage, TViewModel>, TViewModel>(this, propertyName);
+        ViewManager.PropertyChanged(this, propertyName);
 
         base.OnPropertyChanged(propertyName);
     }

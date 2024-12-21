@@ -5,13 +5,12 @@ namespace Stellar;
 public interface IStellarView<TViewModel> : IViewFor<TViewModel>, IStellarView
     where TViewModel : class
 {
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public ViewManager<TViewModel> ViewManager { get; }
 }
 
 public interface IStellarView
 {
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    public ViewManager ViewManager { get; }
-
     public void Initialize();
 
     public void SetupUserInterface();

@@ -1,6 +1,7 @@
 {
-    "sdk": {
-        "rollForward": "latestFeature",
-        "allowPrerelease": false
-    }
+  "sdk": {
+    "version": "9.0.0",
+    "rollForward": "latestFeature",
+    "allowPrerelease": false
+  }
 }

@@ -37,8 +37,8 @@ public class SamplePage : ContentPageBase<ViewModels.SampleViewModel>
         Content =
             new Grid
             {
-                ColumnDefinitions = Columns.Define(Star),
-                RowDefinitions = Rows.Define(Auto, Auto, Auto, Auto, Auto, Auto, Auto, Star),
+                ColumnDefinitions = Columns.Define([Star]),
+                RowDefinitions = Rows.Define([Auto, Auto, Auto, Auto, Auto, Auto, Auto, Star]),
                 Padding = 8,
                 RowSpacing = 8,
                 Children =

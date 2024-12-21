@@ -6,7 +6,7 @@ public abstract class ShellBase<TViewModel> : ReactiveShell<TViewModel>, IStella
     where TViewModel : class
 {
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public ViewManager ViewManager { get; } = new MauiViewManager<TViewModel>();
+    public ViewManager<TViewModel> ViewManager { get; } = new MauiViewManager<TViewModel>();
 
     public IObservable<Unit> Activated => ViewManager.Activated;
 
@@ -46,7 +46,7 @@ public abstract class ShellBase<TViewModel> : ReactiveShell<TViewModel>, IStella
 
     protected override void OnPropertyChanged(string? propertyName = null)
     {
-        ViewManager.PropertyChanged<ShellBase<TViewModel>, TViewModel>(this, propertyName);
+        ViewManager.PropertyChanged(this, propertyName);
 
         base.OnPropertyChanged(propertyName);
     }

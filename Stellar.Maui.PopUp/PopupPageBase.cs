@@ -8,7 +8,7 @@ public abstract class PopupPageBase<TViewModel> : ReactivePopupPage<TViewModel>,
     where TViewModel : class
 {
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public ViewManager ViewManager { get; set; } = new MauiViewManager<TViewModel>();
+    public ViewManager<TViewModel> ViewManager { get; set; } = new MauiViewManager<TViewModel>();
 
     public IObservable<Unit> Initialized => ViewManager.Initialized;
 
@@ -54,7 +54,7 @@ public abstract class PopupPageBase<TViewModel> : ReactivePopupPage<TViewModel>,
 
     protected override void OnPropertyChanged(string propertyName = null)
     {
-        ViewManager.PropertyChanged<PopupPageBase<TViewModel>, TViewModel>(this, propertyName);
+        ViewManager.PropertyChanged(this, propertyName);
 
         base.OnPropertyChanged(propertyName);
     }

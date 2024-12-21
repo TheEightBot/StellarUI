@@ -6,7 +6,7 @@ public abstract class GridBase<TViewModel> : ReactiveGrid<TViewModel>, IStellarV
     where TViewModel : class
 {
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public ViewManager ViewManager { get; } = new MauiViewManager<TViewModel>();
+    public ViewManager<TViewModel> ViewManager { get; } = new MauiViewManager<TViewModel>();
 
     public IObservable<Unit> Initialized => ViewManager.Initialized;
 
@@ -36,7 +36,7 @@ public abstract class GridBase<TViewModel> : ReactiveGrid<TViewModel>, IStellarV
 
     protected override void OnPropertyChanged(string? propertyName = null)
     {
-        ViewManager.PropertyChanged<GridBase<TViewModel>, TViewModel>(this, propertyName);
+        ViewManager.PropertyChanged(this, propertyName);
 
         base.OnPropertyChanged(propertyName);
     }
@@ -46,7 +46,7 @@ public abstract class GridBase<TViewModel, TDataModel> : ReactiveGrid<TViewModel
     where TViewModel : class
 {
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public ViewManager ViewManager { get; } = new MauiViewManager<TViewModel>();
+    public ViewManager<TViewModel> ViewManager { get; } = new MauiViewManager<TViewModel>();
 
     public IObservable<Unit> Initialized => ViewManager.Initialized;
 
@@ -78,7 +78,7 @@ public abstract class GridBase<TViewModel, TDataModel> : ReactiveGrid<TViewModel
 
     protected override void OnPropertyChanged(string? propertyName = null)
     {
-        ViewManager.PropertyChanged<GridBase<TViewModel, TDataModel>, TViewModel>(this, propertyName);
+        ViewManager.PropertyChanged(this, propertyName);
         base.OnPropertyChanged(propertyName);
     }
 
