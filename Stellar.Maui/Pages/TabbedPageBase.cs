@@ -28,6 +28,19 @@ public abstract class TabbedPageBase<TViewModel> : ReactiveTabbedPage<TViewModel
 
     public IObservable<NavigationEvent> NavigationEvents => ViewManager.NavigationEvents;
 
+    protected TabbedPageBase(
+        TViewModel? viewModel = null,
+        bool resolveViewModel = true,
+        bool maintain = false,
+        bool delayBindingRegistrationUntilAttached = false,
+        bool manuallyInitialize = false)
+    {
+        if (!manuallyInitialize)
+        {
+            this.InitializeStellarComponent(viewModel, resolveViewModel, maintain, delayBindingRegistrationUntilAttached);
+        }
+    }
+    
     public virtual void Initialize()
     {
     }

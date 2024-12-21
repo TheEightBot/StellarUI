@@ -28,6 +28,19 @@ public abstract class ContentPageBase<TViewModel> : ReactiveContentPage<TViewMod
 
     public IObservable<NavigationEvent> NavigationEvents => ViewManager.NavigationEvents;
 
+    protected ContentPageBase(
+        TViewModel? viewModel = null,
+        bool resolveViewModel = true,
+        bool maintain = false,
+        bool delayBindingRegistrationUntilAttached = false,
+        bool manuallyInitialize = false)
+    {
+        if (!manuallyInitialize)
+        {
+            this.InitializeStellarComponent(viewModel, resolveViewModel, maintain, delayBindingRegistrationUntilAttached);
+        }
+    }
+    
     public virtual void Initialize()
     {
     }
