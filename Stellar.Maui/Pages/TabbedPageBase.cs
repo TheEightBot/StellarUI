@@ -40,7 +40,7 @@ public abstract class TabbedPageBase<TViewModel> : ReactiveTabbedPage<TViewModel
             this.InitializeStellarComponent(viewModel, resolveViewModel, maintain, delayBindingRegistrationUntilAttached);
         }
     }
-    
+
     public virtual void Initialize()
     {
     }

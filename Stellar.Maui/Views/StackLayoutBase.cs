@@ -38,7 +38,7 @@ public abstract class StackLayoutBase<TViewModel> : ReactiveStackLayout<TViewMod
             this.InitializeStellarComponent(viewModel, resolveViewModel, maintain, delayBindingRegistrationUntilAttached);
         }
     }
-    
+
     public virtual void Initialize()
     {
     }
@@ -91,7 +91,7 @@ public abstract class StackLayoutBase<TViewModel, TDataModel> : ReactiveGrid<TVi
             this.InitializeStellarComponent(viewModel, resolveViewModel, maintain, delayBindingRegistrationUntilAttached);
         }
     }
-    
+
     public virtual void Initialize()
     {
     }

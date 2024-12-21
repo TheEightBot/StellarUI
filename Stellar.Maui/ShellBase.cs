@@ -34,7 +34,7 @@ public abstract class ShellBase<TViewModel> : ReactiveShell<TViewModel>, IStella
             this.InitializeStellarComponent(viewModel, resolveViewModel, maintain, delayBindingRegistrationUntilAttached);
         }
     }
-    
+
     public virtual void Initialize()
     {
     }

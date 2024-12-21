@@ -40,7 +40,7 @@ public abstract class ContentPageBase<TViewModel> : ReactiveContentPage<TViewMod
             this.InitializeStellarComponent(viewModel, resolveViewModel, maintain, delayBindingRegistrationUntilAttached);
         }
     }
-    
+
     public virtual void Initialize()
     {
     }

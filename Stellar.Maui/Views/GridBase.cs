@@ -38,7 +38,7 @@ public abstract class GridBase<TViewModel> : ReactiveGrid<TViewModel>, IStellarV
             this.InitializeStellarComponent(viewModel, resolveViewModel, maintain, delayBindingRegistrationUntilAttached);
         }
     }
-    
+
     public virtual void Initialize()
     {
     }
@@ -91,7 +91,7 @@ public abstract class GridBase<TViewModel, TDataModel> : ReactiveGrid<TViewModel
             this.InitializeStellarComponent(viewModel, resolveViewModel, maintain, delayBindingRegistrationUntilAttached);
         }
     }
-    
+
     public virtual void Initialize()
     {
     }

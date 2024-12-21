@@ -41,7 +41,7 @@ public abstract class MultiPageBase<TPage, TViewModel> : ReactiveMultiPage<TPage
             this.InitializeStellarComponent(viewModel, resolveViewModel, maintain, delayBindingRegistrationUntilAttached);
         }
     }
-    
+
     public virtual void Initialize()
     {
     }

@@ -38,7 +38,7 @@ public abstract class ContentViewBase<TViewModel> : ReactiveContentView<TViewMod
             this.InitializeStellarComponent(viewModel, resolveViewModel, maintain, delayBindingRegistrationUntilAttached);
         }
     }
-    
+
     public virtual void Initialize()
     {
     }
@@ -90,7 +90,7 @@ public abstract class ContentViewBase<TViewModel, TDataModel> : ReactiveContentV
             this.InitializeStellarComponent(viewModel, resolveViewModel, maintain, delayBindingRegistrationUntilAttached);
         }
     }
-    
+
     public virtual void Initialize()
     {
     }

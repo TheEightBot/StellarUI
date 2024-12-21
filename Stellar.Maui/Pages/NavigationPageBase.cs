@@ -40,7 +40,7 @@ public abstract class NavigationPageBase<TViewModel> : ReactiveNavigationPage<TV
             this.InitializeStellarComponent(viewModel, resolveViewModel, maintain, delayBindingRegistrationUntilAttached);
         }
     }
-    
+
     public virtual void Initialize()
     {
     }

@@ -40,7 +40,7 @@ public abstract class FlyoutPageBase<TViewModel> : ReactiveMasterDetailPage<TVie
             this.InitializeStellarComponent(viewModel, resolveViewModel, maintain, delayBindingRegistrationUntilAttached);
         }
     }
-    
+
     public virtual void Initialize()
     {
     }
