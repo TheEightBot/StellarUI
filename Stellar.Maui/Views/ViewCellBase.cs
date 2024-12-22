@@ -24,7 +24,7 @@ public abstract class ViewCellBase<TViewModel> : ReactiveViewCell<TViewModel>, I
 
     protected ViewCellBase(
         TViewModel? viewModel = null,
-        bool resolveViewModel = true,
+        bool resolveViewModel = false,
         bool maintain = false,
         bool delayBindingRegistrationUntilAttached = false,
         bool manuallyInitialize = false)
@@ -73,7 +73,7 @@ public abstract class ViewCellBase<TViewModel, TDataModel> : ReactiveViewCell<TV
 
     protected ViewCellBase(
         TViewModel? viewModel = null,
-        bool resolveViewModel = true,
+        bool resolveViewModel = false,
         bool maintain = false,
         bool delayBindingRegistrationUntilAttached = false,
         bool manuallyInitialize = false)
