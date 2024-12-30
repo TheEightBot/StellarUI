@@ -9,7 +9,7 @@ namespace Stellar.Maui;
 
 public static class PickerExtensions
 {
-    public static IDisposable Bind<TViewIn, TItemsModel>(
+    public static IDisposable BindPicker<TViewIn, TItemsModel>(
         this TViewIn view,
         Expression<Func<TViewIn, Picker>> selectPicker,
         IEnumerable<TItemsModel> items,
@@ -35,12 +35,12 @@ public static class PickerExtensions
             });
     }
 
-    public static ReactivePickerBinder<TViewModel> Bind<TViewModel>(this Picker picker, IEnumerable<TViewModel> items, Action<TViewModel?> selectedItemChanged, Func<TViewModel?, bool> selectItem, Func<TViewModel?, string> titleSelector)
+    public static ReactivePickerBinder<TViewModel> BindPicker<TViewModel>(this Picker picker, IEnumerable<TViewModel> items, Action<TViewModel?> selectedItemChanged, Func<TViewModel?, bool> selectItem, Func<TViewModel?, string> titleSelector)
     {
         return new ReactivePickerBinder<TViewModel>(picker, items, selectedItemChanged, selectItem, titleSelector, null);
     }
 
-    public static IDisposable Bind<TViewIn, TItemsModel, TDontCare>(
+    public static IDisposable BindPicker<TViewIn, TItemsModel, TDontCare>(
         this TViewIn view,
         Expression<Func<TViewIn, Picker>> selectPicker,
         IEnumerable<TItemsModel> items,
@@ -75,7 +75,7 @@ public static class PickerExtensions
             });
     }
 
-    public static ReactivePickerBinder<TViewModel> Bind<TViewModel, TDontCare>(
+    public static ReactivePickerBinder<TViewModel> BindPicker<TViewModel, TDontCare>(
         this Picker picker,
         IEnumerable<TViewModel> items,
         Action<TViewModel?> selectedItemChanged,
@@ -93,7 +93,7 @@ public static class PickerExtensions
         return new ReactivePickerBinder<TViewModel>(picker, items, selectedItemChanged, selectItem, titleSelector, refresh);
     }
 
-    public static IDisposable Bind<TViewIn, TItemsModel>(
+    public static IDisposable BindPicker<TViewIn, TItemsModel>(
         this TViewIn view,
         Expression<Func<TViewIn, Picker>> selectPicker,
         IObservable<IEnumerable<TItemsModel>> items,
@@ -120,7 +120,7 @@ public static class PickerExtensions
             });
     }
 
-    public static ReactivePickerBinder<TViewModel> Bind<TViewModel>(this Picker picker, IObservable<IEnumerable<TViewModel>> items, Action<TViewModel?> selectedItemChanged, Func<TViewModel?, bool> selectItem, Func<TViewModel, string> titleSelector)
+    public static ReactivePickerBinder<TViewModel> BindPicker<TViewModel>(this Picker picker, IObservable<IEnumerable<TViewModel>> items, Action<TViewModel?> selectedItemChanged, Func<TViewModel?, bool> selectItem, Func<TViewModel, string> titleSelector)
     {
         return new ReactivePickerBinder<TViewModel>(picker, items, selectedItemChanged, selectItem, titleSelector, null);
     }
@@ -161,7 +161,7 @@ public static class PickerExtensions
             });
     }
 
-    public static ReactivePickerBinder<TViewModel> Bind<TViewModel, TDontCare>(
+    public static ReactivePickerBinder<TViewModel> BindPicker<TViewModel, TDontCare>(
         this Picker picker,
         IObservable<IEnumerable<TViewModel>> items,
         Action<TViewModel?> selectedItemChanged,
