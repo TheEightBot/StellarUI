@@ -22,6 +22,11 @@ public abstract class ViewCellBase<TViewModel> : ReactiveViewCell<TViewModel>, I
 
     public IObservable<LifecycleEvent> LifecycleEvents => ViewManager.LifecycleEvents;
 
+    protected ViewCellBase()
+        : this(manuallyInitialize: true)
+    {
+    }
+
     protected ViewCellBase(
         TViewModel? viewModel = null,
         bool resolveViewModel = false,
@@ -70,6 +75,11 @@ public abstract class ViewCellBase<TViewModel, TDataModel> : ReactiveViewCell<TV
     public IObservable<Unit> Disposed => ViewManager.Disposed;
 
     public IObservable<LifecycleEvent> LifecycleEvents => ViewManager.LifecycleEvents;
+
+    protected ViewCellBase()
+        : this(manuallyInitialize: true)
+    {
+    }
 
     protected ViewCellBase(
         TViewModel? viewModel = null,

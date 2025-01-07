@@ -22,6 +22,11 @@ public abstract class ShellBase<TViewModel> : ReactiveShell<TViewModel>, IStella
 
     public IObservable<LifecycleEvent> LifecycleEvents => ViewManager.LifecycleEvents;
 
+    protected ShellBase()
+        : this(manuallyInitialize: true)
+    {
+    }
+
     protected ShellBase(
         TViewModel? viewModel = null,
         bool resolveViewModel = true,

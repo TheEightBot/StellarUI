@@ -26,6 +26,11 @@ public abstract class StackLayoutBase<TViewModel> : ReactiveStackLayout<TViewMod
 
     public IObservable<LifecycleEvent> LifecycleEvents => ViewManager.LifecycleEvents;
 
+    protected StackLayoutBase()
+        : this(manuallyInitialize: true)
+    {
+    }
+
     protected StackLayoutBase(
         TViewModel? viewModel = null,
         bool resolveViewModel = true,
@@ -78,6 +83,11 @@ public abstract class StackLayoutBase<TViewModel, TDataModel> : ReactiveGrid<TVi
     public IObservable<Unit> Disposed => ViewManager.Disposed;
 
     public IObservable<LifecycleEvent> LifecycleEvents => ViewManager.LifecycleEvents;
+
+    protected StackLayoutBase()
+        : this(manuallyInitialize: true)
+    {
+    }
 
     protected StackLayoutBase(
         TViewModel? viewModel = null,

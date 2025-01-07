@@ -66,7 +66,7 @@ public static class IViewForExtensions
     public static void DisposeView<TViewModel>(this IStellarView<TViewModel> ve)
         where TViewModel : class
     {
-        if (ve is not null && ve is IStellarView<TViewModel> isv && !isv.ViewManager.Maintain && isv is IDisposable id)
+        if (!ve.ViewManager.Maintain && ve is IDisposable id)
         {
             id.Dispose();
         }

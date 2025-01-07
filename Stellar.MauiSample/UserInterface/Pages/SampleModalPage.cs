@@ -82,7 +82,7 @@ public class SampleModalPage : ContentPageBase<SampleViewModel>
             .DisposeWith(disposables);
 
         _picker
-            .Bind(
+            .BindPicker(
                 this.WhenAnyValue(static x => x.ViewModel.TestItems),
                 x => this.ViewModel.SelectedTestItem = x,
                 x => this.ViewModel.SelectedTestItem == x,

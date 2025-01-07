@@ -28,6 +28,11 @@ public abstract class ContentPageBase<TViewModel> : ReactiveContentPage<TViewMod
 
     public IObservable<NavigationEvent> NavigationEvents => ViewManager.NavigationEvents;
 
+    protected ContentPageBase()
+        : this(manuallyInitialize: true)
+    {
+    }
+
     protected ContentPageBase(
         TViewModel? viewModel = null,
         bool resolveViewModel = true,

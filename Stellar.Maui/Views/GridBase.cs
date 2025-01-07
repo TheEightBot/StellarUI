@@ -26,6 +26,11 @@ public abstract class GridBase<TViewModel> : ReactiveGrid<TViewModel>, IStellarV
 
     public IObservable<LifecycleEvent> LifecycleEvents => ViewManager.LifecycleEvents;
 
+    protected GridBase()
+        : this(manuallyInitialize: true)
+    {
+    }
+
     protected GridBase(
         TViewModel? viewModel = null,
         bool resolveViewModel = true,
@@ -78,6 +83,11 @@ public abstract class GridBase<TViewModel, TDataModel> : ReactiveGrid<TViewModel
     public IObservable<Unit> Disposed => ViewManager.Disposed;
 
     public IObservable<LifecycleEvent> LifecycleEvents => ViewManager.LifecycleEvents;
+
+    protected GridBase()
+        : this(manuallyInitialize: true)
+    {
+    }
 
     protected GridBase(
         TViewModel? viewModel = null,

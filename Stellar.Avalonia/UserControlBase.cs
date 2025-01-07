@@ -22,6 +22,24 @@ public abstract class UserControlBase<TViewModel> : ReactiveUserControl<TViewMod
 
     public IObservable<LifecycleEvent> LifecycleEvents => ViewManager.LifecycleEvents;
 
+    protected UserControlBase()
+        : this(manuallyInitialize: true)
+    {
+    }
+
+    protected UserControlBase(
+        TViewModel? viewModel = null,
+        bool resolveViewModel = true,
+        bool maintain = false,
+        bool delayBindingRegistrationUntilAttached = false,
+        bool manuallyInitialize = false)
+    {
+        if (!manuallyInitialize)
+        {
+            this.InitializeStellarComponent(viewModel, resolveViewModel, maintain, delayBindingRegistrationUntilAttached);
+        }
+    }
+
     public virtual void Initialize()
     {
     }

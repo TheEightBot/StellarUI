@@ -29,6 +29,11 @@ public abstract class MultiPageBase<TPage, TViewModel> : ReactiveMultiPage<TPage
 
     public IObservable<NavigationEvent> NavigationEvents => ViewManager.NavigationEvents;
 
+    protected MultiPageBase()
+        : this(manuallyInitialize: true)
+    {
+    }
+
     protected MultiPageBase(
         TViewModel? viewModel = null,
         bool resolveViewModel = true,

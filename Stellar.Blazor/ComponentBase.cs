@@ -13,6 +13,7 @@ public abstract class ComponentBase<TViewModel> : ReactiveComponentBase<TViewMod
     private bool _isDisposed;
 
     [Inject]
+    [Required]
     protected NavigationManager Navigation { get; private set; }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
@@ -27,6 +28,24 @@ public abstract class ComponentBase<TViewModel> : ReactiveComponentBase<TViewMod
     public IObservable<Unit> Disposed => ViewManager.Disposed;
 
     public IObservable<LifecycleEvent> LifecycleEvents => ViewManager.LifecycleEvents;
+
+    protected ComponentBase()
+        : this(manuallyInitialize: true)
+    {
+    }
+
+    protected ComponentBase(
+        TViewModel? viewModel = null,
+        bool resolveViewModel = true,
+        bool maintain = false,
+        bool delayBindingRegistrationUntilAttached = false,
+        bool manuallyInitialize = false)
+    {
+        if (!manuallyInitialize)
+        {
+            this.InitializeStellarComponent(viewModel, resolveViewModel, maintain, delayBindingRegistrationUntilAttached);
+        }
+    }
 
     public virtual void Initialize()
     {

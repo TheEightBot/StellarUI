@@ -23,6 +23,24 @@ public abstract class InjectableComponentBase<TViewModel> : ReactiveInjectableCo
 
     public IObservable<LifecycleEvent> LifecycleEvents => ViewManager.LifecycleEvents;
 
+    protected InjectableComponentBase()
+        : this(manuallyInitialize: true)
+    {
+    }
+
+    protected InjectableComponentBase(
+        TViewModel? viewModel = null,
+        bool resolveViewModel = true,
+        bool maintain = false,
+        bool delayBindingRegistrationUntilAttached = false,
+        bool manuallyInitialize = false)
+    {
+        if (!manuallyInitialize)
+        {
+            this.InitializeStellarComponent(viewModel, resolveViewModel, maintain, delayBindingRegistrationUntilAttached);
+        }
+    }
+
     public virtual void Initialize()
     {
     }

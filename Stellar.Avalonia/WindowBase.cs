@@ -29,6 +29,24 @@ namespace Stellar.Avalonia
 
         public IObservable<LifecycleEvent> LifecycleEvents => ViewManager.LifecycleEvents;
 
+        protected WindowBase()
+            : this(manuallyInitialize: true)
+        {
+        }
+
+        protected WindowBase(
+            TViewModel? viewModel = null,
+            bool resolveViewModel = true,
+            bool maintain = false,
+            bool delayBindingRegistrationUntilAttached = false,
+            bool manuallyInitialize = false)
+        {
+            if (!manuallyInitialize)
+            {
+                this.InitializeStellarComponent(viewModel, resolveViewModel, maintain, delayBindingRegistrationUntilAttached);
+            }
+        }
+
         public virtual void Initialize()
         {
         }

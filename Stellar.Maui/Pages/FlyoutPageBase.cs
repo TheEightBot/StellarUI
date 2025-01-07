@@ -28,6 +28,11 @@ public abstract class FlyoutPageBase<TViewModel> : ReactiveMasterDetailPage<TVie
 
     public IObservable<NavigationEvent> NavigationEvents => ViewManager.NavigationEvents;
 
+    protected FlyoutPageBase()
+        : this(manuallyInitialize: true)
+    {
+    }
+
     protected FlyoutPageBase(
         TViewModel? viewModel = null,
         bool resolveViewModel = true,

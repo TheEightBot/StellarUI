@@ -23,6 +23,24 @@ public abstract class LayoutComponentBase<TViewModel> : ReactiveLayoutComponentB
 
     public IObservable<LifecycleEvent> LifecycleEvents => ViewManager.LifecycleEvents;
 
+    protected LayoutComponentBase()
+        : this(manuallyInitialize: true)
+    {
+    }
+
+    protected LayoutComponentBase(
+        TViewModel? viewModel = null,
+        bool resolveViewModel = true,
+        bool maintain = false,
+        bool delayBindingRegistrationUntilAttached = false,
+        bool manuallyInitialize = false)
+    {
+        if (!manuallyInitialize)
+        {
+            this.InitializeStellarComponent(viewModel, resolveViewModel, maintain, delayBindingRegistrationUntilAttached);
+        }
+    }
+
     public virtual void Initialize()
     {
     }

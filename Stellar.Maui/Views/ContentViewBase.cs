@@ -26,6 +26,11 @@ public abstract class ContentViewBase<TViewModel> : ReactiveContentView<TViewMod
 
     public IObservable<LifecycleEvent> LifecycleEvents => ViewManager.LifecycleEvents;
 
+    protected ContentViewBase()
+        : this(manuallyInitialize: true)
+    {
+    }
+
     protected ContentViewBase(
         TViewModel? viewModel = null,
         bool resolveViewModel = true,
@@ -77,6 +82,11 @@ public abstract class ContentViewBase<TViewModel, TDataModel> : ReactiveContentV
     public IObservable<Unit> Disposed => ViewManager.Disposed;
 
     public IObservable<LifecycleEvent> LifecycleEvents => ViewManager.LifecycleEvents;
+
+    protected ContentViewBase()
+        : this(manuallyInitialize: true)
+    {
+    }
 
     protected ContentViewBase(
         TViewModel? viewModel = null,

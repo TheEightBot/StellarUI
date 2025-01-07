@@ -5,7 +5,7 @@
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
 		<SingleProject>true</SingleProject>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>warnings</Nullable>
+		<Nullable>enable</Nullable>
 		<PackageId>StellarUI.Avalonia</PackageId>
 		<AssemblyName>StellarUI.Avalonia</AssemblyName>
 		<RootNamespace>StellarUI.Avalonia</RootNamespace>
