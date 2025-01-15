@@ -233,13 +233,12 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
             .ObserveOn(Schedulers.ShortTermThreadPoolScheduler)
             .Where(static _ => DeviceInfo.Platform == DevicePlatform.iOS)
             .Where(static args => args.IsFocused)
-            .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(
                 _ =>
                 {
                     if (_picker is not null && _picker.SelectedIndex < 0 && _picker.Items.Count > 0)
                     {
-                        _picker.SelectedIndex = 0;
+                        _picker.Dispatcher.Dispatch(() => _picker.SelectedIndex = 0);
                     }
                 })
             .DisposeWith(_disposableSubscriptions);
@@ -320,15 +319,15 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
             .ObserveOn(Schedulers.ShortTermThreadPoolScheduler)
             .Where(_ => DeviceInfo.Platform == DevicePlatform.iOS)
             .Where(args => args.IsFocused)
-            .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe(
+            .Do(
                 _ =>
                 {
                     if (_picker is not null && _picker.SelectedIndex < 0 && _picker.Items.Count > 0)
                     {
-                        _picker.SelectedIndex = 0;
+                        _picker.Dispatcher.Dispatch(() => _picker.SelectedIndex = 0);
                     }
                 })
+            .Subscribe()
             .DisposeWith(_disposableSubscriptions);
 
         _picker
@@ -440,7 +439,6 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
         if (!fromUi && _picker is not null && (_picker.SelectedItem is null || !EqualityComparer<TViewModel>.Default.Equals(item, this.SelectedItem)))
         {
             var picker = _picker;
-
             picker?.Dispatcher?.Dispatch(() => picker.SelectedItem = item);
         }
     }
