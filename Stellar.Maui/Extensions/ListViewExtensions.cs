@@ -23,7 +23,7 @@ public static class ListViewExtensions
         if (deselect)
         {
             observable
-                .Do(_ => listView.SelectedItem = null);
+                .Do(_ => listView.Dispatcher.Dispatch(() => listView.SelectedItem = null));
         }
 
         return observable;
@@ -63,7 +63,7 @@ public static class ListViewExtensions
         if (deselect)
         {
             observable
-                .Do(_ => listView.SelectedItem = null);
+                .Do(_ => listView.Dispatcher.Dispatch(() => listView.SelectedItem = null));
         }
 
         return observable;

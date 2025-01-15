@@ -10,7 +10,6 @@ public static class ItemsViewExtensions
         var bindingDisposables = new CompositeDisposable();
 
         listItems
-            .ObserveOn(RxApp.MainThreadScheduler)
             .Do(
                 items =>
                 {
@@ -19,8 +18,12 @@ public static class ItemsViewExtensions
                         return;
                     }
 
-                    itemsView.ItemsSource = null;
-                    itemsView.ItemsSource = items;
+                    itemsView.Dispatcher.Dispatch(
+                        () =>
+                        {
+                            itemsView.ItemsSource = null;
+                            itemsView.ItemsSource = items;
+                        });
                 })
             .Subscribe()
             .DisposeWith(bindingDisposables);
