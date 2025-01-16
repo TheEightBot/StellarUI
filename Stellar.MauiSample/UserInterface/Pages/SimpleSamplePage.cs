@@ -1,5 +1,6 @@
 using ReactiveMarbles.ObservableEvents;
 using Stellar.MauiSample.UserInterface.Views;
+using Stellar.MauiSample.ViewModels;
 using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace Stellar.MauiSample.UserInterface.Pages;
@@ -25,9 +26,9 @@ public class SimpleSamplePage : ContentPageBase<ViewModels.SampleViewModel>
 
     private ListView _listView;
 
-    public SimpleSamplePage()
+    public SimpleSamplePage(SampleViewModel viewModel)
     {
-        this.InitializeStellarComponent();
+        this.InitializeStellarComponent(viewModel);
     }
 
     ~SimpleSamplePage()
@@ -93,7 +94,7 @@ public class SimpleSamplePage : ContentPageBase<ViewModels.SampleViewModel>
                     }
                         .Row(5).Column(0)
                         .Assign(out _parameterValue),
-                    new SampleView
+                    new SampleView(this.ViewModel)
                     {
                         HeightRequest = 60,
                         VerticalOptions = LayoutOptions.Start,

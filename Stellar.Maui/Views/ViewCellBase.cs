@@ -29,14 +29,13 @@ public abstract class ViewCellBase<TViewModel> : ReactiveViewCell<TViewModel>, I
 
     protected ViewCellBase(
         TViewModel? viewModel = null,
-        bool resolveViewModel = false,
         bool maintain = false,
         bool delayBindingRegistrationUntilAttached = false,
-        bool manuallyInitialize = false)
+        bool manuallyInitialize = true)
     {
         if (!manuallyInitialize)
         {
-            this.InitializeStellarComponent(viewModel, resolveViewModel, maintain, delayBindingRegistrationUntilAttached);
+            this.InitializeStellarComponent(viewModel, maintain, delayBindingRegistrationUntilAttached);
         }
     }
 
@@ -83,14 +82,13 @@ public abstract class ViewCellBase<TViewModel, TDataModel> : ReactiveViewCell<TV
 
     protected ViewCellBase(
         TViewModel? viewModel = null,
-        bool resolveViewModel = false,
         bool maintain = false,
         bool delayBindingRegistrationUntilAttached = false,
-        bool manuallyInitialize = false)
+        bool manuallyInitialize = true)
     {
         if (!manuallyInitialize)
         {
-            this.InitializeStellarComponent(viewModel, resolveViewModel, maintain, delayBindingRegistrationUntilAttached);
+            this.InitializeStellarComponent(viewModel, maintain, delayBindingRegistrationUntilAttached);
         }
     }
 

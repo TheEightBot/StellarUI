@@ -15,9 +15,9 @@ public class SampleValidationPage : ContentPageBase<ViewModels.SampleValidationV
 
     private BoxView _color;
 
-    public SampleValidationPage()
+    public SampleValidationPage(SampleValidationViewModel viewModel)
     {
-        this.InitializeStellarComponent();
+        this.InitializeStellarComponent(viewModel);
     }
 
     public override void SetupUserInterface()

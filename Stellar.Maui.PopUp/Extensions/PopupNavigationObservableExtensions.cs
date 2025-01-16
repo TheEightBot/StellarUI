@@ -14,12 +14,12 @@ public static class PopupNavigationObservableExtensions
 {
     public static IDisposable NavigateToPopupPage<TPage>(
         this IObservable<Unit> observable,
-        Action<TPage, Unit> preNavigation = null,
-        Action<TPage, Unit> postNavigation = null,
-        Action<Unit, IDictionary<string, object>> queryParameters = null,
+        Action<TPage, Unit>? preNavigation = null,
+        Action<TPage, Unit>? postNavigation = null,
+        Action<Unit, IDictionary<string, object>>? queryParameters = null,
         bool animated = true,
         bool allowMultiple = false,
-        IScheduler pageCreationScheduler = null,
+        IScheduler? pageCreationScheduler = null,
         TimeSpan? multiTapThrottleDuration = null)
         where TPage : PopupPage
     {
@@ -27,13 +27,13 @@ public static class PopupNavigationObservableExtensions
     }
 
     public static IDisposable NavigateToPopupPage<TParameter, TPage>(
-        this IObservable<TParameter> observable,
-        Action<TPage, TParameter> preNavigation = null,
-        Action<TPage, TParameter> postNavigation = null,
-        Action<TParameter, IDictionary<string, object>> queryParameters = null,
+        this IObservable<TParameter?> observable,
+        Action<TPage, TParameter?>? preNavigation = null,
+        Action<TPage, TParameter?>? postNavigation = null,
+        Action<TParameter?, IDictionary<string, object>>? queryParameters = null,
         bool animated = true,
         bool allowMultiple = false,
-        IScheduler pageCreationScheduler = null,
+        IScheduler? pageCreationScheduler = null,
         TimeSpan? multiTapThrottleDuration = null)
         where TPage : PopupPage
     {
@@ -96,13 +96,13 @@ public static class PopupNavigationObservableExtensions
 
     public static IDisposable NavigateToPopupPage<TParameter, TPage>(
         this IObservable<TParameter> observable,
-        Func<TParameter, TPage> pageCreator,
-        Action<TPage, TParameter> preNavigation = null,
-        Action<TPage, TParameter> postNavigation = null,
-        Action<TParameter, IDictionary<string, object>> queryParameters = null,
+        Func<TParameter?, TPage> pageCreator,
+        Action<TPage, TParameter?>? preNavigation = null,
+        Action<TPage, TParameter?>? postNavigation = null,
+        Action<TParameter?, IDictionary<string, object>>? queryParameters = null,
         bool animated = true,
         bool allowMultiple = false,
-        IScheduler pageCreationScheduler = null,
+        IScheduler? pageCreationScheduler = null,
         TimeSpan? multiTapThrottleDuration = null)
         where TPage : PopupPage
     {
@@ -160,12 +160,12 @@ public static class PopupNavigationObservableExtensions
     public static IDisposable NavigateToPopupPage<TParameter, TPage, TViewModel>(
         this IObservable<TParameter> observable,
         Func<TParameter, TPage> pageCreator,
-        Action<TPage, TParameter> preNavigation = null,
-        Action<TPage, TParameter> postNavigation = null,
-        Action<TParameter, TViewModel> viewModelMap = null,
+        Action<TPage, TParameter?>? preNavigation = null,
+        Action<TPage, TParameter?>? postNavigation = null,
+        Action<TParameter?, TViewModel>? viewModelMap = null,
         bool animated = true,
         bool allowMultiple = false,
-        IScheduler pageCreationScheduler = null,
+        IScheduler? pageCreationScheduler = null,
         TimeSpan? multiTapThrottleDuration = null)
         where TPage : PopupPage, IViewFor<TViewModel>
         where TViewModel : class
@@ -221,8 +221,8 @@ public static class PopupNavigationObservableExtensions
 
     public static IDisposable NavigatePopPopupPage<TParameter>(
         this IObservable<TParameter> observable,
-        Action<TParameter> preNavigation = null,
-        Action<TParameter> postNavigation = null,
+        Action<TParameter?>? preNavigation = null,
+        Action<TParameter?>? postNavigation = null,
         bool animated = true,
         bool allowMultiple = false,
         TimeSpan? multiTapThrottleDuration = null)
@@ -234,7 +234,7 @@ public static class PopupNavigationObservableExtensions
             .Select(
                 x =>
                 {
-                    var mainPage = Application.Current.Windows[0].Page;
+                    var mainPage = Application.Current!.Windows[0].Page;
 
                     if (mainPage is null)
                     {
@@ -271,8 +271,8 @@ public static class PopupNavigationObservableExtensions
 
     public static IDisposable NavigatePopAllPopupPage<TParameter>(
         this IObservable<TParameter> observable,
-        Action<TParameter> preNavigation = null,
-        Action<TParameter> postNavigation = null,
+        Action<TParameter?>? preNavigation = null,
+        Action<TParameter?>? postNavigation = null,
         bool animated = true,
         bool allowMultiple = false,
         TimeSpan? multiTapThrottleDuration = null)
@@ -284,7 +284,7 @@ public static class PopupNavigationObservableExtensions
             .Select(
                 x =>
                 {
-                    var mainPage = Application.Current.Windows[0].Page;
+                    var mainPage = Application.Current!.Windows[0].Page;
 
                     if (mainPage is null)
                     {
@@ -322,8 +322,8 @@ public static class PopupNavigationObservableExtensions
     public static IDisposable NavigateRemovePopupPage<TParameter, TPage>(
         this IObservable<TParameter> observable,
         TPage page,
-        Action<TPage, TParameter> preNavigation = null,
-        Action<TPage, TParameter> postNavigation = null,
+        Action<TPage, TParameter?>? preNavigation = null,
+        Action<TPage, TParameter?>? postNavigation = null,
         bool animated = true,
         bool allowMultiple = false,
         TimeSpan? multiTapThrottleDuration = null)
@@ -336,7 +336,7 @@ public static class PopupNavigationObservableExtensions
             .Select(
                 x =>
                 {
-                    var mainPage = Application.Current.Windows[0].Page;
+                    var mainPage = Application.Current!.Windows[0].Page;
 
                     if (mainPage is null)
                     {

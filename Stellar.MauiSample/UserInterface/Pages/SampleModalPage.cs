@@ -16,9 +16,9 @@ public class SampleModalPage : ContentPageBase<SampleViewModel>
 
     private ListView _listView;
 
-    public SampleModalPage()
+    public SampleModalPage(SampleViewModel viewModel)
     {
-        this.InitializeStellarComponent();
+        this.InitializeStellarComponent(viewModel);
     }
 
     public override void SetupUserInterface()

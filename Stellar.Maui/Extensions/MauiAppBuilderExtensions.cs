@@ -1,8 +1,6 @@
 ﻿using System.Reflection;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Splat;
-using Splat.Microsoft.Extensions.DependencyInjection;
 
 namespace Stellar.Maui;
 
@@ -20,8 +18,6 @@ public static class MauiAppBuilderExtensions
         PlatformRegistrationManager.SetRegistrationNamespaces(RegistrationNamespace.Maui);
         Locator.CurrentMutable.InitializeSplat();
         Locator.CurrentMutable.InitializeReactiveUI();
-
-        mauiAppBuilder.Services.UseMicrosoftDependencyResolver();
 
         mauiAppBuilder
             .Services
