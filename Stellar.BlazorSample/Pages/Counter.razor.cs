@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Stellar.BlazorSample.ViewModels;
 
 namespace Stellar.BlazorSample.Pages;
 
@@ -14,9 +15,9 @@ public partial class Counter
         set => ViewModel.Count = value;
     }
 
-    public Counter()
+    public Counter(CounterViewModel viewModel)
     {
-        this.InitializeStellarComponent();
+        this.InitializeStellarComponent(viewModel);
     }
 
     public override void Bind(CompositeDisposable disposables)

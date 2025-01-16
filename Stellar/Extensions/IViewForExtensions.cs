@@ -8,24 +8,12 @@ public static class IViewForExtensions
 {
     public static void SetupViewModel<TViewModel>(
         this IViewFor<TViewModel> view,
-        TViewModel? viewModel = null,
-        bool resolveViewModel = true)
+        TViewModel? viewModel)
         where TViewModel : class
     {
-        if (viewModel is not null && !viewModel.Equals(view.ViewModel))
+        if (viewModel?.Equals(view.ViewModel) == false)
         {
             view.ViewModel = viewModel;
-        }
-        else if (view.ViewModel is null && resolveViewModel)
-        {
-            var resolvedViewModel = Locator.Current.GetService<TViewModel>();
-
-            if (resolvedViewModel is null)
-            {
-                throw new RegisteredServiceNotFoundException($"Unable to find a registration for a ViewModel of type {typeof(TViewModel).FullName}. Verify that the [ServiceRegistration] attribute was set or that the ViewModel was registered with dependency injection.");
-            }
-
-            view.ViewModel = resolvedViewModel;
         }
 
         if (view.ViewModel is ViewModelBase vmb)

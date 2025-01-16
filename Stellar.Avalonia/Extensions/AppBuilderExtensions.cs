@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Avalonia;
+using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
 using Splat;
 
@@ -9,13 +10,25 @@ public static class AppBuilderExtensions
 {
     public static AppBuilder UseStellarComponents<TStellarAssembly>(this AppBuilder appBuilder)
     {
-        // appBuilder.UseMicrosoftDependencyResolver();
         PlatformRegistrationManager.SetRegistrationNamespaces(RegistrationNamespace.Avalonia);
         Locator.CurrentMutable.InitializeSplat();
         Locator.CurrentMutable.InitializeReactiveUI();
         RxApp.TaskpoolScheduler = Schedulers.ShortTermThreadPoolScheduler;
 
-        // appBuilder.Services.ConfigureStellarComponents(typeof(TStellarAssembly).GetTypeInfo().Assembly);
+/*
+        services.ConfigureStellarComponents(typeof(TStellarAssembly).GetTypeInfo().Assembly);
+
+        services
+            .AddSingleton(
+                sp =>
+                {
+                    var instance = StellarDependencyResolver.Instance;
+
+                    instance.RegisterResolver((Type type) => sp.GetService(type));
+
+                    return instance;
+                });
+*/
         return appBuilder;
     }
 
@@ -53,7 +66,7 @@ public static class AppBuilderExtensions
                                 Attribute.IsDefined(ti, precacheAttribute) &&
                                 ti.IsClass && !ti.IsAbstract &&
                                 ti.GetConstructor(Type.EmptyTypes) is not null && !ti.ContainsGenericParameters)
-                        ?? Enumerable.Empty<Type>();
+                    ?? Enumerable.Empty<Type>();
 
                 foreach (var ti in assTypes)
                 {

@@ -1,3 +1,5 @@
+using Stellar.MauiSample.ViewModels;
+
 namespace Stellar.MauiSample.UserInterface.Views;
 
 #pragma warning disable CA1063
@@ -6,9 +8,9 @@ public class SampleView : ContentViewBase<ViewModels.SampleViewModel>
 {
     private Label _lbl;
 
-    public SampleView()
+    public SampleView(SampleViewModel viewModel)
     {
-        this.InitializeStellarComponent();
+        this.InitializeStellarComponent(viewModel);
     }
 
     ~SampleView()

@@ -17,9 +17,9 @@ public class SamplePopupPage : PopupPageBase<SampleViewModel>
 
     private ListView _listView;
 
-    public SamplePopupPage()
+    public SamplePopupPage(SampleViewModel viewModel)
     {
-        this.InitializeStellarComponent();
+        this.InitializeStellarComponent(viewModel);
     }
 
     public override void SetupUserInterface()
