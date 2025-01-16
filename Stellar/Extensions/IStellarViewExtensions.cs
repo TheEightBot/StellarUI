@@ -7,8 +7,7 @@ public static class IStellarViewExtensions
 {
     public static void InitializeStellarComponent<TViewModel>(
         this IStellarView<TViewModel> stellarView,
-        TViewModel? viewModel = null,
-        bool resolveViewModel = true,
+        TViewModel? viewModel,
         bool maintain = false,
         bool delayBindingRegistrationUntilAttached = false)
         where TViewModel : class
@@ -28,7 +27,7 @@ public static class IStellarViewExtensions
             }
         }
 
-        stellarView.SetupViewModel(viewModel, resolveViewModel);
+        stellarView.SetupViewModel(viewModel);
 
         stellarView.Initialize();
 

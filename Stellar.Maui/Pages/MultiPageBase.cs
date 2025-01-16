@@ -36,14 +36,13 @@ public abstract class MultiPageBase<TPage, TViewModel> : ReactiveMultiPage<TPage
 
     protected MultiPageBase(
         TViewModel? viewModel = null,
-        bool resolveViewModel = true,
         bool maintain = false,
         bool delayBindingRegistrationUntilAttached = false,
-        bool manuallyInitialize = false)
+        bool manuallyInitialize = true)
     {
         if (!manuallyInitialize)
         {
-            this.InitializeStellarComponent(viewModel, resolveViewModel, maintain, delayBindingRegistrationUntilAttached);
+            this.InitializeStellarComponent(viewModel, maintain, delayBindingRegistrationUntilAttached);
         }
     }
 

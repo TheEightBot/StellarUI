@@ -33,14 +33,13 @@ public abstract class ContentViewBase<TViewModel> : ReactiveContentView<TViewMod
 
     protected ContentViewBase(
         TViewModel? viewModel = null,
-        bool resolveViewModel = true,
         bool maintain = false,
         bool delayBindingRegistrationUntilAttached = false,
-        bool manuallyInitialize = false)
+        bool manuallyInitialize = true)
     {
         if (!manuallyInitialize)
         {
-            this.InitializeStellarComponent(viewModel, resolveViewModel, maintain, delayBindingRegistrationUntilAttached);
+            this.InitializeStellarComponent(viewModel, maintain, delayBindingRegistrationUntilAttached);
         }
     }
 
@@ -90,14 +89,13 @@ public abstract class ContentViewBase<TViewModel, TDataModel> : ReactiveContentV
 
     protected ContentViewBase(
         TViewModel? viewModel = null,
-        bool resolveViewModel = true,
         bool maintain = false,
         bool delayBindingRegistrationUntilAttached = false,
-        bool manuallyInitialize = false)
+        bool manuallyInitialize = true)
     {
         if (!manuallyInitialize)
         {
-            this.InitializeStellarComponent(viewModel, resolveViewModel, maintain, delayBindingRegistrationUntilAttached);
+            this.InitializeStellarComponent(viewModel, maintain, delayBindingRegistrationUntilAttached);
         }
     }
 
