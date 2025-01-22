@@ -111,7 +111,11 @@ public abstract class ViewCellBase<TViewModel, TDataModel> : ReactiveViewCell<TV
 
     protected override void OnBindingContextChanged()
     {
-        base.OnBindingContextChanged();
+        if (BindingContext is TViewModel)
+        {
+            base.OnBindingContextChanged();
+            return;
+        }
 
         if (ViewModel is not null && BindingContext is TDataModel dataModel)
         {
