@@ -22,16 +22,17 @@ public static class ListViewExtensions
 
         if (deselect)
         {
-            observable
-                .Do(_ => listView.Dispatcher.Dispatch(() => listView.SelectedItem = null));
+            observable =
+                observable
+                    .Do(_ => listView.Dispatcher.Dispatch(() => listView.SelectedItem = null));
         }
 
         return observable;
     }
 
-    public static IObservable<object> ItemTapped(this ListView listView)
+    public static IObservable<object> ItemTapped(this ListView listView, bool deselect = false)
     {
-        return
+        var observable =
             Observable
                 .FromEvent<EventHandler<ItemTappedEventArgs>, ItemTappedEventArgs>(
                     static eventHandler =>
@@ -42,6 +43,15 @@ public static class ListViewExtensions
                     x => listView.ItemTapped += x,
                     x => listView.ItemTapped -= x)
                 .Select(static args => args.Item);
+
+        if (deselect)
+        {
+            observable =
+                observable
+                    .Do(_ => listView.Dispatcher.Dispatch(() => listView.SelectedItem = null));
+        }
+
+        return observable;
     }
 
     public static IObservable<T> ItemSelected<T>(this ListView listView, bool deselect = false)
@@ -62,16 +72,17 @@ public static class ListViewExtensions
 
         if (deselect)
         {
-            observable
-                .Do(_ => listView.Dispatcher.Dispatch(() => listView.SelectedItem = null));
+            observable =
+                observable
+                    .Do(_ => listView.Dispatcher.Dispatch(() => listView.SelectedItem = null));
         }
 
         return observable;
     }
 
-    public static IObservable<object> ListViewItemSelected(this ListView listView)
+    public static IObservable<object> ItemSelected(this ListView listView, bool deselect = false)
     {
-        return
+        var observable =
             Observable
                 .FromEvent<EventHandler<SelectedItemChangedEventArgs>, SelectedItemChangedEventArgs>(
                     static eventHandler =>
@@ -82,5 +93,14 @@ public static class ListViewExtensions
                     x => listView.ItemSelected += x,
                     x => listView.ItemSelected -= x)
                 .Select(static args => args.SelectedItem);
+
+        if (deselect)
+        {
+            observable =
+                observable
+                    .Do(_ => listView.Dispatcher.Dispatch(() => listView.SelectedItem = null));
+        }
+
+        return observable;
     }
 }

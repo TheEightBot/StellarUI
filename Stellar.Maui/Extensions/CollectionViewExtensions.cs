@@ -16,15 +16,9 @@ public static class CollectionViewExtensions
 
         if (deselect)
         {
-            observable
-                .Do(
-                    _ =>
-                    {
-                        if (deselect)
-                        {
-                            collectionView.SelectedItem = null;
-                        }
-                    });
+            observable =
+                observable
+                    .Do(_ => collectionView.Dispatcher.Dispatch(() => collectionView.SelectedItem = null));
         }
 
         return observable;
@@ -43,15 +37,9 @@ public static class CollectionViewExtensions
 
         if (deselect)
         {
-            observable
-                .Do(
-                    _ =>
-                    {
-                        if (deselect)
-                        {
-                            collectionView.SelectedItems = null;
-                        }
-                    });
+            observable =
+                observable
+                    .Do(_ => collectionView.Dispatcher.Dispatch(() => collectionView.SelectedItem = null));
         }
 
         return observable;
