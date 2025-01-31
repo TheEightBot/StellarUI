@@ -1,6 +1,6 @@
 namespace Stellar;
 
-public class IDisposableExtensions
+public static class IDisposableExtensions
 {
     public static IDisposable DisposeWith(this IDisposable disposable, SerialDisposable serialDisposable)
     {
