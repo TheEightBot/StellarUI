@@ -9,7 +9,7 @@ namespace Stellar.Maui;
 
 public static class NavigationObservableExtensions
 {
-    private static uint _navigatingCount;
+    private static ulong _navigatingCount;
 
     /* This is roughly 12 UI ticks at 60fps. Slightly more than 200ms */
     public static TimeSpan DefaultMultiTapThrottleDuration { get; set; }
@@ -17,7 +17,7 @@ public static class NavigationObservableExtensions
 
     public static bool Navigating
     {
-        get => Interlocked.Exchange(ref _navigatingCount, 0) > 0;
+        get => Interlocked.Read(ref _navigatingCount) > 0;
 
         set
         {
@@ -704,6 +704,12 @@ public static class NavigationObservableExtensions
             IsAppearingAsync = isAppearingAsync;
         }
 
+        public NavigationOptions(TPage page, Task isAppearingAsync)
+        {
+            Page = page;
+            IsAppearingAsync = isAppearingAsync;
+        }
+
         public TPage Page { get; }
 
         public Task IsAppearingAsync { get; }
@@ -720,7 +726,11 @@ public static class NavigationObservableExtensions
             NavigationRoot = navigationRoot;
         }
 
-        public VisualElement NavigationRoot { get; }
+        public NavigationOptions()
+        {
+        }
+
+        public VisualElement? NavigationRoot { get; }
 
         public TParameter? Parameter { get; set; }
 

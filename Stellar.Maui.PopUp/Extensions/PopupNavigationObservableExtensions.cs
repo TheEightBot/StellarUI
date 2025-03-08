@@ -234,14 +234,7 @@ public static class PopupNavigationObservableExtensions
             .Select(
                 x =>
                 {
-                    var mainPage = Application.Current!.Windows[0].Page;
-
-                    if (mainPage is null)
-                    {
-                        throw new MainPageNotFoundException();
-                    }
-
-                    return new NavigationOptions<TParameter>(mainPage)
+                    return new NavigationOptions<TParameter>
                     {
                         Parameter = x,
                         PreNavigation = preNavigation,
@@ -284,14 +277,7 @@ public static class PopupNavigationObservableExtensions
             .Select(
                 x =>
                 {
-                    var mainPage = Application.Current!.Windows[0].Page;
-
-                    if (mainPage is null)
-                    {
-                        throw new MainPageNotFoundException();
-                    }
-
-                    return new NavigationOptions<TParameter>(mainPage)
+                    return new NavigationOptions<TParameter>
                     {
                         Parameter = x,
                         PreNavigation = preNavigation,
@@ -336,14 +322,7 @@ public static class PopupNavigationObservableExtensions
             .Select(
                 x =>
                 {
-                    var mainPage = Application.Current!.Windows[0].Page;
-
-                    if (mainPage is null)
-                    {
-                        throw new MainPageNotFoundException();
-                    }
-
-                    return new NavigationOptions<TPage, TParameter>(page, Task.CompletedTask, mainPage)
+                    return new NavigationOptions<TPage, TParameter>(page, Task.CompletedTask)
                     {
                         Parameter = x,
                         PreNavigation = preNavigation,
