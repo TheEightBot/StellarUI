@@ -153,7 +153,6 @@ public static class PopupNavigationObservableExtensions
 
                     return Unit.Default;
                 })
-            .Do(_ => Navigating = false)
             .Subscribe();
     }
 
@@ -215,7 +214,6 @@ public static class PopupNavigationObservableExtensions
 
                     return Unit.Default;
                 })
-            .Do(_ => Navigating = false)
             .Subscribe();
     }
 
