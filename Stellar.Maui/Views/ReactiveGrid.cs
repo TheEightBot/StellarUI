@@ -1,4 +1,4 @@
-﻿namespace ReactiveUI.Maui;
+﻿namespace ReactiveUI.Maui.Views;
 
 /// <summary>
 /// This is an <see cref="Grid"/> that is also an <see cref="IViewFor{T}"/>.
