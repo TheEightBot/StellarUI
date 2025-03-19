@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Stellar.Maui.Pages;
+namespace Stellar.Maui.Views;
 
 public abstract class ContentViewBase<TViewModel> : ReactiveContentView<TViewModel>, IStellarView<TViewModel>
     where TViewModel : class

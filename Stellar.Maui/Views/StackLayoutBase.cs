@@ -59,7 +59,7 @@ public abstract class StackLayoutBase<TViewModel> : ReactiveStackLayout<TViewMod
     }
 }
 
-public abstract class StackLayoutBase<TViewModel, TDataModel> : ReactiveGrid<TViewModel>, IStellarView<TViewModel>
+public abstract class StackLayoutBase<TViewModel, TDataModel> : ReactiveStackLayout<TViewModel>, IStellarView<TViewModel>
     where TViewModel : class
 {
     [EditorBrowsable(EditorBrowsableState.Never)]

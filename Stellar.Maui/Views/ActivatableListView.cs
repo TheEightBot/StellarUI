@@ -1,12 +1,22 @@
 using System.Collections.Concurrent;
 
-namespace Stellar.Maui;
+namespace Stellar.Maui.Views;
 
 public class ActivatableListView : ListView
 {
     private readonly ConcurrentDictionary<Cell, IDisposable> _cellActivators = new();
 
     private Action<CompositeDisposable, Cell, int> _cellActivatedAction;
+
+    public ActivatableListView()
+        : this(ListViewCachingStrategy.RecycleElement)
+    {
+    }
+
+    public ActivatableListView(ListViewCachingStrategy cachingStrategy = ListViewCachingStrategy.RecycleElement)
+        : base(cachingStrategy)
+    {
+    }
 
     public IDisposable SetCellActivationAction(Action<CompositeDisposable, Cell, int> cellActivatedAction)
     {

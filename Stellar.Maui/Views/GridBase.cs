@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using ReactiveUI.Maui.Views;
 
 namespace Stellar.Maui.Views;
 
