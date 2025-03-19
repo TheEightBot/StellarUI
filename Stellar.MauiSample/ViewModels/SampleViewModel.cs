@@ -100,6 +100,12 @@ public partial class SampleViewModel(TestService testService)
     }
 }
 
+public partial class WrappedTestItem : ReactiveObject
+{
+    [Reactive]
+    private TestItem _item;
+}
+
 public class TestItem : INotifyPropertyChanged
 {
 #pragma warning disable CS0067

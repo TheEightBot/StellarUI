@@ -128,7 +128,7 @@ public class SamplePage : ContentPageBase<ViewModels.SampleViewModel>
         Observable
             .Merge(
                 _listView
-                    .ItemTapped<ViewModels.TestItem>()
+                    .ItemTapped<ViewModels.TestItem>(true)
                     .Select(static x => x.Value2),
                 this.WhenAnyObservable(static x => x.ViewModel.GoNext)
                     .Select(static _ => 0))

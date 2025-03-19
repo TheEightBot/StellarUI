@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Splat;
 
@@ -6,15 +6,25 @@ namespace Stellar.Maui;
 
 public static class MauiAppBuilderExtensions
 {
-    public static MauiAppBuilder PreCacheComponents<TStellarAssembly>(this MauiAppBuilder mauiAppBuilder)
+    public static bool UseCustomMauiScheduler { get; set; } = true;
+
+    public static bool UseShortTermThreadPoolScheduler { get; set; } = true;
+
+    public static MauiAppBuilder PreCacheComponents<TStellarAssembly>(this MauiAppBuilder mauiAppBuilder, bool useCustomMauiScheduler = true, bool useShortTermThreadPoolScheduler = true)
     {
+        UseCustomMauiScheduler = useCustomMauiScheduler;
+        UseShortTermThreadPoolScheduler = useShortTermThreadPoolScheduler;
+
         PreCache(mauiAppBuilder, typeof(TStellarAssembly).GetTypeInfo().Assembly);
 
         return mauiAppBuilder;
     }
 
-    public static MauiAppBuilder UseStellarComponents<TStellarAssembly>(this MauiAppBuilder mauiAppBuilder)
+    public static MauiAppBuilder UseStellarComponents<TStellarAssembly>(this MauiAppBuilder mauiAppBuilder, bool useCustomMauiScheduler = true, bool useShortTermThreadPoolScheduler = true)
     {
+        UseCustomMauiScheduler = useCustomMauiScheduler;
+        UseShortTermThreadPoolScheduler = useShortTermThreadPoolScheduler;
+
         PlatformRegistrationManager.SetRegistrationNamespaces(RegistrationNamespace.Maui);
         Locator.CurrentMutable.InitializeSplat();
         Locator.CurrentMutable.InitializeReactiveUI();
@@ -33,8 +43,15 @@ public static class MauiAppBuilderExtensions
     {
         public void Initialize(IServiceProvider services)
         {
-            RxApp.MainThreadScheduler = services.GetRequiredService<MauiScheduler>();
-            RxApp.TaskpoolScheduler = Schedulers.ShortTermThreadPoolScheduler;
+            if (UseCustomMauiScheduler)
+            {
+                RxApp.MainThreadScheduler = services.GetRequiredService<MauiScheduler>();
+            }
+
+            if (UseShortTermThreadPoolScheduler)
+            {
+                RxApp.TaskpoolScheduler = Schedulers.ShortTermThreadPoolScheduler;
+            }
         }
     }
 

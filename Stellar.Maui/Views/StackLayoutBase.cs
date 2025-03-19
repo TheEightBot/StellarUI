@@ -118,7 +118,11 @@ public abstract class StackLayoutBase<TViewModel, TDataModel> : ReactiveGrid<TVi
 
     protected override void OnBindingContextChanged()
     {
-        base.OnBindingContextChanged();
+        if (BindingContext is TViewModel)
+        {
+            base.OnBindingContextChanged();
+            return;
+        }
 
         if (ViewModel is not null && BindingContext is TDataModel dataModel)
         {
