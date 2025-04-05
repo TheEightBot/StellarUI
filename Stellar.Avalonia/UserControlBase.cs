@@ -45,7 +45,7 @@ public abstract class UserControlBase<TViewModel> : ReactiveUserControl<TViewMod
 
     public abstract void SetupUserInterface();
 
-    public abstract void Bind(CompositeDisposable disposables);
+    public abstract void Bind(WeakCompositeDisposable disposables);
 
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
@@ -95,7 +95,7 @@ public abstract class UserControlBase<TViewModel, TDataModel> : ReactiveUserCont
 
     public abstract void SetupUserInterface();
 
-    public abstract void Bind(CompositeDisposable disposables);
+    public abstract void Bind(WeakCompositeDisposable disposables);
 
     protected abstract void MapDataModelToViewModel(TViewModel viewModel, TDataModel dataModel);
 

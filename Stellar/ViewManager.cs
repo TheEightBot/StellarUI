@@ -8,13 +8,13 @@ public abstract class ViewManager<TViewModel>
     where TViewModel : class
 #pragma warning restore CA1001
 {
-    private readonly Lazy<Subject<LifecycleEvent>> _lifecycleEvents = new Lazy<Subject<LifecycleEvent>>(() => new Subject<LifecycleEvent>(), LazyThreadSafetyMode.ExecutionAndPublication);
+    private readonly Lazy<Subject<LifecycleEvent>> _lifecycleEvents;
 
-    private readonly Lazy<Subject<NavigationEvent>> _navigationEvents = new Lazy<Subject<NavigationEvent>>(() => new Subject<NavigationEvent>(), LazyThreadSafetyMode.ExecutionAndPublication);
+    private readonly Lazy<Subject<NavigationEvent>> _navigationEvents;
 
-    private readonly object _bindingLock = new();
+    private readonly Lock _bindingLock = new();
 
-    private readonly CompositeDisposable _controlBindings = new();
+    private readonly WeakCompositeDisposable _controlBindings;
 
     private bool _controlsBound;
 
@@ -46,14 +46,12 @@ public abstract class ViewManager<TViewModel>
 
     public bool ControlsBound => Volatile.Read(ref _controlsBound);
 
-    ~ViewManager()
+    public ViewManager()
     {
-        if (_lifecycleEvents.IsValueCreated)
-        {
-            _lifecycleEvents?.Value?.Dispose();
-        }
+        _controlBindings = new(this);
 
-        _controlBindings.Dispose();
+        _lifecycleEvents = new(() => new Subject<LifecycleEvent>().DisposeWith(_controlBindings), LazyThreadSafetyMode.ExecutionAndPublication);
+        _navigationEvents = new(() => new Subject<NavigationEvent>().DisposeWith(_controlBindings), LazyThreadSafetyMode.ExecutionAndPublication);
     }
 
     public void RegisterBindings(IStellarView<TViewModel> view)

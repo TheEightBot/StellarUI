@@ -50,7 +50,7 @@ public abstract class GridBase<TViewModel> : ReactiveGrid<TViewModel>, IStellarV
 
     public abstract void SetupUserInterface();
 
-    public abstract void Bind(CompositeDisposable disposables);
+    public abstract void Bind(WeakCompositeDisposable disposables);
 
     protected override void OnPropertyChanged(string? propertyName = null)
     {
@@ -107,7 +107,7 @@ public abstract class GridBase<TViewModel, TDataModel> : ReactiveGrid<TViewModel
 
     public abstract void SetupUserInterface();
 
-    public abstract void Bind(CompositeDisposable disposables);
+    public abstract void Bind(WeakCompositeDisposable disposables);
 
     protected abstract void MapDataModelToViewModel(TViewModel viewModel, TDataModel dataModel);
 

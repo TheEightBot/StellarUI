@@ -13,11 +13,6 @@ public static class ItemsViewExtensions
             .Do(
                 items =>
                 {
-                    if (itemsView == null)
-                    {
-                        return;
-                    }
-
                     itemsView.Dispatcher.Dispatch(
                         () =>
                         {

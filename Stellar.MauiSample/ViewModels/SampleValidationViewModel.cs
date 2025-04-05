@@ -13,7 +13,7 @@ public partial class SampleValidationViewModel : ValidatingViewModelBase<SampleV
     {
     }
 
-    protected override void Bind(CompositeDisposable disposables)
+    protected override void Bind(WeakCompositeDisposable disposables)
     {
         this.WhenAnyValue(static x => x.StringValue)
             .Do(static x => System.Diagnostics.Debug.WriteLine($"String Value: {x}"))

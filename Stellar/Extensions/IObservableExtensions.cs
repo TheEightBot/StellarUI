@@ -14,12 +14,12 @@ public static class IObservableExtensions
             .Select(static x => x as object);
     }
 
-    public static IObservable<TSource> IsNotNull<TSource>(this IObservable<TSource> source)
+    public static IObservable<TSource> IsNotNull<TSource>(this IObservable<TSource?> source)
     {
-        return source.Where(static obj => !EqualityComparer<TSource>.Default.Equals(obj, default));
+        return source.Where(static obj => obj is not null).Select(static obj => obj!);
     }
 
-    public static IObservable<TSource> IsNull<TSource>(this IObservable<TSource> source)
+    public static IObservable<TSource?> IsNull<TSource>(this IObservable<TSource?> source)
         where TSource : class
     {
         return source.Where(static obj => obj is null);

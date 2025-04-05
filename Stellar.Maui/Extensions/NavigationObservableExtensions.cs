@@ -278,7 +278,7 @@ public static class NavigationObservableExtensions
                     try
                     {
                         x.PreNavigation?.Invoke(x.Parameter);
-                        var pages = await x.NavigationRoot.PopTo<TPage>(x.Animated);
+                        var pages = await x.NavigationRoot!.PopTo<TPage>(x.Animated);
                         x.PostNavigation?.Invoke(x.Parameter);
                     }
                     finally

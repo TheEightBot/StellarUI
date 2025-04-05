@@ -52,7 +52,7 @@ public abstract class MultiPageBase<TPage, TViewModel> : ReactiveMultiPage<TPage
 
     public abstract void SetupUserInterface();
 
-    public abstract void Bind(CompositeDisposable disposables);
+    public abstract void Bind(WeakCompositeDisposable disposables);
 
     protected override void OnAppearing()
     {

@@ -34,7 +34,7 @@ public class StellarMainWindow : WindowBase<ViewModels.MainWindowViewModel>
             };
     }
 
-    public override void Bind(CompositeDisposable disposables)
+    public override void Bind(WeakCompositeDisposable disposables)
     {
         this.Bind(ViewModel, vm => vm.Greeting, ui => ui._text.Text)
             .DisposeWith(disposables);

@@ -20,7 +20,7 @@ public class SampleMappedViewCell : ViewCellBase<ViewModels.WrappedTestItem, Vie
                 .Assign(out _name);
     }
 
-    public override void Bind(CompositeDisposable disposables)
+    public override void Bind(WeakCompositeDisposable disposables)
     {
         this.OneWayBind(ViewModel, static vm => vm.Item.Value1, static ui => ui._name.Text)
             .DisposeWith(disposables);

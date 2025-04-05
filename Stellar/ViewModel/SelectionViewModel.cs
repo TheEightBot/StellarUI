@@ -1,23 +1,20 @@
-﻿using System;
-using System.Runtime.CompilerServices;
-
-namespace Stellar.ViewModel;
+﻿namespace Stellar.ViewModel;
 
 public partial class SelectionViewModel<TSelectedValKey> : ViewModelBase
 {
     [Reactive]
-    private TSelectedValKey? _key;
+    public TSelectedValKey? Key { get; set; }
 
     [Reactive]
-    public string? _displayValue;
+    public string? DisplayValue { get; set; }
 
     [Reactive]
-    public bool _selected;
+    public bool Selected { get; set; }
 
     [Reactive]
-    private ReactiveCommand<Unit, bool>? _toggleSelected;
+    public ReactiveCommand<Unit, bool>? ToggleSelected { get; private set; }
 
-    protected override void Bind(CompositeDisposable disposables)
+    protected override void Bind(WeakCompositeDisposable disposables)
     {
         ToggleSelected =
             ReactiveCommand

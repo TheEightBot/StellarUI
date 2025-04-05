@@ -54,7 +54,7 @@ public abstract class ComponentBase<TViewModel> : ReactiveComponentBase<TViewMod
     {
     }
 
-    public abstract void Bind(CompositeDisposable disposables);
+    public abstract void Bind(WeakCompositeDisposable disposables);
 
     protected override void OnInitialized()
     {

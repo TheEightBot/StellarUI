@@ -49,7 +49,7 @@ public abstract class StackLayoutBase<TViewModel> : ReactiveStackLayout<TViewMod
 
     public abstract void SetupUserInterface();
 
-    public abstract void Bind(CompositeDisposable disposables);
+    public abstract void Bind(WeakCompositeDisposable disposables);
 
     protected override void OnPropertyChanged(string? propertyName = null)
     {
@@ -106,7 +106,7 @@ public abstract class StackLayoutBase<TViewModel, TDataModel> : ReactiveStackLay
 
     public abstract void SetupUserInterface();
 
-    public abstract void Bind(CompositeDisposable disposables);
+    public abstract void Bind(WeakCompositeDisposable disposables);
 
     protected abstract void MapDataModelToViewModel(TViewModel viewModel, TDataModel dataModel);
 

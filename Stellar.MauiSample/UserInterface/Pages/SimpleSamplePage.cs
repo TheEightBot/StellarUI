@@ -118,7 +118,7 @@ public class SimpleSamplePage : ContentPageBase<ViewModels.SampleViewModel>
                 .Assign(out _mainLayout);
     }
 
-    public override void Bind(CompositeDisposable disposables)
+    public override void Bind(WeakCompositeDisposable disposables)
     {
         this.BindCommand(ViewModel, static vm => vm.GoNext, static ui => ui._next, Observables.UnitDefault)
             .DisposeWith(disposables);

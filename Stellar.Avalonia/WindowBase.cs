@@ -52,7 +52,7 @@ namespace Stellar.Avalonia
 
         public abstract void SetupUserInterface();
 
-        public abstract void Bind(CompositeDisposable disposables);
+        public abstract void Bind(WeakCompositeDisposable disposables);
 
         protected override void OnInitialized()
         {
