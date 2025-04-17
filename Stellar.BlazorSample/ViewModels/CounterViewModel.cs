@@ -8,7 +8,7 @@ public partial class CounterViewModel : ViewModelBase
     [Reactive]
     private int _count;
 
-    protected override void Bind(CompositeDisposable disposables)
+    protected override void Bind(WeakCompositeDisposable disposables)
     {
     }
 }

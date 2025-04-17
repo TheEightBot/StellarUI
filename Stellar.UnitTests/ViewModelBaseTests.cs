@@ -47,7 +47,7 @@ public class ViewModelBaseTests
 
     private class TestViewModel : ViewModelBase
     {
-        protected override void Bind(CompositeDisposable disposables)
+        protected override void Bind(WeakCompositeDisposable disposables)
         {
             // Do nothing
         }

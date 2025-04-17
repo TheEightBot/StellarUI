@@ -58,7 +58,7 @@ public class SampleValidationPage : ContentPageBase<ViewModels.SampleValidationV
                 .Assign(out _mainLayout);
     }
 
-    public override void Bind(CompositeDisposable disposables)
+    public override void Bind(WeakCompositeDisposable disposables)
     {
         this.Bind(ViewModel, static vm => vm.StringValue, static ui => ui._value.Text)
             .DisposeWith(disposables);

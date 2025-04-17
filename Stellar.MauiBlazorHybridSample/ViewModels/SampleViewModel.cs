@@ -66,7 +66,7 @@ public partial class SampleViewModel(TestService testService)
         this.TestItems = items;
     }
 
-    protected override void Bind(CompositeDisposable disposables)
+    protected override void Bind(WeakCompositeDisposable disposables)
     {
         this.GoPopup =
             ReactiveCommand

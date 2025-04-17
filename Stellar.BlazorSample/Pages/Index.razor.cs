@@ -9,7 +9,7 @@ public partial class Index
         this.InitializeStellarComponent(viewModel);
     }
 
-    public override void Bind(CompositeDisposable disposables)
+    public override void Bind(WeakCompositeDisposable disposables)
     {
     }
 }

@@ -29,7 +29,7 @@ public class SampleView : ContentViewBase<ViewModels.SampleViewModel>
                 .Assign(out _lbl);
     }
 
-    public override void Bind(CompositeDisposable disposables)
+    public override void Bind(WeakCompositeDisposable disposables)
     {
         var colorNotifications =
             this.WhenAnyValue(static x => x.ViewModel.ColorArray)

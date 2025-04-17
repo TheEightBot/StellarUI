@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using Stellar.MauiSample.Services;
 
 namespace Stellar.MauiSample.ViewModels;
@@ -71,7 +71,7 @@ public partial class SampleViewModel(TestService testService)
         TestItems = items;
     }
 
-    protected override void Bind(CompositeDisposable disposables)
+    protected override void Bind(WeakCompositeDisposable disposables)
     {
         GoPopup =
             ReactiveCommand

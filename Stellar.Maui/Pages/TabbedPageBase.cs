@@ -46,7 +46,7 @@ public abstract class TabbedPageBase<TViewModel> : ReactiveTabbedPage<TViewModel
 
     public abstract void SetupUserInterface();
 
-    public abstract void Bind(CompositeDisposable disposables);
+    public abstract void Bind(WeakCompositeDisposable disposables);
 
     protected override void OnAppearing()
     {

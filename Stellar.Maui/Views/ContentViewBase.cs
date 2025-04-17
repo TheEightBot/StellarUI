@@ -49,7 +49,7 @@ public abstract class ContentViewBase<TViewModel> : ReactiveContentView<TViewMod
 
     public abstract void SetupUserInterface();
 
-    public abstract void Bind(CompositeDisposable disposables);
+    public abstract void Bind(WeakCompositeDisposable disposables);
 
     protected override void OnPropertyChanged(string? propertyName = null)
     {
@@ -105,7 +105,7 @@ public abstract class ContentViewBase<TViewModel, TDataModel> : ReactiveContentV
 
     public abstract void SetupUserInterface();
 
-    public abstract void Bind(CompositeDisposable disposables);
+    public abstract void Bind(WeakCompositeDisposable disposables);
 
     protected abstract void MapDataModelToViewModel(TViewModel viewModel, TDataModel dataModel);
 

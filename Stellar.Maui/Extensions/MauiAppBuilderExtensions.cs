@@ -10,11 +10,8 @@ public static class MauiAppBuilderExtensions
 
     public static bool UseShortTermThreadPoolScheduler { get; set; } = true;
 
-    public static MauiAppBuilder PreCacheComponents<TStellarAssembly>(this MauiAppBuilder mauiAppBuilder, bool useCustomMauiScheduler = true, bool useShortTermThreadPoolScheduler = true)
+    public static MauiAppBuilder PreCacheComponents<TStellarAssembly>(this MauiAppBuilder mauiAppBuilder)
     {
-        UseCustomMauiScheduler = useCustomMauiScheduler;
-        UseShortTermThreadPoolScheduler = useShortTermThreadPoolScheduler;
-
         PreCache(mauiAppBuilder, typeof(TStellarAssembly).GetTypeInfo().Assembly);
 
         return mauiAppBuilder;

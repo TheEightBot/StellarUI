@@ -1,3 +1,6 @@
+using System;
+using System.Threading.Tasks;
+using Microsoft.Maui.Controls;
 using ReactiveMarbles.ObservableEvents;
 using Stellar.MauiSample.UserInterface.Views;
 using Stellar.MauiSample.ViewModels;
@@ -15,6 +18,8 @@ public class SamplePage : ContentPageBase<ViewModels.SampleViewModel>
     private Button _modal;
 
     private Button _next;
+
+    private Button _broadcast;
 
     private Button _collect;
 
@@ -39,14 +44,14 @@ public class SamplePage : ContentPageBase<ViewModels.SampleViewModel>
             new Grid
             {
                 ColumnDefinitions = Columns.Define([Star]),
-                RowDefinitions = Rows.Define([Auto, Auto, Auto, Auto, Auto, Auto, Auto, Star]),
+                RowDefinitions = Rows.Define([Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Star]),
                 Padding = 8,
                 RowSpacing = 8,
                 Children =
                 {
                     new Button
                     {
-                        Text = "Popup",
+                        Text = "Popup 3",
                         HeightRequest = 32,
                         VerticalOptions = LayoutOptions.Start,
                     }
@@ -77,32 +82,40 @@ public class SamplePage : ContentPageBase<ViewModels.SampleViewModel>
                         .Row(3).Column(0)
                         .Assign(out _next),
                     new Button
+                        {
+                            Text = "Broadcast",
+                            HeightRequest = 32,
+                            VerticalOptions = LayoutOptions.Start,
+                        }
+                        .Row(4).Column(0)
+                        .Assign(out _broadcast),
+                    new Button
                     {
                         Text = "Collect",
                         HeightRequest = 32,
                         VerticalOptions = LayoutOptions.Start,
                     }
-                        .Row(4).Column(0)
+                        .Row(5).Column(0)
                         .Assign(out _collect),
                     new Label
                     {
                         HeightRequest = 32,
                         VerticalOptions = LayoutOptions.Start,
                     }
-                        .Row(5).Column(0)
+                        .Row(6).Column(0)
                         .Assign(out _parameterValue),
                     new SampleView(this.ViewModel)
                     {
                         HeightRequest = 60,
                         VerticalOptions = LayoutOptions.Start,
                     }
-                        .Row(6).Column(0)
+                        .Row(7).Column(0)
                         .Assign(out _color),
                     new Picker
                     {
                         VerticalOptions = LayoutOptions.Start,
                     }
-                        .Row(7).Column(0)
+                        .Row(8).Column(0)
                         .Assign(out _picker),
 
                     new ListView
@@ -110,14 +123,14 @@ public class SamplePage : ContentPageBase<ViewModels.SampleViewModel>
                         ItemTemplate = new DataTemplate(typeof(Cells.SampleViewCell)),
                         VerticalOptions = LayoutOptions.Fill,
                     }
-                        .Row(8).Column(0)
+                        .Row(9).Column(0)
                         .Assign(out _listView),
                 },
             }
                 .Assign(out _mainLayout);
     }
 
-    public override void Bind(CompositeDisposable disposables)
+    public override void Bind(WeakCompositeDisposable disposables)
     {
         this.BindCommand(ViewModel, static vm => vm.GoNext, static ui => ui._next, Observables.UnitDefault)
             .DisposeWith(disposables);
@@ -167,13 +180,37 @@ public class SamplePage : ContentPageBase<ViewModels.SampleViewModel>
         _collect.Events()
             .Clicked
             .Do(
-                _ =>
+                async _ =>
                 {
-                    GC.WaitForPendingFinalizers();
-                    GC.Collect();
+                    // Add some memory pressure to encourage garbage collection
+                    var memoryPressure = new byte[1024 * 1024 * 10]; // 10 MB
 
+                    // Run garbage collection multiple times to ensure weak references are properly collected
+                    for (int i = 0; i < 5; i++)
+                    {
+                        GC.Collect(2, GCCollectionMode.Forced, true, true);
+                        GC.WaitForPendingFinalizers();
+                        GC.Collect(2, GCCollectionMode.Forced, true, true);
+                    }
+
+                    // Create and release more memory pressure
+                    for (int i = 0; i < 3; i++)
+                    {
+                        var morePressure = new byte[1024 * 1024 * 10]; // Another 10 MB
+                        morePressure = null;
+                        GC.Collect(2, GCCollectionMode.Forced, true, true);
+                    }
+
+                    // Wait a short time to ensure finalization and garbage collection completes
+                    await Task.Delay(200);
+
+                    // One final collection
+                    GC.Collect(2, GCCollectionMode.Forced, true, true);
                     GC.WaitForPendingFinalizers();
-                    GC.Collect();
+                    GC.Collect(2, GCCollectionMode.Forced, true, true);
+
+                    // Keep this line to prevent the memory pressure array from being optimized away
+                    GC.KeepAlive(memoryPressure);
                 })
             .Subscribe()
             .DisposeWith(disposables);

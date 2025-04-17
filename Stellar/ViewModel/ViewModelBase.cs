@@ -1,54 +1,69 @@
 namespace Stellar.ViewModel;
 
+using Stellar.Extensions;
+
 #pragma warning disable CA1001
 public abstract class ViewModelBase : ReactiveObject, IViewModel
 #pragma warning restore CA1001
 {
     protected static readonly Action DefaultAction = () => { };
 
-    private readonly object _vmLock = new();
-
-    private readonly CompositeDisposable _viewModelBindings = new();
+    private readonly Lock _vmLock = new();
+    private readonly WeakCompositeDisposable _viewModelBindings;
+    private readonly Lazy<bool> _shouldMaintain;
 
     private bool _bindingsRegistered;
-
     private bool _initialized;
+    private bool _isDisposed;
+
+    protected ViewModelBase()
+    {
+        _viewModelBindings = new(this);
+
+        // Cache attribute lookup using lazy initialization with the fast AttributeCache
+        _shouldMaintain = new Lazy<bool>(() =>
+        {
+            var sra = AttributeCache.GetAttribute<ServiceRegistrationAttribute>(this.GetType());
+            if (sra != null)
+            {
+                return sra.ServiceRegistrationType is Lifetime.Scoped or Lifetime.Singleton;
+            }
+
+            return false;
+        });
+    }
 
     public bool Maintain { get; set; }
 
-    public bool IsDisposed { get; private set; }
+    public bool IsDisposed => _isDisposed;
 
     public bool Initialized
     {
-        get
-        {
-            lock (_vmLock)
-            {
-                return _initialized;
-            }
-        }
+        // Using volatile reads instead of full locks for better performance
+        get => Volatile.Read(ref _initialized);
+        private set => _initialized = value;
     }
 
     public bool BindingsRegistered
     {
-        get
-        {
-            lock (_vmLock)
-            {
-                return _bindingsRegistered;
-            }
-        }
+        // Using volatile reads instead of full locks for better performance
+        get => Volatile.Read(ref _bindingsRegistered);
+        private set => _bindingsRegistered = value;
     }
 
     public void SetupViewModel()
     {
         InitializeInternal();
-
         Register();
     }
 
     public void Register()
     {
+        if (IsDisposed)
+        {
+            return;
+        }
+
         lock (_vmLock)
         {
             if (_bindingsRegistered)
@@ -59,12 +74,17 @@ public abstract class ViewModelBase : ReactiveObject, IViewModel
             _viewModelBindings.Clear();
             Bind(_viewModelBindings);
 
-            _bindingsRegistered = true;
+            BindingsRegistered = true;
         }
     }
 
     public void Unregister()
     {
+        if (IsDisposed)
+        {
+            return;
+        }
+
         lock (_vmLock)
         {
             if (Maintain || !_bindingsRegistered)
@@ -73,36 +93,52 @@ public abstract class ViewModelBase : ReactiveObject, IViewModel
             }
 
             _viewModelBindings.Clear();
-
-            _bindingsRegistered = false;
+            BindingsRegistered = false;
         }
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (_isDisposed)
+        {
+            return;
+        }
+
+        if (disposing)
+        {
+            _viewModelBindings.Dispose();
+        }
+
+        _isDisposed = true;
     }
 
     protected virtual void Initialize()
     {
     }
 
-    protected abstract void Bind(CompositeDisposable disposables);
+    protected abstract void Bind(WeakCompositeDisposable disposables);
 
     private void InitializeInternal()
     {
+        if (Initialized)
+        {
+            return;
+        }
+
         lock (_vmLock)
         {
             if (!_initialized)
             {
-                if (Attribute.GetCustomAttribute(this.GetType(), typeof(ServiceRegistrationAttribute)) is ServiceRegistrationAttribute sra)
-                {
-                    switch (sra.ServiceRegistrationType)
-                    {
-                        case Lifetime.Scoped:
-                        case Lifetime.Singleton:
-                            Maintain = true;
-                            break;
-                    }
-                }
-
+                // Use cached attribute lookup
+                Maintain = _shouldMaintain.Value;
                 Initialize();
-                _initialized = true;
+                Initialized = true;
             }
         }
     }

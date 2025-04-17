@@ -12,7 +12,7 @@ public partial class IndexViewModel : ViewModelBase
     [property: QueryParameter]
     private int _parameterInput;
 
-    protected override void Bind(CompositeDisposable disposables)
+    protected override void Bind(WeakCompositeDisposable disposables)
     {
         Observable
             .Interval(TimeSpan.FromSeconds(1))
