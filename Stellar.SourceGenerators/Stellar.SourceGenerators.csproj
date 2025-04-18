@@ -6,6 +6,14 @@
     <OutputItemType>Analyzer</OutputItemType>
     <AssemblyName>Stellar.SourceGenerators</AssemblyName>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+
+    <PackageId>StellarUI.SourceGenerators</PackageId>
+    <Title>Stellar UI - Source Generators</Title>
+    <Authors>eight-Bot</Authors>
+    <Copyright>Eight-Bot 2025</Copyright>
+    <PackageLicenseUrl>https://github.com/TheEightBot/StellarUI/blob/main/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/TheEightBot/StellarUI</RepositoryUrl>
+
   </PropertyGroup>
 
   <ItemGroup>

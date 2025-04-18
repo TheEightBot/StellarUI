@@ -7,7 +7,7 @@
     <PackageId>StellarUI.FluentValidation</PackageId>
     <Title>Stellar UI - FluentValidation</Title>
     <Authors>Eight-Bot</Authors>
-    <Copyright>Eight-Bot 2024</Copyright>
+    <Copyright>Eight-Bot 2025</Copyright>
     <PackageLicenseUrl>https://github.com/TheEightBot/StellarUI/blob/main/LICENSE</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/TheEightBot/StellarUI</RepositoryUrl>
     <PackageTags>.NET;FluentValidation;MVVM;Reactive UI;Reactive Extensions;Eight-Bot</PackageTags>
