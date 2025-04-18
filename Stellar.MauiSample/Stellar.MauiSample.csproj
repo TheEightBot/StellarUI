@@ -56,6 +56,9 @@
                    LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
     </ItemGroup>
     <ItemGroup>
+        <ProjectReference Include="..\Stellar.SourceGenerators\Stellar.SourceGenerators.csproj"
+                          OutputItemType="Analyzer"
+                          ReferenceOutputAssembly="false" />
         <ProjectReference Include="..\Stellar\Stellar.csproj" />
         <ProjectReference Include="..\Stellar.Maui.PopUp\Stellar.Maui.PopUp.csproj" />
         <ProjectReference Include="..\Stellar.Maui\Stellar.Maui.csproj" />

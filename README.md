@@ -247,6 +247,29 @@ public partial class SampleViewModel : ViewModelBase
 }
 ```
 
+
+#### Compile-Time Service Registration with Source Generator
+
+StellarUI includes a Roslyn source generator that emits a strongly-typed registration extension based on your assembly, eliminating runtime reflection.
+
+1. Add the generator package to your project via NuGet:
+
+    ```bash
+    dotnet add package Stellar.SourceGenerators --version <latest-version>
+    ```
+
+2. Rebuild your project to produce `AddRegisteredServicesFor{YourAssemblyName}.g.cs` in `obj/<TFM>/generated`.
+
+3. In your startup code (e.g., `MauiProgram.cs` or `Program.cs`), call the generated extension:
+
+    ```csharp
+    using Stellar; // namespace of generated code
+    
+    builder.Services.AddRegisteredServicesForMyApp(); // replace MyApp with your project's AssemblyName
+    ```
+
+All `[ServiceRegistration]` attributed types will be registered at compile time.
+
 ### Lifecycle Management
 
 StellarUI provides a consistent set of lifecycle events across all platforms:
