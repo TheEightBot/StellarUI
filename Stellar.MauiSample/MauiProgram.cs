@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
+using Stellar;
 
 namespace Stellar.MauiSample;
 
@@ -24,6 +25,8 @@ public static class MauiProgram
                 .EnableHotReload()
 #endif
                 .UseStellarComponents<App>();
+
+        appBuilder.Services.AddRegisteredServicesForStellarMauiSample();
 
         /*
         We can add individual service registrations or all at once
