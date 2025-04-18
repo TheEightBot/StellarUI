@@ -1,7 +1,7 @@
 # StellarUI
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![NuGet](https://img.shields.io/nuget/v/Stellar.svg)](https://www.nuget.org/packages/Stellar/)
+[![NuGet](https://img.shields.io/nuget/v/Stellar.svg)](https://www.nuget.org/packages/StellarUI/)
 
 A comprehensive cross-platform .NET application framework built on ReactiveUI for creating reactive MVVM applications.
 
@@ -173,7 +173,7 @@ public class SampleView : ContentViewBase<SampleViewModel>
     }
     
     // Bind the UI elements to the view model
-    public override void Bind(CompositeDisposable disposables)
+    public override void Bind(WeakCompositeDisposable disposables)
     {
         this.OneWayBind(ViewModel, vm => vm.Text, v => v._label.Text)
             .DisposeWith(disposables);
@@ -201,7 +201,7 @@ public partial class SampleViewModel : ViewModelBase
     }
     
     // Bind method for setting up reactive bindings
-    protected override void Bind(CompositeDisposable disposables)
+    protected override void Bind(WeakCompositeDisposable disposables)
     {
         // Setup observables, commands, etc.
         this.WhenAnyValue(x => x.Text)
