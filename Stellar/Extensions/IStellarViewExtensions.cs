@@ -7,6 +7,15 @@ public static class IStellarViewExtensions
 {
     public static void InitializeStellarComponent<TViewModel>(
         this IStellarView<TViewModel> stellarView,
+        bool maintain = false,
+        bool delayBindingRegistrationUntilAttached = false)
+        where TViewModel : class
+    {
+        InitializeStellarComponent(stellarView, null, maintain, delayBindingRegistrationUntilAttached);
+    }
+
+    public static void InitializeStellarComponent<TViewModel>(
+        this IStellarView<TViewModel> stellarView,
         TViewModel? viewModel,
         bool maintain = false,
         bool delayBindingRegistrationUntilAttached = false)
