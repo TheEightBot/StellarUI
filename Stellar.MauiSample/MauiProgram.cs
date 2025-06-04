@@ -24,7 +24,7 @@ public static class MauiProgram
 #if DEBUG
                 .EnableHotReload()
 #endif
-                .UseStellarComponents<App>();
+                .UseStellarComponents();
 
         appBuilder.Services.AddRegisteredServicesForStellarMauiSample();
 
