@@ -8,12 +8,19 @@ public static class BuilderExtensions
 {
     public static IServiceCollection UseStellarComponents<TStellarAssembly>(this IServiceCollection services)
     {
+        UseStellarComponents(services);
+
+        services.ConfigureStellarComponents(typeof(TStellarAssembly).GetTypeInfo().Assembly);
+
+        return services;
+    }
+
+    public static IServiceCollection UseStellarComponents(this IServiceCollection services)
+    {
         PlatformRegistrationManager.SetRegistrationNamespaces(RegistrationNamespace.Blazor);
         Locator.CurrentMutable.InitializeSplat();
         Locator.CurrentMutable.InitializeReactiveUI();
         RxApp.TaskpoolScheduler = Schedulers.ShortTermThreadPoolScheduler;
-
-        services.ConfigureStellarComponents(typeof(TStellarAssembly).GetTypeInfo().Assembly);
 
         return services;
     }

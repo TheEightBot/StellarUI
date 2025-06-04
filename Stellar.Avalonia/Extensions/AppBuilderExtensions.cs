@@ -8,27 +8,13 @@ namespace Stellar.Avalonia;
 
 public static class AppBuilderExtensions
 {
-    public static AppBuilder UseStellarComponents<TStellarAssembly>(this AppBuilder appBuilder)
+    public static AppBuilder UseStellarComponents(this AppBuilder appBuilder)
     {
         PlatformRegistrationManager.SetRegistrationNamespaces(RegistrationNamespace.Avalonia);
         Locator.CurrentMutable.InitializeSplat();
         Locator.CurrentMutable.InitializeReactiveUI();
         RxApp.TaskpoolScheduler = Schedulers.ShortTermThreadPoolScheduler;
 
-/*
-        services.ConfigureStellarComponents(typeof(TStellarAssembly).GetTypeInfo().Assembly);
-
-        services
-            .AddSingleton(
-                sp =>
-                {
-                    var instance = StellarDependencyResolver.Instance;
-
-                    instance.RegisterResolver((Type type) => sp.GetService(type));
-
-                    return instance;
-                });
-*/
         return appBuilder;
     }
 
