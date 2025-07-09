@@ -416,6 +416,9 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
             }
         }
 
+        var picker = _picker;
+        picker?.Dispatcher?.Dispatch(() => picker.ResetToInitialValue());
+
         if (fromNotificationTrigger)
         {
             SelectedItemChanged(default(TViewModel));
