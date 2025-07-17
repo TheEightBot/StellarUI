@@ -58,8 +58,8 @@ public abstract class ViewManager<TViewModel> : IDisposable
     {
         _controlBindings = new(this);
 
-        _lifecycleEvents = new(() => new Subject<LifecycleEvent>().DisposeWith(_controlBindings), LazyThreadSafetyMode.ExecutionAndPublication);
-        _navigationEvents = new(() => new Subject<NavigationEvent>().DisposeWith(_controlBindings), LazyThreadSafetyMode.ExecutionAndPublication);
+        _lifecycleEvents = new(() => new Subject<LifecycleEvent>(), LazyThreadSafetyMode.ExecutionAndPublication);
+        _navigationEvents = new(() => new Subject<NavigationEvent>(), LazyThreadSafetyMode.ExecutionAndPublication);
     }
 
     public void Dispose()
