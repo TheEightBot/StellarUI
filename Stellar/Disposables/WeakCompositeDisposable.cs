@@ -333,14 +333,19 @@ public sealed class WeakCompositeDisposable : ICollection<IDisposable>, IDisposa
             return _disposables.Contains(item);
         }
 
+        public void Clear()
+        {
+            _disposables.Clear();
+        }
+
         public void CopyTo(IDisposable[] array, int arrayIndex)
         {
             _disposables.CopyTo(array, arrayIndex);
         }
 
-        public void Clear()
+        public List<IDisposable> ToList()
         {
-            _disposables.Clear();
+            return new List<IDisposable>(_disposables);
         }
 
         public IEnumerator<IDisposable> GetEnumerator()

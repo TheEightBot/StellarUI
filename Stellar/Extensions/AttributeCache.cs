@@ -10,6 +10,7 @@ using System.Reflection;
 public static class AttributeCache
 {
     private static readonly ConcurrentDictionary<(Type TypeKey, Type AttributeType), Attribute?> TypeAttributeCache = new();
+    private static readonly ConcurrentDictionary<(MemberInfo MemberKey, Type AttributeType), Attribute?> MemberAttributeCache = new();
 
     /// <summary>
     /// Gets a custom attribute for a type with high performance caching.
@@ -34,8 +35,9 @@ public static class AttributeCache
     public static TAttribute? GetAttribute<TAttribute>(MemberInfo memberInfo)
         where TAttribute : Attribute
     {
-        // For member-level attributes, we'd need a separate cache with appropriate key structure
-        return Attribute.GetCustomAttribute(memberInfo, typeof(TAttribute)) as TAttribute;
+        return (TAttribute?)MemberAttributeCache.GetOrAdd(
+            (memberInfo, typeof(TAttribute)),
+            key => Attribute.GetCustomAttribute(key.MemberKey, key.AttributeType));
     }
 
     /// <summary>
@@ -48,5 +50,23 @@ public static class AttributeCache
         where TAttribute : Attribute
     {
         return GetAttribute<TAttribute>(type) != null;
+    }
+
+    /// <summary>
+    /// Clears the cache to prevent memory leaks in long-running applications.
+    /// Call this periodically or when you know types are being unloaded.
+    /// </summary>
+    public static void ClearCache()
+    {
+        TypeAttributeCache.Clear();
+        MemberAttributeCache.Clear();
+    }
+
+    /// <summary>
+    /// Gets the current cache statistics for monitoring memory usage.
+    /// </summary>
+    public static (int TypeCacheCount, int MemberCacheCount) GetCacheStatistics()
+    {
+        return (TypeAttributeCache.Count, MemberAttributeCache.Count);
     }
 }
