@@ -66,7 +66,7 @@ public abstract class ViewModelBase : ReactiveObject, IViewModel
 
         lock (_vmLock)
         {
-            if (_bindingsRegistered)
+            if (_bindingsRegistered || IsDisposed)
             {
                 return;
             }
@@ -87,7 +87,7 @@ public abstract class ViewModelBase : ReactiveObject, IViewModel
 
         lock (_vmLock)
         {
-            if (Maintain || !_bindingsRegistered)
+            if (Maintain || !_bindingsRegistered || IsDisposed)
             {
                 return;
             }
