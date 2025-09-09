@@ -10,7 +10,7 @@
 		<AssemblyName>StellarUI.Avalonia</AssemblyName>
 		<RootNamespace>StellarUI.Avalonia</RootNamespace>
 		<Title>Stellar UI - Avalonia</Title>
-		<Copyright>Eight-Bot 2024</Copyright>
+		<Copyright>Eight-Bot 2025</Copyright>
 		<PackageLicenseUrl>https://github.com/TheEightBot/StellarUI/blob/main/LICENSE</PackageLicenseUrl>
 		<RepositoryUrl>https://github.com/TheEightBot/StellarUI</RepositoryUrl>
 		<PackageTags>Avalonia;MVVM;Reactive UI;Reactive Extensions;Eight-Bot</PackageTags>

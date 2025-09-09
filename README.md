@@ -255,7 +255,7 @@ StellarUI includes a Roslyn source generator that emits a strongly-typed registr
 1. Add the generator package to your project via NuGet:
 
     ```bash
-    dotnet add package Stellar.SourceGenerators --version <latest-version>
+    dotnet add package StellarUI.SourceGenerators --version <latest-version>
     ```
 
 2. Rebuild your project to produce `AddRegisteredServicesFor{YourAssemblyName}.g.cs` in `obj/<TFM>/generated`.

@@ -17,7 +17,7 @@ public abstract partial class ValidatingViewModelBase<TNeedsValidation> : ViewMo
     protected readonly IProvideValidation<TNeedsValidation> Validator;
 
     [Reactive]
-    public bool IsValid { get; private set; }
+    public partial bool IsValid { get; private set; }
 
     public ObservableCollection<ValidationInformation> ValidationErrors { get; } = new();
 

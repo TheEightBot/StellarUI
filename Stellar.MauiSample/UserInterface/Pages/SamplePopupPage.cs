@@ -13,6 +13,8 @@ public class SamplePopupPage : PopupPageBase<SampleViewModel>
 
     private BoxView _color;
 
+    private Button _clear;
+
     private Picker _picker;
 
     private ListView _listView;
@@ -53,6 +55,12 @@ public class SamplePopupPage : PopupPageBase<SampleViewModel>
                         VerticalOptions = LayoutOptions.Start,
                     }
                         .Assign(out _picker),
+                    new Button
+                        {
+                            Text = "Clear",
+                            VerticalOptions = LayoutOptions.Start,
+                        }
+                        .Assign(out _clear),
 
                     new ListView
                     {
@@ -80,12 +88,16 @@ public class SamplePopupPage : PopupPageBase<SampleViewModel>
             .BindTo(this, static ui => ui._color.BackgroundColor)
             .DisposeWith(disposables);
 
+        this.BindCommand(ViewModel, vm => vm.Clear, ui => ui._clear, Observables.UnitDefault)
+            .DisposeWith(disposables);
+
         _picker
             .BindPicker(
                 this.WhenAnyValue(static x => x.ViewModel.TestItems),
                 x => this.ViewModel.SelectedTestItem = x,
                 x => this.ViewModel.SelectedTestItem == x,
-                x => x.Value1)
+                x => x.Value1,
+                this.WhenAnyValue(x => x.ViewModel.SelectedTestItem))
             .DisposeWith(disposables);
 
         this.OneWayBind(ViewModel, static vm => vm.TestItems, static ui => ui._listView.ItemsSource)

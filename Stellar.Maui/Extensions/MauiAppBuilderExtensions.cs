@@ -19,6 +19,17 @@ public static class MauiAppBuilderExtensions
 
     public static MauiAppBuilder UseStellarComponents<TStellarAssembly>(this MauiAppBuilder mauiAppBuilder, bool useCustomMauiScheduler = true, bool useShortTermThreadPoolScheduler = true)
     {
+        UseStellarComponents(mauiAppBuilder, useCustomMauiScheduler, useShortTermThreadPoolScheduler);
+
+        mauiAppBuilder
+            .Services
+                .ConfigureStellarComponents(typeof(TStellarAssembly).GetTypeInfo().Assembly);
+
+        return mauiAppBuilder;
+    }
+
+    public static MauiAppBuilder UseStellarComponents(this MauiAppBuilder mauiAppBuilder, bool useCustomMauiScheduler = true, bool useShortTermThreadPoolScheduler = true)
+    {
         UseCustomMauiScheduler = useCustomMauiScheduler;
         UseShortTermThreadPoolScheduler = useShortTermThreadPoolScheduler;
 
@@ -26,12 +37,11 @@ public static class MauiAppBuilderExtensions
         Locator.CurrentMutable.InitializeSplat();
         Locator.CurrentMutable.InitializeReactiveUI();
 
+        mauiAppBuilder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IMauiInitializeScopedService, MauiSchedulerInitializer>());
+
         mauiAppBuilder
             .Services
-                .AddSingleton(serviceProvider => new MauiScheduler(serviceProvider.GetRequiredService<IDispatcher>()))
-                .ConfigureStellarComponents(typeof(TStellarAssembly).GetTypeInfo().Assembly);
-
-        mauiAppBuilder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IMauiInitializeScopedService, MauiSchedulerInitializer>());
+            .AddSingleton(serviceProvider => new MauiScheduler(serviceProvider.GetRequiredService<IDispatcher>()));
 
         return mauiAppBuilder;
     }

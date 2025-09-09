@@ -4,10 +4,11 @@
         <SingleProject>true</SingleProject>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <LangVersion>preview</LangVersion>
         <PackageId>StellarUI</PackageId>
         <Title>Stellar UI</Title>
         <Authors>Eight-Bot</Authors>
-        <Copyright>Eight-Bot 2024</Copyright>
+        <Copyright>Eight-Bot 2025</Copyright>
         <PackageLicenseUrl>https://github.com/TheEightBot/StellarUI/blob/main/LICENSE</PackageLicenseUrl>
         <RepositoryUrl>https://github.com/TheEightBot/StellarUI/blob/main/LICENSE</RepositoryUrl>
         <PackageTags>.NET UI;MVVM;Reactive UI;Reactive Extensions;Eight-Bot</PackageTags>

@@ -21,7 +21,7 @@ public static class Program
             .UsePlatformDetect()
             .WithInterFont()
             .LogToTrace()
-            .UseStellarComponents<App>()
+            .UseStellarComponents()
 #if DEBUG
             .EnableHotReload()
 #endif

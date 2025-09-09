@@ -10,7 +10,7 @@
     <RepositoryUrl>https://github.com/TheEightBot/StellarUI/blob/main/LICENSE</RepositoryUrl>
     <Title>Stellar UI - Blazor</Title>
     <Authors>Eight-Bot</Authors>
-    <Copyright>Eight-Bot 2024</Copyright>
+    <Copyright>Eight-Bot 2025</Copyright>
     <PackageLicenseUrl>https://github.com/TheEightBot/StellarUI/blob/main/LICENSE</PackageLicenseUrl>
     <PackageTags>.NET Blazor;MVVM;Reactive UI;Reactive Extensions;Eight-Bot</PackageTags>
   </PropertyGroup>

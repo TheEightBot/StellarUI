@@ -26,6 +26,9 @@ public partial class SampleViewModel(TestService testService)
     private ReactiveCommand<Unit, Unit> _goNext;
 
     [Reactive]
+    private ReactiveCommand<Unit, Unit> _clear;
+
+    [Reactive]
     private byte[] _colorArray;
 
     [Reactive]
@@ -91,6 +94,14 @@ public partial class SampleViewModel(TestService testService)
         GoNext =
             ReactiveCommand
                 .Create(DefaultAction)
+                .DisposeWith(disposables);
+
+        Clear =
+            ReactiveCommand
+                .Create(() =>
+                {
+                    SelectedTestItem = null;
+                })
                 .DisposeWith(disposables);
     }
 
