@@ -18,7 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="System.Threading.RateLimiting" Version="9.0.0" />
+      <PackageReference Include="System.Threading.RateLimiting" Version="9.0.9" />
       <PackageReference Update="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0" />
     </ItemGroup>
 
