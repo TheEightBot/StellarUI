@@ -21,15 +21,12 @@ public abstract class ViewModelBase : ReactiveObject, IViewModel
         _viewModelBindings = new(this);
 
         // Cache attribute lookup using lazy initialization with the fast AttributeCache
+        // Capture the type to avoid capturing 'this' in the lambda
+        var vmType = this.GetType();
         _shouldMaintain = new Lazy<bool>(() =>
         {
-            var sra = AttributeCache.GetAttribute<ServiceRegistrationAttribute>(this.GetType());
-            if (sra != null)
-            {
-                return sra.ServiceRegistrationType is Lifetime.Scoped or Lifetime.Singleton;
-            }
-
-            return false;
+            var sra = AttributeCache.GetAttribute<ServiceRegistrationAttribute>(vmType);
+            return sra?.ServiceRegistrationType is Lifetime.Scoped or Lifetime.Singleton;
         });
     }
 

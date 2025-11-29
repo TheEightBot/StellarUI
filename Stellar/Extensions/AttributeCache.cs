@@ -23,7 +23,7 @@ public static class AttributeCache
     {
         return (TAttribute?)TypeAttributeCache.GetOrAdd(
             (type, typeof(TAttribute)),
-            key => Attribute.GetCustomAttribute(key.TypeKey, key.AttributeType));
+            static key => Attribute.GetCustomAttribute(key.TypeKey, key.AttributeType));
     }
 
     /// <summary>
@@ -37,7 +37,7 @@ public static class AttributeCache
     {
         return (TAttribute?)MemberAttributeCache.GetOrAdd(
             (memberInfo, typeof(TAttribute)),
-            key => Attribute.GetCustomAttribute(key.MemberKey, key.AttributeType));
+            static key => Attribute.GetCustomAttribute(key.MemberKey, key.AttributeType));
     }
 
     /// <summary>

@@ -12,7 +12,7 @@ public record ValidationResult
         IsValid = isValid;
     }
 
-    public static ValidationResult DefaultValidationResult = new ValidationResult(new List<ValidationInformation>(), true);
+    public static ValidationResult DefaultValidationResult = new ValidationResult(Array.Empty<ValidationInformation>(), true);
 }
 
 public record ValidationInformation
