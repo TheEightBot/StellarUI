@@ -9,6 +9,26 @@ public abstract class ViewManager<TViewModel> : IDisposable
 
     private readonly Lazy<Subject<NavigationEvent>> _navigationEvents;
 
+    private readonly Lazy<IObservable<Unit>> _initialized;
+
+    private readonly Lazy<IObservable<Unit>> _activated;
+
+    private readonly Lazy<IObservable<Unit>> _attached;
+
+    private readonly Lazy<IObservable<Unit>> _isAppearing;
+
+    private readonly Lazy<IObservable<Unit>> _isDisappearing;
+
+    private readonly Lazy<IObservable<Unit>> _detached;
+
+    private readonly Lazy<IObservable<Unit>> _deactivated;
+
+    private readonly Lazy<IObservable<Unit>> _disposedObservable;
+
+    private readonly Lazy<IObservable<Unit>> _navigatedTo;
+
+    private readonly Lazy<IObservable<Unit>> _navigatedFrom;
+
     private readonly Lock _bindingLock = new();
 
     private readonly WeakCompositeDisposable _controlBindings;
@@ -17,29 +37,29 @@ public abstract class ViewManager<TViewModel> : IDisposable
 
     private bool _disposed = false;
 
-    public IObservable<Unit> Initialized => _disposed ? Observable.Empty<Unit>() : _lifecycleEvents.Value.Where(x => x == LifecycleEvent.Initialized).SelectUnit().AsObservable();
+    public IObservable<Unit> Initialized => _disposed || !_lifecycleEvents.IsValueCreated ? Observable.Empty<Unit>() : _initialized.Value;
 
-    public IObservable<Unit> Activated => _disposed ? Observable.Empty<Unit>() : _lifecycleEvents.Value.Where(x => x == LifecycleEvent.Activated).SelectUnit().AsObservable();
+    public IObservable<Unit> Activated => _disposed || !_lifecycleEvents.IsValueCreated ? Observable.Empty<Unit>() : _activated.Value;
 
-    public IObservable<Unit> Attached => _disposed ? Observable.Empty<Unit>() : _lifecycleEvents.Value.Where(x => x == LifecycleEvent.Attached).SelectUnit().AsObservable();
+    public IObservable<Unit> Attached => _disposed || !_lifecycleEvents.IsValueCreated ? Observable.Empty<Unit>() : _attached.Value;
 
-    public IObservable<Unit> IsAppearing => _disposed ? Observable.Empty<Unit>() : _lifecycleEvents.Value.Where(x => x == LifecycleEvent.IsAppearing).SelectUnit().AsObservable();
+    public IObservable<Unit> IsAppearing => _disposed || !_lifecycleEvents.IsValueCreated ? Observable.Empty<Unit>() : _isAppearing.Value;
 
-    public IObservable<Unit> IsDisappearing => _disposed ? Observable.Empty<Unit>() : _lifecycleEvents.Value.Where(x => x == LifecycleEvent.IsDisappearing).SelectUnit().AsObservable();
+    public IObservable<Unit> IsDisappearing => _disposed || !_lifecycleEvents.IsValueCreated ? Observable.Empty<Unit>() : _isDisappearing.Value;
 
-    public IObservable<Unit> Detached => _disposed ? Observable.Empty<Unit>() : _lifecycleEvents.Value.Where(x => x == LifecycleEvent.Detached).SelectUnit().AsObservable();
+    public IObservable<Unit> Detached => _disposed || !_lifecycleEvents.IsValueCreated ? Observable.Empty<Unit>() : _detached.Value;
 
-    public IObservable<Unit> Deactivated => _disposed ? Observable.Empty<Unit>() : _lifecycleEvents.Value.Where(x => x == LifecycleEvent.Deactivated).SelectUnit().AsObservable();
+    public IObservable<Unit> Deactivated => _disposed || !_lifecycleEvents.IsValueCreated ? Observable.Empty<Unit>() : _deactivated.Value;
 
-    public IObservable<Unit> Disposed => _disposed ? Observable.Empty<Unit>() : _lifecycleEvents.Value.Where(x => x == LifecycleEvent.Disposed).SelectUnit().AsObservable();
+    public IObservable<Unit> Disposed => _disposed || !_lifecycleEvents.IsValueCreated ? Observable.Empty<Unit>() : _disposedObservable.Value;
 
-    public IObservable<LifecycleEvent> LifecycleEvents => _disposed ? Observable.Empty<LifecycleEvent>() : _lifecycleEvents.Value.AsObservable();
+    public IObservable<LifecycleEvent> LifecycleEvents => _disposed || !_lifecycleEvents.IsValueCreated ? Observable.Empty<LifecycleEvent>() : _lifecycleEvents.Value.AsObservable();
 
-    public IObservable<Unit> NavigatedTo => _disposed ? Observable.Empty<Unit>() : _navigationEvents.Value.Where(x => x == NavigationEvent.NavigatedTo).SelectUnit().AsObservable();
+    public IObservable<Unit> NavigatedTo => _disposed || !_navigationEvents.IsValueCreated ? Observable.Empty<Unit>() : _navigatedTo.Value;
 
-    public IObservable<Unit> NavigatedFrom => _disposed ? Observable.Empty<Unit>() : _navigationEvents.Value.Where(x => x == NavigationEvent.NavigatedFrom).SelectUnit().AsObservable();
+    public IObservable<Unit> NavigatedFrom => _disposed || !_navigationEvents.IsValueCreated ? Observable.Empty<Unit>() : _navigatedFrom.Value;
 
-    public IObservable<NavigationEvent> NavigationEvents => _disposed ? Observable.Empty<NavigationEvent>() : _navigationEvents.Value.AsObservable();
+    public IObservable<NavigationEvent> NavigationEvents => _disposed || !_navigationEvents.IsValueCreated ? Observable.Empty<NavigationEvent>() : _navigationEvents.Value.AsObservable();
 
     public bool Maintain { get; set; }
 
@@ -60,6 +80,18 @@ public abstract class ViewManager<TViewModel> : IDisposable
 
         _lifecycleEvents = new(() => new Subject<LifecycleEvent>(), LazyThreadSafetyMode.ExecutionAndPublication);
         _navigationEvents = new(() => new Subject<NavigationEvent>(), LazyThreadSafetyMode.ExecutionAndPublication);
+
+        _initialized = new(() => _lifecycleEvents.Value.Where(static x => x == LifecycleEvent.Initialized).SelectUnit().AsObservable(), LazyThreadSafetyMode.ExecutionAndPublication);
+        _activated = new(() => _lifecycleEvents.Value.Where(static x => x == LifecycleEvent.Activated).SelectUnit().AsObservable(), LazyThreadSafetyMode.ExecutionAndPublication);
+        _attached = new(() => _lifecycleEvents.Value.Where(static x => x == LifecycleEvent.Attached).SelectUnit().AsObservable(), LazyThreadSafetyMode.ExecutionAndPublication);
+        _isAppearing = new(() => _lifecycleEvents.Value.Where(static x => x == LifecycleEvent.IsAppearing).SelectUnit().AsObservable(), LazyThreadSafetyMode.ExecutionAndPublication);
+        _isDisappearing = new(() => _lifecycleEvents.Value.Where(static x => x == LifecycleEvent.IsDisappearing).SelectUnit().AsObservable(), LazyThreadSafetyMode.ExecutionAndPublication);
+        _detached = new(() => _lifecycleEvents.Value.Where(static x => x == LifecycleEvent.Detached).SelectUnit().AsObservable(), LazyThreadSafetyMode.ExecutionAndPublication);
+        _deactivated = new(() => _lifecycleEvents.Value.Where(static x => x == LifecycleEvent.Deactivated).SelectUnit().AsObservable(), LazyThreadSafetyMode.ExecutionAndPublication);
+        _disposedObservable = new(() => _lifecycleEvents.Value.Where(static x => x == LifecycleEvent.Disposed).SelectUnit().AsObservable(), LazyThreadSafetyMode.ExecutionAndPublication);
+
+        _navigatedTo = new(() => _navigationEvents.Value.Where(static x => x == NavigationEvent.NavigatedTo).SelectUnit().AsObservable(), LazyThreadSafetyMode.ExecutionAndPublication);
+        _navigatedFrom = new(() => _navigationEvents.Value.Where(static x => x == NavigationEvent.NavigatedFrom).SelectUnit().AsObservable(), LazyThreadSafetyMode.ExecutionAndPublication);
     }
 
     public void Dispose()
