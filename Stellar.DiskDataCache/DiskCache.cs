@@ -181,8 +181,8 @@ public class DiskCache : IDataCache, IDisposable
 
         return
             File.Exists(filePath)
-                ? new FileStream(filePath, FileMode.Truncate)
-                : new FileStream(filePath, FileMode.Create);
+                ? new FileStream(filePath, FileMode.Truncate, FileAccess.Write, FileShare.None, 4096, FileOptions.Asynchronous)
+                : new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None, 4096, FileOptions.Asynchronous);
     }
 
     private Stream GetFile(string? cacheDirectoryName, string fileName)
@@ -192,7 +192,7 @@ public class DiskCache : IDataCache, IDisposable
         var filePath = Path.Combine(cacheDirectory.FullName, fileName);
 
         return File.Exists(filePath)
-            ? new FileStream(filePath, FileMode.Open)
+            ? new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.Asynchronous)
             : Stream.Null;
     }
 

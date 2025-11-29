@@ -65,26 +65,26 @@
 
 9. **Disk cache implementation (`Stellar.DiskDataCache/DiskCache.cs`)**
 
-    - [ ] Audit read/write paths for large temporary allocations (e.g., `byte[]`, `MemoryStream`) and consider reuse/pooled patterns where straightforward.
-    - [ ] Review string/path handling to avoid unnecessary concatenations or `new` objects.
-    - [ ] Keep changes conservative and focused on obvious allocation hotspots.
+    - [x] Audit read/write paths for large temporary allocations (e.g., `byte[]`, `MemoryStream`) and consider reuse/pooled patterns where straightforward.
+    - [x] Review string/path handling to avoid unnecessary concatenations or `new` objects.
+    - [x] Keep changes conservative and focused on obvious allocation hotspots.
 
 10. **Platform-specific view managers and bindings (`MauiViewManager`, `BlazorViewManager`, `AvaloniaViewManager`)**
 
-    - [ ] Review per-navigation/per-render code paths for lambda/closure allocations and repeated observable or task chains.
-    - [ ] Cache simple, reusable delegates or helper observables where appropriate.
-    - [ ] Ensure no change in user-facing behavior or platform-specific semantics.
+    - [x] Review per-navigation/per-render code paths for lambda/closure allocations and repeated observable or task chains.
+    - [x] Cache simple, reusable delegates or helper observables where appropriate.
+    - [x] Ensure no change in user-facing behavior or platform-specific semantics.
 
 11. **General closure and allocation audit in `Stellar` core**
 
-    - [ ] Perform a pass over `Stellar/Extensions` and `Stellar/ViewModel` to identify obvious closure allocations and unnecessary LINQ in hot paths.
-    - [ ] Introduce small, well-named helpers where they reduce duplication and allocations.
-    - [ ] Avoid premature micro-optimizations; focus on clear wins.
+    - [x] Perform a pass over `Stellar/Extensions` and `Stellar/ViewModel` to identify obvious closure allocations and unnecessary LINQ in hot paths.
+    - [x] Introduce small, well-named helpers where they reduce duplication and allocations.
+    - [x] Avoid premature micro-optimizations; focus on clear wins.
 
 12. **GC and disposal hygiene across core types**
-    - [ ] Confirm all disposables (`ViewManager<TViewModel>`, weak disposables, etc.) correctly release references and call `GC.SuppressFinalize` where applicable.
-    - [ ] Ensure event subscriptions and delegates are unsubscribed/cleared during disposal to prevent leaks.
-    - [ ] Add or refine XML docs/comments only where it clarifies lifecycle and disposal expectations (optional).
+    - [x] Confirm all disposables (`ViewManager<TViewModel>`, weak disposables, etc.) correctly release references and call `GC.SuppressFinalize` where applicable.
+    - [x] Ensure event subscriptions and delegates are unsubscribed/cleared during disposal to prevent leaks.
+    - [x] Add or refine XML docs/comments only where it clarifies lifecycle and disposal expectations (optional).
 
 ---
 

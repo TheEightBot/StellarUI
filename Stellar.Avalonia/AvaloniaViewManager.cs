@@ -6,7 +6,8 @@ namespace Stellar.Avalonia;
 public class AvaloniaViewManager<TViewModel> : ViewManager<TViewModel>
     where TViewModel : class
 {
-    private IStellarView<TViewModel> _view;
+    private IStellarView<TViewModel>? _view;
+    private Action<Type[]?>? _cachedHotReloadHandler;
 
     public override void HandleActivated(IStellarView<TViewModel> view)
     {
@@ -14,18 +15,19 @@ public class AvaloniaViewManager<TViewModel> : ViewManager<TViewModel>
 
         if (HotReloadService.HotReloadAware)
         {
-            _view = view as IStellarView<TViewModel>;
-            HotReloadService.UpdateApplicationEvent -= HandleHotReload;
-            HotReloadService.UpdateApplicationEvent += HandleHotReload;
+            _view = view;
+            _cachedHotReloadHandler ??= HandleHotReload;
+            HotReloadService.UpdateApplicationEvent -= _cachedHotReloadHandler;
+            HotReloadService.UpdateApplicationEvent += _cachedHotReloadHandler;
         }
     }
 
     public override void HandleDeactivated(IStellarView<TViewModel> view)
     {
-        if (HotReloadService.HotReloadAware)
+        if (HotReloadService.HotReloadAware && _cachedHotReloadHandler is not null)
         {
             _view = null;
-            HotReloadService.UpdateApplicationEvent -= HandleHotReload;
+            HotReloadService.UpdateApplicationEvent -= _cachedHotReloadHandler;
         }
 
         base.HandleDeactivated(view);

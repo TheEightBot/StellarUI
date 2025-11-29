@@ -7,6 +7,7 @@ public class MauiViewManager<TViewModel> : ViewManager<TViewModel>
     where TViewModel : class
 {
     private WeakReference<object?>? _reloadView;
+    private Action<Type[]?>? _cachedHotReloadHandler;
 
     public override void PropertyChanged<TView>(TView view, string? propertyName = null)
     {
@@ -22,8 +23,9 @@ public class MauiViewManager<TViewModel> : ViewManager<TViewModel>
             if (HotReloadService.HotReloadAware)
             {
                 this._reloadView = new WeakReference<object?>(view);
-                HotReloadService.UpdateApplicationEvent -= this.HandleHotReload;
-                HotReloadService.UpdateApplicationEvent += this.HandleHotReload;
+                _cachedHotReloadHandler ??= this.HandleHotReload;
+                HotReloadService.UpdateApplicationEvent -= _cachedHotReloadHandler;
+                HotReloadService.UpdateApplicationEvent += _cachedHotReloadHandler;
             }
 
             if (view is not IStellarView<TViewModel> isv)
@@ -36,9 +38,9 @@ public class MauiViewManager<TViewModel> : ViewManager<TViewModel>
         }
         else
         {
-            if (HotReloadService.HotReloadAware)
+            if (HotReloadService.HotReloadAware && _cachedHotReloadHandler is not null)
             {
-                HotReloadService.UpdateApplicationEvent -= this.HandleHotReload;
+                HotReloadService.UpdateApplicationEvent -= _cachedHotReloadHandler;
             }
 
             if (view is not IStellarView<TViewModel> isv)
