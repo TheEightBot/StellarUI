@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
+using Mopups.Hosting;
 using Stellar;
 
 namespace Stellar.MauiSample;
@@ -13,6 +14,7 @@ public static class MauiProgram
             MauiApp
                 .CreateBuilder()
                 .UseMauiApp<App>()
+                .ConfigureMopups()
                 .ConfigureFonts(
                     fonts =>
                     {
