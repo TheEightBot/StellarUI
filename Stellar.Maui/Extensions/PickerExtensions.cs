@@ -437,13 +437,21 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
 
     private void SelectedItemChanged(TViewModel? item, bool fromUi = false)
     {
-        _selectedItemChanged?.Invoke(item);
+        var picker = _picker;
 
-        if (!fromUi && _picker is not null && (_picker.SelectedItem is null || !EqualityComparer<TViewModel>.Default.Equals(item, this.SelectedItem)))
+        if (picker is null)
         {
-            var picker = _picker;
-            picker?.Dispatcher?.Dispatch(() => picker.SelectedItem = item);
+            return;
         }
+
+        picker.Dispatcher?.Dispatch(() => _selectedItemChanged?.Invoke(item));
+
+        if (fromUi || (_picker.SelectedItem is not null && EqualityComparer<TViewModel>.Default.Equals(item, this.SelectedItem)))
+        {
+            return;
+        }
+
+        picker.Dispatcher?.Dispatch(() => picker.SelectedItem = item);
     }
 
     public void Dispose()
