@@ -417,6 +417,12 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
         }
 
         var picker = _picker;
+
+        if ((_picker?.SelectedIndex ?? -1) < 0)
+        {
+            return;
+        }
+
         picker?.Dispatcher?.Dispatch(() => picker.ResetToInitialValue());
 
         if (fromNotificationTrigger)
@@ -444,14 +450,18 @@ public class ReactivePickerBinder<TViewModel> : IDisposable
             return;
         }
 
-        picker.Dispatcher?.Dispatch(() => _selectedItemChanged?.Invoke(item));
+        picker.Dispatcher?.Dispatch(
+            () =>
+            {
+                _selectedItemChanged?.Invoke(item);
 
-        if (fromUi || (_picker.SelectedItem is not null && EqualityComparer<TViewModel>.Default.Equals(item, this.SelectedItem)))
-        {
-            return;
-        }
+                if (fromUi || (picker.SelectedItem is not null && EqualityComparer<TViewModel>.Default.Equals(item, this.SelectedItem)))
+                {
+                    return;
+                }
 
-        picker.Dispatcher?.Dispatch(() => picker.SelectedItem = item);
+                picker.SelectedItem = item;
+            });
     }
 
     public void Dispose()
