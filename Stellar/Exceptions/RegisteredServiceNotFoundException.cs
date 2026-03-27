@@ -1,6 +1,6 @@
 ﻿namespace Stellar.Exceptions;
 
-public class RegisteredServiceNotFoundException : Exception
+public sealed class RegisteredServiceNotFoundException : Exception
 {
     public RegisteredServiceNotFoundException()
     {

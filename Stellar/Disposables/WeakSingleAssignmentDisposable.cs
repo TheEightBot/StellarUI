@@ -26,10 +26,7 @@ public sealed class WeakSingleAssignmentDisposable : IDisposable
     /// <param name="lifetimeScope">The object that controls the lifetime of the disposable.</param>
     public WeakSingleAssignmentDisposable(object lifetimeScope)
     {
-        if (lifetimeScope == null)
-        {
-            throw new ArgumentNullException(nameof(lifetimeScope));
-        }
+        ArgumentNullException.ThrowIfNull(lifetimeScope);
 
         this._table = new ConditionalWeakTable<object, DisposableContainer>();
         this._table.Add(lifetimeScope, new DisposableContainer());
@@ -161,10 +158,7 @@ public sealed class WeakSingleAssignmentDisposable : IDisposable
 
         public void SetDisposable(IDisposable value)
         {
-            if (value == null)
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
+            ArgumentNullException.ThrowIfNull(value);
 
             // Use a bool flag to track if the disposable has been assigned
             bool wasAssigned = _isAssigned;

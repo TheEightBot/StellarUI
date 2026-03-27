@@ -28,10 +28,7 @@ public sealed class WeakCompositeDisposable : ICollection<IDisposable>, IDisposa
     /// <param name="lifetimeScope">The object that controls the lifetime of the disposables.</param>
     public WeakCompositeDisposable(object lifetimeScope)
     {
-        if (lifetimeScope == null)
-        {
-            throw new ArgumentNullException(nameof(lifetimeScope));
-        }
+        ArgumentNullException.ThrowIfNull(lifetimeScope);
 
         this._table = new ConditionalWeakTable<object, DisposableCollection>
         {
@@ -75,10 +72,7 @@ public sealed class WeakCompositeDisposable : ICollection<IDisposable>, IDisposa
     /// <param name="item">The disposable to add.</param>
     public void Add(IDisposable item)
     {
-        if (item == null)
-        {
-            throw new ArgumentNullException(nameof(item));
-        }
+        ArgumentNullException.ThrowIfNull(item);
 
         lock (_gate)
         {
@@ -107,10 +101,7 @@ public sealed class WeakCompositeDisposable : ICollection<IDisposable>, IDisposa
     /// <returns>true if the disposable was removed successfully; otherwise, false.</returns>
     public bool Remove(IDisposable item)
     {
-        if (item == null)
-        {
-            throw new ArgumentNullException(nameof(item));
-        }
+        ArgumentNullException.ThrowIfNull(item);
 
         lock (_gate)
         {
@@ -178,10 +169,7 @@ public sealed class WeakCompositeDisposable : ICollection<IDisposable>, IDisposa
     /// <returns>true if the disposable is found in the composite; otherwise, false.</returns>
     public bool Contains(IDisposable item)
     {
-        if (item == null)
-        {
-            throw new ArgumentNullException(nameof(item));
-        }
+        ArgumentNullException.ThrowIfNull(item);
 
         lock (_gate)
         {
@@ -206,10 +194,7 @@ public sealed class WeakCompositeDisposable : ICollection<IDisposable>, IDisposa
     /// <param name="arrayIndex">The index in the array at which copying begins.</param>
     public void CopyTo(IDisposable[] array, int arrayIndex)
     {
-        if (array == null)
-        {
-            throw new ArgumentNullException(nameof(array));
-        }
+        ArgumentNullException.ThrowIfNull(array);
 
         if (arrayIndex < 0 || arrayIndex >= array.Length)
         {

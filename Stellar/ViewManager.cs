@@ -123,17 +123,9 @@ public abstract class ViewManager<TViewModel> : IDisposable
         Volatile.Write(ref _isDisposed, true);
     }
 
-    private void ThrowIfDisposed()
-    {
-        if (Volatile.Read(ref _isDisposed))
-        {
-            throw new ObjectDisposedException(nameof(ViewManager<TViewModel>));
-        }
-    }
-
     public void RegisterBindings(IStellarView<TViewModel> view)
     {
-        ThrowIfDisposed();
+        ObjectDisposedException.ThrowIf(Volatile.Read(ref _isDisposed), this);
 
         lock (_bindingLock)
         {
@@ -155,7 +147,7 @@ public abstract class ViewManager<TViewModel> : IDisposable
 
     public void UnregisterBindings(IStellarView<TViewModel> view)
     {
-        ThrowIfDisposed();
+        ObjectDisposedException.ThrowIf(Volatile.Read(ref _isDisposed), this);
 
         lock (_bindingLock)
         {
@@ -174,7 +166,7 @@ public abstract class ViewManager<TViewModel> : IDisposable
 
     public virtual void HandleActivated(IStellarView<TViewModel> view)
     {
-        ThrowIfDisposed();
+        ObjectDisposedException.ThrowIf(Volatile.Read(ref _isDisposed), this);
 
         view.RegisterViewModelBindings();
 
@@ -185,7 +177,7 @@ public abstract class ViewManager<TViewModel> : IDisposable
 
     public virtual void HandleDeactivated(IStellarView<TViewModel> view)
     {
-        ThrowIfDisposed();
+        ObjectDisposedException.ThrowIf(Volatile.Read(ref _isDisposed), this);
 
         OnLifecycle(view, LifecycleEvent.Deactivated);
 
@@ -195,7 +187,7 @@ public abstract class ViewManager<TViewModel> : IDisposable
     public virtual void PropertyChanged<TView>(TView view, string? propertyName = null)
         where TView : IViewFor<TViewModel>
     {
-        ThrowIfDisposed();
+        ObjectDisposedException.ThrowIf(Volatile.Read(ref _isDisposed), this);
 
         if (propertyName == nameof(IViewFor<TViewModel>.ViewModel) && view.ViewModel is not null)
         {

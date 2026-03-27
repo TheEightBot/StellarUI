@@ -26,10 +26,7 @@ public sealed class WeakSerialDisposable : IDisposable
     /// <param name="lifetimeScope">The object that controls the lifetime of the disposable.</param>
     public WeakSerialDisposable(object lifetimeScope)
     {
-        if (lifetimeScope == null)
-        {
-            throw new ArgumentNullException(nameof(lifetimeScope));
-        }
+        ArgumentNullException.ThrowIfNull(lifetimeScope);
 
         this._table = new ConditionalWeakTable<object, DisposableContainer>();
         this._table.Add(lifetimeScope, new DisposableContainer());
