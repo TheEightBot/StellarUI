@@ -155,13 +155,6 @@ The `using System.Runtime.Serialization` is unused (no `[Serializable]` attribut
 
 - [ ] **Remove `StringExtensions.Contains`** — callers already get the BCL overload. If this method is used directly via `StringExtensions.Contains(...)` anywhere, search and replace with the built-in call.
 
-### 3.5 ValueIsTrue / ValueIsFalse — Semantic confusion with WhereIsTrue/WhereIsFalse
-
-**File**: `Stellar/Extensions/IObservableExtensions.cs` (lines 106–114)
-
-`ValueIsTrue` does `Select(static result => result)` which is an identity projection — it returns the value unchanged. `ValueIsFalse` inverts it. These names suggest filtering, but they're actually projections. Meanwhile `WhereIsTrue`/`WhereIsFalse` do the filtering. This is confusing.
-
-- [ ] **Consider renaming to `Negate()`/`Identity()` or similar**, or add XML documentation that clearly differentiates these from the `Where*` variants. If these are unused, consider removing them.
 
 ### 3.6 ViewModelBase — Consider `sealed` disposal pattern
 
@@ -257,19 +250,6 @@ Manual `if (x == null) throw new ArgumentNullException(nameof(x))` patterns can 
 
 - [ ] **Replace `ThrowIfDisposed()` with inline `ObjectDisposedException.ThrowIf(_disposed, this)`** calls. This removes the private helper method and is recognized by the JIT for better inlining.
 
-### 5.3 Collection expressions — .NET 9 / C# 13
-
-**Files**: Multiple
-
-`new List<IDisposable>()`, `new List<ValidationInformation>()`, `Enumerable.Empty<Type>()` etc. can use collection expressions (`[]`) in C# 13 (which the project uses via `LangVersion=preview`).
-
-- [ ] **Replace `new List<T>()` with `[]` and `Enumerable.Empty<T>()` with `[]`** where appropriate. The compiler optimizes `[]` to use pooled arrays for empty collections. For example:
-  ```csharp
-  // Before
-  List<IDisposable> disposables = new();
-  // After
-  List<IDisposable> disposables = [];
-  ```
 
 ### 5.4 `sealed` on leaf classes
 
