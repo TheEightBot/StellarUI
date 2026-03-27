@@ -202,6 +202,14 @@ public abstract partial class ValidatingViewModelBase<TNeedsValidation> : ViewMo
             return defaultValue;
         }
 
-        return errors.FirstOrDefault(ni => ni.PropertyName.Equals(propertyName, StringComparison.Ordinal)) ?? defaultValue;
+        for (int i = 0; i < errors.Count; i++)
+        {
+            if (errors[i].PropertyName.Equals(propertyName, StringComparison.Ordinal))
+            {
+                return errors[i];
+            }
+        }
+
+        return defaultValue;
     }
 }
