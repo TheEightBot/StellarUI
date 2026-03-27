@@ -445,7 +445,7 @@ public static class IObservableExtensions
         return Observable.Create<T>(observer =>
         {
             Notification<T>? outsideNotification = null;
-            var gate = new object();
+            var gate = new Lock();
             bool active = false;
             var cancelable = new MultipleAssignmentDisposable();
             var disposable =

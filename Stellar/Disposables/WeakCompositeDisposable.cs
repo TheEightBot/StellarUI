@@ -1,3 +1,4 @@
+using System.Buffers;
 using System.Collections;
 using System.Runtime.CompilerServices;
 
@@ -11,7 +12,7 @@ namespace Stellar;
 public sealed class WeakCompositeDisposable : ICollection<IDisposable>, IDisposable
 {
     private readonly ConditionalWeakTable<object, DisposableCollection> _table;
-    private readonly object _gate = new object();
+    private readonly Lock _gate = new();
     private readonly WeakReference<object> _lifetimeScope;
     private bool _isDisposed;
 
@@ -136,7 +137,8 @@ public sealed class WeakCompositeDisposable : ICollection<IDisposable>, IDisposa
     /// </summary>
     public void Clear()
     {
-        List<IDisposable> disposables = new();
+        IDisposable[]? rented = null;
+        int count = 0;
 
         lock (_gate)
         {
@@ -147,16 +149,25 @@ public sealed class WeakCompositeDisposable : ICollection<IDisposable>, IDisposa
 
             if (TryGetCollection(out var collection))
             {
-                // Capture all disposables to dispose outside of the lock
-                disposables.AddRange(collection!);
-                collection!.Clear();
+                count = collection!.Count;
+                if (count > 0)
+                {
+                    rented = ArrayPool<IDisposable>.Shared.Rent(count);
+                    collection.CopyTo(rented, 0);
+                    collection.Clear();
+                }
             }
         }
 
         // Dispose outside of lock
-        foreach (var disposable in disposables)
+        if (rented is not null)
         {
-            disposable.Dispose();
+            for (int i = 0; i < count; i++)
+            {
+                rented[i].Dispose();
+            }
+
+            ArrayPool<IDisposable>.Shared.Return(rented, clearArray: true);
         }
     }
 
@@ -229,7 +240,8 @@ public sealed class WeakCompositeDisposable : ICollection<IDisposable>, IDisposa
     /// </summary>
     public void Dispose()
     {
-        List<IDisposable> disposables = new();
+        IDisposable[]? rented = null;
+        int count = 0;
 
         lock (_gate)
         {
@@ -242,16 +254,25 @@ public sealed class WeakCompositeDisposable : ICollection<IDisposable>, IDisposa
 
             if (TryGetCollection(out var collection))
             {
-                // Capture all disposables to dispose outside of the lock
-                disposables.AddRange(collection!);
-                collection!.Clear();
+                count = collection!.Count;
+                if (count > 0)
+                {
+                    rented = ArrayPool<IDisposable>.Shared.Rent(count);
+                    collection.CopyTo(rented, 0);
+                    collection.Clear();
+                }
             }
         }
 
         // Dispose outside of lock to avoid deadlocks
-        foreach (var disposable in disposables)
+        if (rented is not null)
         {
-            disposable.Dispose();
+            for (int i = 0; i < count; i++)
+            {
+                rented[i].Dispose();
+            }
+
+            ArrayPool<IDisposable>.Shared.Return(rented, clearArray: true);
         }
     }
 

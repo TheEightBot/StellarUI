@@ -55,14 +55,11 @@ public static class IServiceCollectionExtensions
     {
         if (attribute.RegisterInterfaces)
         {
-            var interfaces = type.GetInterfaces() ?? Enumerable.Empty<Type>();
+            var interfaces = type.GetInterfaces();
 
-            if (interfaces.Any())
+            foreach (var currInterface in interfaces)
             {
-                foreach (var currInterface in interfaces)
-                {
-                    RegisterServiceByLifetime(services, attribute.ServiceRegistrationType, currInterface, type);
-                }
+                RegisterServiceByLifetime(services, attribute.ServiceRegistrationType, currInterface, type);
             }
         }
 

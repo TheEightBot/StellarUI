@@ -10,7 +10,7 @@ namespace Stellar;
 public sealed class WeakSerialDisposable : IDisposable
 {
     private readonly ConditionalWeakTable<object, DisposableContainer> _table;
-    private readonly object _gate = new object();
+    private readonly Lock _gate = new();
     private readonly WeakReference<object> _lifetimeScope;
     private bool _isDisposed;
 
