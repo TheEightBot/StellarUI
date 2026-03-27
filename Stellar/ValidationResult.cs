@@ -4,9 +4,9 @@ public record ValidationResult
 {
     public bool IsValid { get; }
 
-    public ICollection<ValidationInformation> ValidationInformation { get; }
+    public IReadOnlyCollection<ValidationInformation> ValidationInformation { get; }
 
-    public ValidationResult(ICollection<ValidationInformation> validationInformation, bool isValid)
+    public ValidationResult(IReadOnlyCollection<ValidationInformation> validationInformation, bool isValid)
     {
         ValidationInformation = validationInformation;
         IsValid = isValid;
@@ -43,6 +43,6 @@ public record ValidationInformation
         PropertyName = propertyName;
         ErrorMessage = error;
         AttemptedValue = attemptedValue;
-        IsError = false;
+        IsError = true;
     }
 }
