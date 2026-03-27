@@ -30,29 +30,29 @@ public abstract class ViewManager<TViewModel> : IDisposable
 
     private bool _isDisposed = false;
 
-    public IObservable<Unit> Initialized => _isDisposed ? Observable.Empty<Unit>() : _initialized.Value;
+    public IObservable<Unit> Initialized => Volatile.Read(ref _isDisposed) ? Observable.Empty<Unit>() : _initialized.Value;
 
-    public IObservable<Unit> Activated => _isDisposed ? Observable.Empty<Unit>() : _activated.Value;
+    public IObservable<Unit> Activated => Volatile.Read(ref _isDisposed) ? Observable.Empty<Unit>() : _activated.Value;
 
-    public IObservable<Unit> Attached => _isDisposed ? Observable.Empty<Unit>() : _attached.Value;
+    public IObservable<Unit> Attached => Volatile.Read(ref _isDisposed) ? Observable.Empty<Unit>() : _attached.Value;
 
-    public IObservable<Unit> IsAppearing => _isDisposed ? Observable.Empty<Unit>() : _isAppearing.Value;
+    public IObservable<Unit> IsAppearing => Volatile.Read(ref _isDisposed) ? Observable.Empty<Unit>() : _isAppearing.Value;
 
-    public IObservable<Unit> IsDisappearing => _isDisposed ? Observable.Empty<Unit>() : _isDisappearing.Value;
+    public IObservable<Unit> IsDisappearing => Volatile.Read(ref _isDisposed) ? Observable.Empty<Unit>() : _isDisappearing.Value;
 
-    public IObservable<Unit> Detached => _isDisposed ? Observable.Empty<Unit>() : _detached.Value;
+    public IObservable<Unit> Detached => Volatile.Read(ref _isDisposed) ? Observable.Empty<Unit>() : _detached.Value;
 
-    public IObservable<Unit> Deactivated => _isDisposed ? Observable.Empty<Unit>() : _deactivated.Value;
+    public IObservable<Unit> Deactivated => Volatile.Read(ref _isDisposed) ? Observable.Empty<Unit>() : _deactivated.Value;
 
-    public IObservable<Unit> Disposed => _isDisposed ? Observable.Empty<Unit>() : _disposed.Value;
+    public IObservable<Unit> Disposed => Volatile.Read(ref _isDisposed) ? Observable.Empty<Unit>() : _disposed.Value;
 
-    public IObservable<LifecycleEvent> LifecycleEvents => _isDisposed ? Observable.Empty<LifecycleEvent>() : _allLifecycleEvents.Value;
+    public IObservable<LifecycleEvent> LifecycleEvents => Volatile.Read(ref _isDisposed) ? Observable.Empty<LifecycleEvent>() : _allLifecycleEvents.Value;
 
-    public IObservable<Unit> NavigatedTo => _isDisposed ? Observable.Empty<Unit>() : _navigatedTo.Value;
+    public IObservable<Unit> NavigatedTo => Volatile.Read(ref _isDisposed) ? Observable.Empty<Unit>() : _navigatedTo.Value;
 
-    public IObservable<Unit> NavigatedFrom => _isDisposed ? Observable.Empty<Unit>() : _navigatedFrom.Value;
+    public IObservable<Unit> NavigatedFrom => Volatile.Read(ref _isDisposed) ? Observable.Empty<Unit>() : _navigatedFrom.Value;
 
-    public IObservable<NavigationEvent> NavigationEvents => _isDisposed ? Observable.Empty<NavigationEvent>() : _allNavigationEvents.Value;
+    public IObservable<NavigationEvent> NavigationEvents => Volatile.Read(ref _isDisposed) ? Observable.Empty<NavigationEvent>() : _allNavigationEvents.Value;
 
     public bool Maintain { get; set; }
 
@@ -96,7 +96,7 @@ public abstract class ViewManager<TViewModel> : IDisposable
 
     protected virtual void Dispose(bool disposing)
     {
-        if (_isDisposed)
+        if (Volatile.Read(ref _isDisposed))
         {
             return;
         }
@@ -120,12 +120,12 @@ public abstract class ViewManager<TViewModel> : IDisposable
             }
         }
 
-        _isDisposed = true;
+        Volatile.Write(ref _isDisposed, true);
     }
 
     private void ThrowIfDisposed()
     {
-        if (_isDisposed)
+        if (Volatile.Read(ref _isDisposed))
         {
             throw new ObjectDisposedException(nameof(ViewManager<TViewModel>));
         }
@@ -205,7 +205,7 @@ public abstract class ViewManager<TViewModel> : IDisposable
 
     public void OnLifecycle(IStellarView<TViewModel> view, LifecycleEvent lifecycleEvent)
     {
-        if (_isDisposed)
+        if (Volatile.Read(ref _isDisposed))
         {
             return; // Silently return if disposed to avoid exceptions during cleanup
         }
@@ -225,7 +225,7 @@ public abstract class ViewManager<TViewModel> : IDisposable
 
     public void OnNavigating(IStellarView<TViewModel> view, NavigationEvent navigationEvent)
     {
-        if (_isDisposed)
+        if (Volatile.Read(ref _isDisposed))
         {
             return; // Silently return if disposed to avoid exceptions during cleanup
         }
