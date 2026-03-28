@@ -9,20 +9,20 @@ public class ServiceRegistrationAttribute : Attribute
 
     public bool RegisterInterfaces { get; set; }
 
-    public ServiceRegistrationAttribute()
-    {
-        ServiceRegistrationType = Lifetime.Transient;
-    }
+    public Type? ServiceType { get; set; }
 
-    public ServiceRegistrationAttribute(Lifetime serviceRegistrationType)
-    {
-        ServiceRegistrationType = serviceRegistrationType;
-    }
+    public string? Key { get; set; }
 
-    public ServiceRegistrationAttribute(Lifetime serviceRegistrationType = Lifetime.Transient, bool registerInterfaces = false)
+    public ServiceRegistrationAttribute(
+        Lifetime serviceRegistrationType = Lifetime.Transient,
+        bool registerInterfaces = false,
+        Type? serviceType = null,
+        string? key = null)
     {
         ServiceRegistrationType = serviceRegistrationType;
         RegisterInterfaces = registerInterfaces;
+        ServiceType = serviceType;
+        Key = key;
     }
 }
 

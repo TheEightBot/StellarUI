@@ -68,7 +68,7 @@ namespace Stellar.SourceGenerators
                         };
 
                         bool isKeyed = !string.IsNullOrEmpty(reg.Key);
-                        string? keyLiteral = isKeyed ? $"\"{EscapeStringLiteral(reg.Key!)}\"" : null;
+                        string? keyLiteral = isKeyed ? SyntaxFactory.Literal(reg.Key!).Text : null;
 
                         if (reg.ExplicitServiceType is not null)
                         {
@@ -162,6 +162,22 @@ namespace Stellar.SourceGenerators
                     registerInterfaces = ri;
                 }
 
+                if (ad.ConstructorArguments.Length >= 3)
+                {
+                    TypedConstant serviceTypeArg = ad.ConstructorArguments[2];
+                    if (serviceTypeArg.Kind == TypedConstantKind.Type &&
+                        serviceTypeArg.Value is ITypeSymbol positionalServiceType)
+                    {
+                        explicitServiceType = positionalServiceType as INamedTypeSymbol;
+                    }
+                }
+
+                if (ad.ConstructorArguments.Length >= 4 &&
+                    ad.ConstructorArguments[3].Value is string positionalKey)
+                {
+                    key = positionalKey;
+                }
+
                 foreach (KeyValuePair<string, TypedConstant> named in ad.NamedArguments)
                 {
                     switch (named.Key)
@@ -226,13 +242,6 @@ namespace Stellar.SourceGenerators
             }
         }
 
-        private static string EscapeStringLiteral(string value)
-        {
-            return value
-                .Replace("\\", "\\\\")
-                .Replace("\"", "\\\"");
-        }
-
         private static string GetTypeSyntax(INamedTypeSymbol typeSymbol)
         {
             var sb = new StringBuilder();
@@ -267,17 +276,44 @@ namespace Stellar.SourceGenerators
         {
             sb.Append(typeSymbol.Name);
 
-            if (typeSymbol.TypeParameters.Length > 0)
+            if (typeSymbol.TypeParameters.Length == 0)
             {
-                sb.Append('<');
+                return;
+            }
 
+            sb.Append('<');
+
+            bool useUnbound = typeSymbol.IsUnboundGenericType ||
+                              typeSymbol.TypeArguments.Any(a => a.TypeKind == TypeKind.TypeParameter);
+
+            if (useUnbound)
+            {
                 if (typeSymbol.TypeParameters.Length > 1)
                 {
                     sb.Append(',', typeSymbol.TypeParameters.Length - 1);
                 }
-
-                sb.Append('>');
             }
+            else
+            {
+                for (int i = 0; i < typeSymbol.TypeArguments.Length; i++)
+                {
+                    if (i > 0)
+                    {
+                        sb.Append(", ");
+                    }
+
+                    if (typeSymbol.TypeArguments[i] is INamedTypeSymbol argSymbol)
+                    {
+                        sb.Append(GetTypeSyntax(argSymbol));
+                    }
+                    else
+                    {
+                        sb.Append(typeSymbol.TypeArguments[i].ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat));
+                    }
+                }
+            }
+
+            sb.Append('>');
         }
     }
 }
