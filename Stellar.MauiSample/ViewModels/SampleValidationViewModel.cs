@@ -6,7 +6,7 @@ namespace Stellar.MauiSample.ViewModels;
 public partial class SampleValidationViewModel : ValidatingViewModelBase<SampleValidationViewModel>
 {
     [Reactive]
-    public string _stringValue;
+    private string _stringValue;
 
     public SampleValidationViewModel(SampleValidationViewModelValidator validator)
         : base(validator)
