@@ -1,4 +1,5 @@
 ﻿using System;
+using Stellar.Extensions;
 using Stellar.ViewModel;
 
 namespace Stellar;
@@ -25,7 +26,7 @@ public static class IStellarViewExtensions
         {
             stellarView.ViewManager.Maintain = true;
         }
-        else if (Attribute.GetCustomAttribute(stellarView.GetType(), typeof(ServiceRegistrationAttribute)) is ServiceRegistrationAttribute sra)
+        else if (AttributeCache.GetAttribute<ServiceRegistrationAttribute>(stellarView.GetType()) is { } sra)
         {
             switch (sra.ServiceRegistrationType)
             {

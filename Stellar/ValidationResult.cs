@@ -4,15 +4,15 @@ public record ValidationResult
 {
     public bool IsValid { get; }
 
-    public ICollection<ValidationInformation> ValidationInformation { get; }
+    public IReadOnlyCollection<ValidationInformation> ValidationInformation { get; }
 
-    public ValidationResult(ICollection<ValidationInformation> validationInformation, bool isValid)
+    public ValidationResult(IReadOnlyCollection<ValidationInformation> validationInformation, bool isValid)
     {
         ValidationInformation = validationInformation;
         IsValid = isValid;
     }
 
-    public static ValidationResult DefaultValidationResult = new ValidationResult(new List<ValidationInformation>(), true);
+    public static readonly ValidationResult DefaultValidationResult = new ValidationResult(Array.Empty<ValidationInformation>(), true);
 }
 
 public record ValidationInformation
@@ -43,6 +43,6 @@ public record ValidationInformation
         PropertyName = propertyName;
         ErrorMessage = error;
         AttemptedValue = attemptedValue;
-        IsError = false;
+        IsError = true;
     }
 }

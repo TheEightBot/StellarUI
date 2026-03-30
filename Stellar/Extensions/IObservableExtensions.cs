@@ -130,17 +130,13 @@ public static class IObservableExtensions
             return source
                 .Select(x =>
                     Observable
-                        .Defer(() =>
-                            Observable
-                                .Start(() => onNext(x))
-                                .SubscribeOn(scheduler)))
+                        .Start(() => onNext(x))
+                        .SubscribeOn(scheduler))
                 .Merge(concurrentSubscriptions);
         }
 
         return source
-            .Select(x =>
-                Observable.Defer(() =>
-                    Observable.Start(() => onNext(x))))
+            .Select(x => Observable.Start(() => onNext(x)))
             .Merge(concurrentSubscriptions);
     }
 
@@ -151,17 +147,13 @@ public static class IObservableExtensions
             return source
                 .Select(x =>
                     Observable
-                        .Defer(() =>
-                            Observable
-                                .Start(() => onNext(x, cancellationToken))
-                                .SubscribeOn(scheduler)))
+                        .Start(() => onNext(x, cancellationToken))
+                        .SubscribeOn(scheduler))
                 .Merge(concurrentSubscriptions);
         }
 
         return source
-            .Select(x =>
-                Observable.Defer(() =>
-                    Observable.Start(() => onNext(x, cancellationToken))))
+            .Select(x => Observable.Start(() => onNext(x, cancellationToken)))
             .Merge(concurrentSubscriptions);
     }
 
@@ -172,17 +164,13 @@ public static class IObservableExtensions
             return source
                 .Select(xIn =>
                     Observable
-                        .Defer(() =>
-                            Observable
-                                .Start(() => onNext(xIn))
-                                .SubscribeOn(scheduler)))
+                        .Start(() => onNext(xIn))
+                        .SubscribeOn(scheduler))
                 .Merge(concurrentSubscriptions);
         }
 
         return source
-            .Select(xIn =>
-                Observable.Defer(() =>
-                    Observable.Start(() => onNext(xIn))))
+            .Select(xIn => Observable.Start(() => onNext(xIn)))
             .Merge(concurrentSubscriptions);
     }
 
@@ -193,17 +181,13 @@ public static class IObservableExtensions
             return source
                 .Select(xIn =>
                     Observable
-                        .Defer(() =>
-                            Observable
-                                .Start(() => onNext(xIn, cancellationToken))
-                                .SubscribeOn(scheduler)))
+                        .Start(() => onNext(xIn, cancellationToken))
+                        .SubscribeOn(scheduler))
                 .Merge(concurrentSubscriptions);
         }
 
         return source
-            .Select(xIn =>
-                Observable.Defer(() =>
-                    Observable.Start(() => onNext(xIn, cancellationToken))))
+            .Select(xIn => Observable.Start(() => onNext(xIn, cancellationToken)))
             .Merge(concurrentSubscriptions);
     }
 
@@ -214,17 +198,13 @@ public static class IObservableExtensions
             return source
                 .Select(x =>
                     Observable
-                        .Defer(() =>
-                            Observable
-                                .Start(() => onNext(x, cancellationToken))
-                                .SubscribeOn(scheduler)))
+                        .Start(() => onNext(x, cancellationToken))
+                        .SubscribeOn(scheduler))
                 .Concat();
         }
 
         return source
-            .Select(x =>
-                Observable.Defer(() =>
-                    Observable.Start(() => onNext(x, cancellationToken))))
+            .Select(x => Observable.Start(() => onNext(x, cancellationToken)))
             .Concat();
     }
 
@@ -235,17 +215,13 @@ public static class IObservableExtensions
             return source
                 .Select(xIn =>
                     Observable
-                        .Defer(() =>
-                            Observable
-                                .Start(() => onNext(xIn))
-                                .SubscribeOn(scheduler)))
+                        .Start(() => onNext(xIn))
+                        .SubscribeOn(scheduler))
                 .Concat();
         }
 
         return source
-            .Select(xIn =>
-                Observable.Defer(() =>
-                    Observable.Start(() => onNext(xIn))))
+            .Select(xIn => Observable.Start(() => onNext(xIn)))
             .Concat();
     }
 
@@ -256,17 +232,13 @@ public static class IObservableExtensions
             return source
                 .Select(xIn =>
                     Observable
-                        .Defer(() =>
-                            Observable
-                                .Start(() => onNext(xIn, cancellationToken))
-                                .SubscribeOn(scheduler)))
+                        .Start(() => onNext(xIn, cancellationToken))
+                        .SubscribeOn(scheduler))
                 .Concat();
         }
 
         return source
-            .Select(xIn =>
-                Observable.Defer(() =>
-                    Observable.Start(() => onNext(xIn, cancellationToken))))
+            .Select(xIn => Observable.Start(() => onNext(xIn, cancellationToken)))
             .Concat();
     }
 
@@ -444,54 +416,112 @@ public static class IObservableExtensions
     {
         return Observable.Create<T>(observer =>
         {
-            Notification<T>? outsideNotification = null;
-            var gate = new object();
+            var gate = new Lock();
             bool active = false;
+            bool hasValue = false;
+            T? latestValue = default;
+            bool hasError = false;
+            Exception? latestError = null;
+            bool hasCompleted = false;
             var cancelable = new MultipleAssignmentDisposable();
-            var disposable =
-                source
-                    .Materialize()
-                    .Subscribe(
-                        thisNotification =>
-                        {
-                            bool wasNotAlreadyActive;
-                            lock (gate)
-                            {
-                                wasNotAlreadyActive = !active;
-                                active = true;
-                                outsideNotification = thisNotification;
-                            }
 
-                            if (wasNotAlreadyActive)
-                            {
-                                cancelable.Disposable =
-                                    scheduler
-                                        .Schedule(
-                                            self =>
-                                            {
-                                                Notification<T>? localNotification = null;
-                                                lock (gate)
-                                                {
-                                                    localNotification = outsideNotification;
-                                                    outsideNotification = null;
-                                                }
+            void DrainLoop(Action self)
+            {
+                T? value;
+                Exception? error;
+                bool completed;
+                bool hadValue;
 
-                                                localNotification.Accept(observer);
+                lock (gate)
+                {
+                    hadValue = hasValue;
+                    value = latestValue;
+                    error = latestError;
+                    completed = hasCompleted;
+                    latestValue = default;
+                    hasValue = false;
+                    hasError = false;
+                    hasCompleted = false;
+                }
 
-                                                bool hasPendingNotification = false;
+                if (error is not null)
+                {
+                    observer.OnError(error);
+                    return;
+                }
 
-                                                lock (gate)
-                                                {
-                                                    hasPendingNotification = active = outsideNotification is not null;
-                                                }
+                if (hadValue)
+                {
+                    observer.OnNext(value!);
+                }
 
-                                                if (hasPendingNotification)
-                                                {
-                                                    self();
-                                                }
-                                            });
-                            }
-                        });
+                if (completed)
+                {
+                    observer.OnCompleted();
+                    return;
+                }
+
+                bool hasPending;
+                lock (gate)
+                {
+                    hasPending = active = hasValue || hasError || hasCompleted;
+                }
+
+                if (hasPending)
+                {
+                    self();
+                }
+            }
+
+            var disposable = source.Subscribe(
+                value =>
+                {
+                    bool wasNotAlreadyActive;
+                    lock (gate)
+                    {
+                        wasNotAlreadyActive = !active;
+                        active = true;
+                        hasValue = true;
+                        latestValue = value;
+                    }
+
+                    if (wasNotAlreadyActive)
+                    {
+                        cancelable.Disposable = scheduler.Schedule(DrainLoop);
+                    }
+                },
+                error =>
+                {
+                    bool wasNotAlreadyActive;
+                    lock (gate)
+                    {
+                        wasNotAlreadyActive = !active;
+                        active = true;
+                        hasError = true;
+                        latestError = error;
+                    }
+
+                    if (wasNotAlreadyActive)
+                    {
+                        cancelable.Disposable = scheduler.Schedule(DrainLoop);
+                    }
+                },
+                () =>
+                {
+                    bool wasNotAlreadyActive;
+                    lock (gate)
+                    {
+                        wasNotAlreadyActive = !active;
+                        active = true;
+                        hasCompleted = true;
+                    }
+
+                    if (wasNotAlreadyActive)
+                    {
+                        cancelable.Disposable = scheduler.Schedule(DrainLoop);
+                    }
+                });
+
             return new CompositeDisposable(disposable, cancelable);
         });
     }
@@ -500,16 +530,42 @@ public static class IObservableExtensions
     {
         IScheduler schedulerOrDefault = scheduler ?? Scheduler.Default;
 
-        return source
-            .Publish(
-                o =>
+        return Observable.Create<T?>(observer =>
+        {
+            var gate = new Lock();
+            bool gateOpen = true;
+            var throttleDisposable = new SerialDisposable();
+
+            var subscription = source.Subscribe(
+                value =>
                 {
-                    return o
-                        .Take(1, schedulerOrDefault)
-                        .Concat(o.IgnoreElements().TakeUntil(Observable.Return(default(T), schedulerOrDefault).Delay(delay, schedulerOrDefault)))
-                        .Repeat()
-                        .TakeUntil(o.IgnoreElements().Concat(Observable.Return(default(T), schedulerOrDefault)));
-                });
+                    bool shouldEmit;
+                    lock (gate)
+                    {
+                        shouldEmit = gateOpen;
+                        if (gateOpen)
+                        {
+                            gateOpen = false;
+                        }
+                    }
+
+                    if (shouldEmit)
+                    {
+                        observer.OnNext(value);
+                        throttleDisposable.Disposable = schedulerOrDefault.Schedule(delay, () =>
+                        {
+                            lock (gate)
+                            {
+                                gateOpen = true;
+                            }
+                        });
+                    }
+                },
+                observer.OnError,
+                observer.OnCompleted);
+
+            return new CompositeDisposable(subscription, throttleDisposable);
+        });
     }
 
     public static IObservable<T?> ThrottleFirst<T>(this IObservable<T?> source, Action<T?> beforeThrottle, Action<T?> afterThrottle, TimeSpan delay, IScheduler? beforeAndAfterThrottleScheduler = null, IScheduler? scheduler = null)
@@ -517,25 +573,49 @@ public static class IObservableExtensions
         IScheduler schedulerOrDefault = scheduler ?? Scheduler.Default;
         IScheduler beforeAndAfterThrottleSchedulerOrDefault = beforeAndAfterThrottleScheduler ?? Scheduler.Default;
 
-        return source
-            .Publish(
-                o =>
+        return Observable.Create<T?>(observer =>
+        {
+            var gate = new Lock();
+            bool gateOpen = true;
+            var throttleDisposable = new SerialDisposable();
+
+            var subscription = source.Subscribe(
+                value =>
                 {
-                    return o
-                        .Take(1, schedulerOrDefault)
-                        .Concat(
-                            o.IgnoreElements()
-                                .TakeUntil(
-                                    Observable.Return(default(T), schedulerOrDefault)
-                                        .ObserveOn(beforeAndAfterThrottleSchedulerOrDefault)
-                                        .Do(beforeThrottle)
-                                        .ObserveOn(schedulerOrDefault)
-                                        .Delay(delay, schedulerOrDefault)
-                                        .ObserveOn(beforeAndAfterThrottleSchedulerOrDefault)
-                                        .Do(afterThrottle)
-                                        .ObserveOn(schedulerOrDefault)))
-                        .Repeat()
-                        .TakeUntil(o.IgnoreElements().Concat(Observable.Return(default(T), schedulerOrDefault)));
-                });
+                    bool shouldEmit;
+                    lock (gate)
+                    {
+                        shouldEmit = gateOpen;
+                        if (gateOpen)
+                        {
+                            gateOpen = false;
+                        }
+                    }
+
+                    if (shouldEmit)
+                    {
+                        observer.OnNext(value);
+                        throttleDisposable.Disposable = beforeAndAfterThrottleSchedulerOrDefault.Schedule(() =>
+                        {
+                            beforeThrottle(value);
+                            throttleDisposable.Disposable = schedulerOrDefault.Schedule(delay, () =>
+                            {
+                                beforeAndAfterThrottleSchedulerOrDefault.Schedule(() =>
+                                {
+                                    afterThrottle(value);
+                                    lock (gate)
+                                    {
+                                        gateOpen = true;
+                                    }
+                                });
+                            });
+                        });
+                    }
+                },
+                observer.OnError,
+                observer.OnCompleted);
+
+            return new CompositeDisposable(subscription, throttleDisposable);
+        });
     }
 }

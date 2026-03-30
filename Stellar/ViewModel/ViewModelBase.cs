@@ -35,7 +35,7 @@ public abstract class ViewModelBase : ReactiveObject, IViewModel
 
     public bool Maintain { get; set; }
 
-    public bool IsDisposed => _isDisposed;
+    public bool IsDisposed => Volatile.Read(ref _isDisposed);
 
     public bool Initialized
     {
@@ -105,7 +105,7 @@ public abstract class ViewModelBase : ReactiveObject, IViewModel
 
     protected virtual void Dispose(bool disposing)
     {
-        if (_isDisposed)
+        if (Volatile.Read(ref _isDisposed))
         {
             return;
         }
@@ -115,7 +115,7 @@ public abstract class ViewModelBase : ReactiveObject, IViewModel
             _viewModelBindings.Dispose();
         }
 
-        _isDisposed = true;
+        Volatile.Write(ref _isDisposed, true);
     }
 
     protected virtual void Initialize()

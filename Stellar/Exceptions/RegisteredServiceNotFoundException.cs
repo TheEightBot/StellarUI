@@ -1,9 +1,6 @@
-﻿using System;
-using System.Runtime.Serialization;
+﻿namespace Stellar.Exceptions;
 
-namespace Stellar.Exceptions;
-
-public class RegisteredServiceNotFoundException : Exception
+public sealed class RegisteredServiceNotFoundException : Exception
 {
     public RegisteredServiceNotFoundException()
     {

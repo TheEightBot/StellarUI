@@ -3,7 +3,7 @@
 namespace Stellar;
 
 [AttributeUsage(AttributeTargets.Class)]
-public class ServiceRegistrationAttribute : Attribute
+public sealed class ServiceRegistrationAttribute : Attribute
 {
     public Lifetime ServiceRegistrationType { get; set; }
 

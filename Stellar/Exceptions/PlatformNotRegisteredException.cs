@@ -1,6 +1,6 @@
 ﻿namespace Stellar.Exceptions;
 
-public class PlatformNotRegisteredException : Exception
+public sealed class PlatformNotRegisteredException : Exception
 {
     public PlatformNotRegisteredException()
     {

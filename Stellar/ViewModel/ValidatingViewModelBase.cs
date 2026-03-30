@@ -109,13 +109,42 @@ public abstract partial class ValidatingViewModelBase<TNeedsValidation> : ViewMo
             return;
         }
 
-        target.ValidationErrors.Clear();
+        var errors = target.ValidationErrors;
+        var newItems = validationResult?.ValidationInformation;
 
-        if (validationResult?.ValidationInformation != null)
+        // Batch the update: remove excess, update existing, add new — fire minimal change events
+        int newCount = newItems?.Count ?? 0;
+        int oldCount = errors.Count;
+
+        if (newCount == 0)
         {
-            foreach (var error in validationResult.ValidationInformation)
+            if (oldCount > 0)
             {
-                target.ValidationErrors.Add(error);
+                errors.Clear();
+            }
+        }
+        else
+        {
+            // Replace or add items positionally to minimize CollectionChanged events
+            int i = 0;
+            foreach (var item in newItems!)
+            {
+                if (i < oldCount)
+                {
+                    errors[i] = item;
+                }
+                else
+                {
+                    errors.Add(item);
+                }
+
+                i++;
+            }
+
+            // Remove any trailing excess items
+            while (errors.Count > newCount)
+            {
+                errors.RemoveAt(errors.Count - 1);
             }
         }
 
@@ -173,6 +202,14 @@ public abstract partial class ValidatingViewModelBase<TNeedsValidation> : ViewMo
             return defaultValue;
         }
 
-        return errors.FirstOrDefault(ni => ni.PropertyName.Equals(propertyName, StringComparison.Ordinal)) ?? defaultValue;
+        for (int i = 0; i < errors.Count; i++)
+        {
+            if (errors[i].PropertyName.Equals(propertyName, StringComparison.Ordinal))
+            {
+                return errors[i];
+            }
+        }
+
+        return defaultValue;
     }
 }

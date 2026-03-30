@@ -16,16 +16,13 @@ public static class IServiceCollectionExtensions
         var assTypes =
             assembly
                 ?.ExportedTypes
-                ?.Where(ti => AttributeCache.HasAttribute<ServiceRegistrationAttribute>(ti) && ti.IsAssignableTo(registrationType) && !ti.IsAbstract)
-                ?? Enumerable.Empty<Type>();
+                ?.Select(ti => (Type: ti, Attr: AttributeCache.GetAttribute<ServiceRegistrationAttribute>(ti)))
+                .Where(x => x.Attr != null && x.Type.IsAssignableTo(registrationType) && !x.Type.IsAbstract)
+                ?? Enumerable.Empty<(Type Type, ServiceRegistrationAttribute? Attr)>();
 
-        foreach (var ti in assTypes)
+        foreach (var (type, attr) in assTypes)
         {
-            var a = AttributeCache.GetAttribute<ServiceRegistrationAttribute>(ti);
-            if (a != null)
-            {
-                RegisterType(services, ti, a);
-            }
+            RegisterType(services, type, attr!);
         }
 
         return services;
@@ -36,16 +33,13 @@ public static class IServiceCollectionExtensions
         var assTypes =
             assembly
                 ?.ExportedTypes
-                ?.Where(ti => AttributeCache.HasAttribute<ServiceRegistrationAttribute>(ti))
-                ?? Enumerable.Empty<Type>();
+                ?.Select(ti => (Type: ti, Attr: AttributeCache.GetAttribute<ServiceRegistrationAttribute>(ti)))
+                .Where(x => x.Attr != null)
+                ?? Enumerable.Empty<(Type Type, ServiceRegistrationAttribute? Attr)>();
 
-        foreach (var ti in assTypes)
+        foreach (var (type, attr) in assTypes)
         {
-            var a = AttributeCache.GetAttribute<ServiceRegistrationAttribute>(ti);
-            if (a != null)
-            {
-                RegisterType(services, ti, a);
-            }
+            RegisterType(services, type, attr!);
         }
 
         return services;
@@ -55,14 +49,11 @@ public static class IServiceCollectionExtensions
     {
         if (attribute.RegisterInterfaces)
         {
-            var interfaces = type.GetInterfaces() ?? Enumerable.Empty<Type>();
+            var interfaces = type.GetInterfaces();
 
-            if (interfaces.Any())
+            foreach (var currInterface in interfaces)
             {
-                foreach (var currInterface in interfaces)
-                {
-                    RegisterServiceByLifetime(services, attribute.ServiceRegistrationType, currInterface, type);
-                }
+                RegisterServiceByLifetime(services, attribute.ServiceRegistrationType, currInterface, type);
             }
         }
 
