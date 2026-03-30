@@ -257,12 +257,17 @@ public sealed class WeakCompositeDisposable : ICollection<IDisposable>, IDisposa
         // Dispose outside of lock to avoid deadlocks
         if (rented is not null)
         {
-            for (int i = 0; i < count; i++)
+            try
             {
-                rented[i].Dispose();
+                for (int i = 0; i < count; i++)
+                {
+                    rented[i].Dispose();
+                }
             }
-
-            ArrayPool<IDisposable>.Shared.Return(rented, clearArray: true);
+            finally
+            {
+                ArrayPool<IDisposable>.Shared.Return(rented, clearArray: true);
+            }
         }
     }
 
