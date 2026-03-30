@@ -430,9 +430,11 @@ public static class IObservableExtensions
                 T? value;
                 Exception? error;
                 bool completed;
+                bool hadValue;
 
                 lock (gate)
                 {
+                    hadValue = hasValue;
                     value = latestValue;
                     error = latestError;
                     completed = hasCompleted;
@@ -448,7 +450,7 @@ public static class IObservableExtensions
                     return;
                 }
 
-                if (value is not null || typeof(T).IsValueType)
+                if (hadValue)
                 {
                     observer.OnNext(value!);
                 }
