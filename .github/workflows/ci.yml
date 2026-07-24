@@ -47,15 +47,40 @@ jobs:
           dotnet test Stellar.UnitTests/Stellar.UnitTests.csproj
           --configuration Release
           --no-build
+          --settings Stellar.UnitTests/coverlet.runsettings
+          --collect:"XPlat Code Coverage"
           --logger "trx;LogFileName=test-results.trx"
           --results-directory ./TestResults
+
+      # A ratchet against silent regression, not a target. Raise MINIMUM when coverage
+      # rises; do not lower it to make a build pass. Checked here rather than through
+      # coverlet's Threshold setting, which the XPlat data collector silently ignores.
+      - name: Check coverage floor
+        run: |
+          python3 - <<'PY'
+          import glob, sys, xml.etree.ElementTree as ET
+
+          MINIMUM = 85.0
+
+          reports = glob.glob('TestResults/**/coverage.cobertura.xml', recursive=True)
+          if not reports:
+              sys.exit('No coverage report was produced.')
+
+          rate = float(ET.parse(reports[0]).getroot().get('line-rate')) * 100
+          print(f'Line coverage: {rate:.1f}% (floor {MINIMUM:.0f}%)')
+
+          if rate < MINIMUM:
+              sys.exit(f'Coverage {rate:.1f}% is below the {MINIMUM:.0f}% floor.')
+          PY
 
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v7
         with:
           name: test-results
-          path: ./TestResults/*.trx
+          path: |
+            ./TestResults/*.trx
+            ./TestResults/**/coverage.cobertura.xml
           if-no-files-found: warn
 
   maui:

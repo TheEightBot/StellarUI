@@ -241,6 +241,118 @@ public class ViewManagerTests
         manager.Dispose();
     }
 
+    [Theory]
+    [InlineData(LifecycleEvent.Initialized)]
+    [InlineData(LifecycleEvent.Activated)]
+    [InlineData(LifecycleEvent.Attached)]
+    [InlineData(LifecycleEvent.IsAppearing)]
+    [InlineData(LifecycleEvent.IsDisappearing)]
+    [InlineData(LifecycleEvent.Detached)]
+    [InlineData(LifecycleEvent.Deactivated)]
+    [InlineData(LifecycleEvent.Disposed)]
+    public void EveryLifecycleStream_SeesOnlyItsOwnEvent(LifecycleEvent lifecycleEvent)
+    {
+        using var manager = new TestViewManager();
+        var view = new FakeView(manager);
+
+        var stream = lifecycleEvent switch
+        {
+            LifecycleEvent.Initialized => manager.Initialized,
+            LifecycleEvent.Activated => manager.Activated,
+            LifecycleEvent.Attached => manager.Attached,
+            LifecycleEvent.IsAppearing => manager.IsAppearing,
+            LifecycleEvent.IsDisappearing => manager.IsDisappearing,
+            LifecycleEvent.Detached => manager.Detached,
+            LifecycleEvent.Deactivated => manager.Deactivated,
+            _ => manager.Disposed,
+        };
+
+        var hits = 0;
+        using var subscription = stream.Subscribe(_ => hits++);
+
+        // Every other event first, none of which should reach this stream.
+        foreach (var other in Enum.GetValues<LifecycleEvent>())
+        {
+            if (other != lifecycleEvent)
+            {
+                manager.OnLifecycle(view, other);
+            }
+        }
+
+        Assert.Equal(0, hits);
+
+        manager.OnLifecycle(view, lifecycleEvent);
+
+        Assert.Equal(1, hits);
+    }
+
+    [Fact]
+    public void AfterDispose_EveryStreamIsEmpty()
+    {
+        var manager = new TestViewManager();
+        manager.Dispose();
+
+        Assert.Empty(manager.Initialized.ToList().Wait());
+        Assert.Empty(manager.Activated.ToList().Wait());
+        Assert.Empty(manager.NavigatedTo.ToList().Wait());
+        Assert.Empty(manager.NavigationEvents.ToList().Wait());
+        Assert.Empty(manager.LifecycleEvents.ToList().Wait());
+    }
+
+    [Fact]
+    public void PropertyChanged_ReassignsTheViewModelWhenTheViewModelPropertyChanges()
+    {
+        using var manager = new TestViewManager();
+        var viewModel = new object();
+        var view = new FakeView(manager) { ViewModel = viewModel };
+
+        manager.PropertyChanged(view, nameof(IViewFor<object>.ViewModel));
+
+        Assert.Same(viewModel, view.ViewModel);
+    }
+
+    [Fact]
+    public void PropertyChanged_IgnoresOtherProperties()
+    {
+        using var manager = new TestViewManager();
+        var view = new FakeView(manager) { ViewModel = new object() };
+
+        manager.PropertyChanged(view, "SomethingElse");
+        manager.PropertyChanged(view, propertyName: null);
+    }
+
+    [Fact]
+    public void AfterDispose_PropertyChangedThrows()
+    {
+        var manager = new TestViewManager();
+        var view = new FakeView(manager);
+        manager.Dispose();
+
+        Assert.Throws<ObjectDisposedException>(
+            () => manager.PropertyChanged(view, nameof(IViewFor<object>.ViewModel)));
+    }
+
+    [Fact]
+    public void AfterDispose_UnregisterBindingsThrows()
+    {
+        var manager = new TestViewManager();
+        var view = new FakeView(manager);
+        manager.Dispose();
+
+        Assert.Throws<ObjectDisposedException>(() => manager.UnregisterBindings(view));
+    }
+
+    [Fact]
+    public void UnregisterBindings_BeforeAnythingWasBound_IsANoOp()
+    {
+        using var manager = new TestViewManager();
+        var view = new FakeView(manager);
+
+        manager.UnregisterBindings(view);
+
+        Assert.False(manager.ControlsBound);
+    }
+
     private sealed class TestViewManager : ViewManager<object>
     {
     }

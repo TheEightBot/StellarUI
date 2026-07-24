@@ -170,6 +170,106 @@ public sealed class ValidatingViewModelBaseTests : IDisposable
         Assert.Equal(callsBefore, validator.ValidateCallCount);
     }
 
+    [Fact]
+    public void WithNoTrigger_ValidationRunsImmediatelyFromPropertyChanges()
+    {
+        // The default path: callers who pass no trigger get one built from the view
+        // model's own PropertyChanged, seeded so validation runs once on registration.
+        var validator = new StubValidator
+        {
+            Result = new ValidationResult(
+                new[] { new ValidationInformation("Name", "Name is required") },
+                isValid: false),
+        };
+        var viewModel = new TestViewModel(validator);
+
+        using var registration = viewModel.ValidateOnPropertyChanges();
+
+        Assert.False(viewModel.IsValid);
+        Assert.Single(viewModel.ValidationErrors);
+    }
+
+    [Fact]
+    public void WithNoTrigger_ChangingAPropertyReValidates()
+    {
+        var validator = new StubValidator();
+        var viewModel = new TestViewModel(validator);
+
+        using var registration = viewModel.ValidateOnPropertyChanges();
+        var afterRegistration = validator.ValidateCallCount;
+
+        viewModel.Name = "changed";
+
+        Assert.True(validator.ValidateCallCount > afterRegistration);
+    }
+
+    [Fact]
+    public void WithNoTrigger_DisposingDetachesFromPropertyChanged()
+    {
+        var validator = new StubValidator();
+        var viewModel = new TestViewModel(validator);
+
+        var registration = viewModel.ValidateOnPropertyChanges();
+        registration.Dispose();
+        var afterDispose = validator.ValidateCallCount;
+
+        viewModel.Name = "changed";
+
+        Assert.Equal(afterDispose, validator.ValidateCallCount);
+    }
+
+    [Fact]
+    public void TheGenericTriggerOverload_AcceptsAnyStreamType()
+    {
+        // RegisterValidation<TDoesntMatter> exists so callers can drive validation from
+        // whatever stream they already have, not only IObservable<Unit>.
+        var validator = new StubValidator();
+        var viewModel = new TestViewModel(validator);
+        var trigger = new Subject<string>();
+
+        using var registration = viewModel.ValidateFrom(trigger);
+
+        trigger.OnNext("go");
+
+        Assert.True(validator.ValidateCallCount > 0);
+    }
+
+    [Fact]
+    public void AViewModelThatIsNotTheValidatedType_ValidatesAsDefault()
+    {
+        // ValidateWithWeakReference falls back to the default result when the view model
+        // is not the type the validator was declared for.
+        var viewModel = new MismatchedViewModel(new MismatchedValidator());
+        var trigger = new Subject<Unit>();
+
+        using var registration = viewModel.Validate(trigger);
+        trigger.OnNext(Unit.Default);
+
+        Assert.True(viewModel.IsValid);
+        Assert.Empty(viewModel.ValidationErrors);
+    }
+
+    private sealed class MismatchedValidator : IProvideValidation<string>
+    {
+        public ValidationResult Validate(string validation) =>
+            new(new[] { new ValidationInformation("X", "never reached") }, false);
+    }
+
+    private sealed class MismatchedViewModel : ValidatingViewModelBase<string>
+    {
+        public MismatchedViewModel(IProvideValidation<string> validator)
+            : base(validator)
+        {
+        }
+
+        public IDisposable Validate(IObservable<Unit> trigger) =>
+            RegisterValidation(trigger, ImmediateScheduler.Instance, TimeSpan.Zero);
+
+        protected override void Bind(WeakCompositeDisposable disposables)
+        {
+        }
+    }
+
     private sealed class StubValidator : IProvideValidation<TestViewModel>
     {
         public ValidationResult Result { get; set; } = ValidationResult.DefaultValidationResult;
@@ -185,9 +285,19 @@ public sealed class ValidatingViewModelBaseTests : IDisposable
 
     private sealed class TestViewModel : ValidatingViewModelBase<TestViewModel>
     {
+        private string? _name;
+
         public TestViewModel(IProvideValidation<TestViewModel> validator)
             : base(validator)
         {
+        }
+
+        // A notifying property, so the PropertyChanged-driven trigger has something to
+        // react to.
+        public string? Name
+        {
+            get => _name;
+            set => this.RaiseAndSetIfChanged(ref _name, value);
         }
 
         /// <summary>
@@ -195,6 +305,14 @@ public sealed class ValidatingViewModelBaseTests : IDisposable
         /// observation scheduler, so tests observe results synchronously.
         /// </summary>
         public IDisposable Validate(IObservable<Unit> trigger) =>
+            RegisterValidation(trigger, ImmediateScheduler.Instance, TimeSpan.Zero);
+
+        /// <summary>Registers with no trigger, so the base builds one from PropertyChanged.</summary>
+        public IDisposable ValidateOnPropertyChanges() =>
+            RegisterValidation(null, ImmediateScheduler.Instance, TimeSpan.Zero);
+
+        /// <summary>Exercises the generic trigger overload with a non-Unit stream.</summary>
+        public IDisposable ValidateFrom<T>(IObservable<T> trigger) =>
             RegisterValidation(trigger, ImmediateScheduler.Instance, TimeSpan.Zero);
 
         protected override void Bind(WeakCompositeDisposable disposables)
