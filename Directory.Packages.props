@@ -38,8 +38,10 @@
   <ItemGroup>
     <PackageVersion Include="Microsoft.Maui.Controls" Version="10.0.90" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="10.0.90" />
-    <PackageVersion Include="CommunityToolkit.Maui" Version="12.2.0" />
-    <PackageVersion Include="CommunityToolkit.Maui.Markup" Version="6.0.1" />
+    <!-- CommunityToolkit.Maui 12.x pins Microsoft.Maui.Essentials below 10.0.0,
+         so .NET 10 forces 14.x here as well. -->
+    <PackageVersion Include="CommunityToolkit.Maui" Version="14.2.2" />
+    <PackageVersion Include="CommunityToolkit.Maui.Markup" Version="7.0.1" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageVersion Include="Mopups" Version="1.3.2" />
   </ItemGroup>

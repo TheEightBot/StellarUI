@@ -84,7 +84,7 @@ public static class NavigationObservableExtensions
                         Animated = animated,
                     };
                 })
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .SelectMany(
                 static async x =>
                 {
@@ -154,7 +154,7 @@ public static class NavigationObservableExtensions
                         Animated = animated,
                     };
                 })
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .SelectMany(
                 static async x =>
                 {
@@ -215,7 +215,7 @@ public static class NavigationObservableExtensions
                         Animated = animated,
                     };
                 })
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .SelectMany(
                 static async x =>
                 {
@@ -271,7 +271,7 @@ public static class NavigationObservableExtensions
                         Animated = animated,
                     };
                 })
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .SelectMany(
                 static async x =>
                 {
@@ -315,7 +315,7 @@ public static class NavigationObservableExtensions
                         Animated = animated,
                     };
                 })
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .SelectMany(
                 static async x =>
                 {
@@ -359,7 +359,7 @@ public static class NavigationObservableExtensions
                         Animated = animated,
                     };
                 })
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .SelectMany(
                 static async x =>
                 {
@@ -432,7 +432,7 @@ public static class NavigationObservableExtensions
                         Animated = animated,
                     };
                 })
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .SelectMany(
                 static async x =>
                 {
@@ -493,7 +493,7 @@ public static class NavigationObservableExtensions
                         Animated = animated,
                     };
                 })
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .SelectMany(
                 static async x =>
                 {
@@ -555,7 +555,7 @@ public static class NavigationObservableExtensions
                         Animated = animated,
                     };
                 })
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .SelectMany(
                 static async x =>
                 {
@@ -606,7 +606,7 @@ public static class NavigationObservableExtensions
                         Animated = animated,
                     };
                 })
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .SelectMany(
                 static async x =>
                 {

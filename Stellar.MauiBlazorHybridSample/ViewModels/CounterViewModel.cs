@@ -11,7 +11,7 @@ public partial class CounterViewModel : ViewModelBase
     protected override void Bind(WeakCompositeDisposable disposables)
     {
         Observable
-            .Interval(TimeSpan.FromSeconds(2), RxApp.TaskpoolScheduler)
+            .Interval(TimeSpan.FromSeconds(2), RxSchedulers.TaskpoolScheduler)
             .Do(i => Count *= i)
             .Subscribe();
     }

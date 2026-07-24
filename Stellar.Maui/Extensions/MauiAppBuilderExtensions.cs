@@ -1,5 +1,7 @@
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using ReactiveUI.Builder;
+using ReactiveUI.Maui;
 using Splat;
 
 namespace Stellar.Maui;
@@ -33,9 +35,13 @@ public static class MauiAppBuilderExtensions
         UseCustomMauiScheduler = useCustomMauiScheduler;
         UseShortTermThreadPoolScheduler = useShortTermThreadPoolScheduler;
 
-        PlatformRegistrationManager.SetRegistrationNamespaces(RegistrationNamespace.Maui);
+        // ReactiveUI 23 replaced PlatformRegistrationManager and InitializeReactiveUI
+        // with a builder. UseReactiveUI registers the MAUI platform services that
+        // SetRegistrationNamespaces(RegistrationNamespace.Maui) used to select.
+        // The schedulers are still assigned in MauiSchedulerInitializer below,
+        // because IDispatcher cannot be resolved this early.
         Locator.CurrentMutable.InitializeSplat();
-        Locator.CurrentMutable.InitializeReactiveUI();
+        mauiAppBuilder.UseReactiveUI(static builder => builder.WithMaui());
 
         mauiAppBuilder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IMauiInitializeScopedService, MauiSchedulerInitializer>());
 
@@ -52,12 +58,12 @@ public static class MauiAppBuilderExtensions
         {
             if (UseCustomMauiScheduler)
             {
-                RxApp.MainThreadScheduler = services.GetRequiredService<MauiScheduler>();
+                RxSchedulers.MainThreadScheduler = services.GetRequiredService<MauiScheduler>();
             }
 
             if (UseShortTermThreadPoolScheduler)
             {
-                RxApp.TaskpoolScheduler = Schedulers.ShortTermThreadPoolScheduler;
+                RxSchedulers.TaskpoolScheduler = Schedulers.ShortTermThreadPoolScheduler;
             }
         }
     }

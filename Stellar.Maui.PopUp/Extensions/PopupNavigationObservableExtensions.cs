@@ -63,7 +63,7 @@ public static class PopupNavigationObservableExtensions
                         Animated = animated,
                     };
                 })
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .SelectMany(
                 static async x =>
                 {
@@ -125,7 +125,7 @@ public static class PopupNavigationObservableExtensions
                         Animated = animated,
                     };
                 })
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .SelectMany(
                 static async x =>
                 {
@@ -188,7 +188,7 @@ public static class PopupNavigationObservableExtensions
                         Animated = animated,
                     };
                 })
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .SelectMany(
                 static async x =>
                 {
@@ -240,7 +240,7 @@ public static class PopupNavigationObservableExtensions
                         Animated = animated,
                     };
                 })
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .SelectMany(
                 static async x =>
                 {
@@ -283,7 +283,7 @@ public static class PopupNavigationObservableExtensions
                         Animated = animated,
                     };
                 })
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .SelectMany(
                 static async x =>
                 {
@@ -328,7 +328,7 @@ public static class PopupNavigationObservableExtensions
                         Animated = animated,
                     };
                 })
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .SelectMany(
                 static async x =>
                 {

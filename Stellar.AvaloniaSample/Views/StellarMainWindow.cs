@@ -41,7 +41,7 @@ public class StellarMainWindow : WindowBase<ViewModels.MainWindowViewModel>
 
         this.WhenAnyValue(x => x.ViewModel.Greeting)
             .Select(x => (x?.Length ?? 0) / 100d)
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .BindTo(this, x => x._text.Opacity)
             .DisposeWith(disposables);
     }

@@ -23,7 +23,7 @@ public partial class Counter
     public override void Bind(WeakCompositeDisposable disposables)
     {
         Observable
-            .Interval(TimeSpan.FromSeconds(1), RxApp.TaskpoolScheduler)
+            .Interval(TimeSpan.FromSeconds(1), RxSchedulers.TaskpoolScheduler)
             .Do(i => Count += i)
             .Subscribe();
     }
