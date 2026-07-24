@@ -46,10 +46,10 @@ public abstract partial class ValidatingViewModelBase<TNeedsValidation> : ViewMo
 
         validatorDisposable.Disposable =
             validationTrigger
-                .ObserveOn(RxApp.TaskpoolScheduler)
-                .ThrottleFirst(changeThrottleDuration ?? DefaultValidationChangeThrottleDuration, RxApp.TaskpoolScheduler)
+                .ObserveOn(RxSchedulers.TaskpoolScheduler)
+                .ThrottleFirst(changeThrottleDuration ?? DefaultValidationChangeThrottleDuration, RxSchedulers.TaskpoolScheduler)
                 .Select(_ => ValidateWithWeakReference(weakThis, validator))
-                .ObserveOn(observationScheduler ?? RxApp.MainThreadScheduler)
+                .ObserveOn(observationScheduler ?? RxSchedulers.MainThreadScheduler)
                 .Subscribe(validationResult => UpdateValidationState(weakThis, validationResult));
 
         return validatorDisposable;
@@ -78,7 +78,7 @@ public abstract partial class ValidatingViewModelBase<TNeedsValidation> : ViewMo
                         target.PropertyChanged -= handler;
                     }
                 },
-                RxApp.TaskpoolScheduler)
+                RxSchedulers.TaskpoolScheduler)
             .Select(_ => Unit.Default)
             .StartWith(Unit.Default);
     }
@@ -186,7 +186,7 @@ public abstract partial class ValidatingViewModelBase<TNeedsValidation> : ViewMo
                         errors.CollectionChanged -= handler;
                     }
                 })
-            .ObserveOn(RxApp.TaskpoolScheduler)
+            .ObserveOn(RxSchedulers.TaskpoolScheduler)
             .Select(_ => GetValidationInformation(weakErrors, propertyName, validInformation))
             .StartWith(validInformation)
             .DistinctUntilChanged();

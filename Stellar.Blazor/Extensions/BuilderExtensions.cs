@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using ReactiveUI.Builder;
 using Splat;
 
 namespace Stellar.Blazor;
@@ -17,10 +18,15 @@ public static class BuilderExtensions
 
     public static IServiceCollection UseStellarComponents(this IServiceCollection services)
     {
-        PlatformRegistrationManager.SetRegistrationNamespaces(RegistrationNamespace.Blazor);
-        Locator.CurrentMutable.InitializeSplat();
-        Locator.CurrentMutable.InitializeReactiveUI();
-        RxApp.TaskpoolScheduler = Schedulers.ShortTermThreadPoolScheduler;
+        // ReactiveUI 23 replaced PlatformRegistrationManager and the
+        // InitializeReactiveUI/RxApp surface with a builder. WithBlazor
+        // registers the Blazor platform services and schedulers that
+        // SetRegistrationNamespaces(RegistrationNamespace.Blazor) used to select.
+        RxAppBuilder
+            .CreateReactiveUIBuilder()
+            .WithBlazor()
+            .WithTaskPoolScheduler(Schedulers.ShortTermThreadPoolScheduler)
+            .Build();
 
         return services;
     }
