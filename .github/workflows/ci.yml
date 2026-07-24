@@ -59,7 +59,7 @@ jobs:
           if-no-files-found: warn
 
   maui:
-    name: MAUI (build)
+    name: MAUI packages
     # macos-26, not macos-15: the .NET 10 iOS/MacCatalyst workload band
     # 26.5.10301 requires Xcode 26.6, and the newest Xcode on the macos-15
     # image is 26.3. Library builds do not enforce that check but app heads do,
@@ -79,16 +79,44 @@ jobs:
       - name: Install MAUI workloads
         run: dotnet workload install maui --ignore-failed-sources
 
-      # The shipped packages build first so a failure in the sample apps below
-      # does not hide whether the packages themselves are healthy.
       - name: Build Stellar.Maui
         run: dotnet build Stellar.Maui/Stellar.Maui.csproj --configuration Release
 
       - name: Build Stellar.Maui.PopUp
         run: dotnet build Stellar.Maui.PopUp/Stellar.Maui.PopUp.csproj --configuration Release
 
-      - name: Build Stellar.MauiSample
-        run: dotnet build Stellar.MauiSample/Stellar.MauiSample.csproj --configuration Release
+  # The sample heads are 94% of the MAUI build time (13.7 and 10.8 minutes
+  # against 1.4 for the packages), so they are split out: one job each so they
+  # run concurrently rather than back to back, and skippable for routine
+  # dependency bumps via the skip-samples label.
+  #
+  # They are not merely decorative. The samples, and only the samples, caught
+  # the CommunityToolkit.Maui / Microsoft.Maui.Essentials version conflict and
+  # the Android minSdk 21 break during the .NET 10 upgrade. Skip them for a
+  # patch bump; do not skip them for anything that moves a major.
+  samples:
+    name: Sample apps (${{ matrix.project }})
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-samples') }}
+    runs-on: macos-26
+    strategy:
+      fail-fast: false
+      matrix:
+        project:
+          - Stellar.MauiSample
+          - Stellar.MauiBlazorHybridSample
+    steps:
+      - uses: actions/checkout@v7
 
-      - name: Build Stellar.MauiBlazorHybridSample
-        run: dotnet build Stellar.MauiBlazorHybridSample/Stellar.MauiBlazorHybridSample.csproj --configuration Release
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.x'
+
+      - uses: maxim-lobanov/setup-xcode@v1.7.0
+        with:
+          xcode-version: latest-stable
+
+      - name: Install MAUI workloads
+        run: dotnet workload install maui --ignore-failed-sources
+
+      - name: Build ${{ matrix.project }}
+        run: dotnet build ${{ matrix.project }}/${{ matrix.project }}.csproj --configuration Release
