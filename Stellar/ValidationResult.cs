@@ -1,12 +1,12 @@
-﻿namespace Stellar;
+namespace Stellar;
 
 public record ValidationResult
 {
     public bool IsValid { get; }
 
-    public IReadOnlyCollection<ValidationInformation> ValidationInformation { get; }
+    public IReadOnlyList<ValidationInformation> ValidationInformation { get; }
 
-    public ValidationResult(IReadOnlyCollection<ValidationInformation> validationInformation, bool isValid)
+    public ValidationResult(IReadOnlyList<ValidationInformation> validationInformation, bool isValid)
     {
         ValidationInformation = validationInformation;
         IsValid = isValid;

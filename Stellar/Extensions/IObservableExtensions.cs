@@ -1,4 +1,4 @@
-﻿namespace Stellar;
+namespace Stellar;
 
 public static class IObservableExtensions
 {
@@ -16,7 +16,9 @@ public static class IObservableExtensions
 
     public static IObservable<TSource> IsNotNull<TSource>(this IObservable<TSource?> source)
     {
-        return source.Where(static obj => obj is not null).Select(static obj => obj!);
+        // The Select existed only to drop the null annotation. TSource? and TSource are the
+        // same type at runtime, so forgiving the result removes an operator from the chain.
+        return source.Where(static obj => obj is not null)!;
     }
 
     public static IObservable<TSource?> IsNull<TSource>(this IObservable<TSource?> source)
@@ -50,7 +52,7 @@ public static class IObservableExtensions
     public static IObservable<T?> WhereHasValueAndIsNotDefault<T>(this IObservable<T?> source)
         where T : struct
     {
-        return source.Where(x => x.HasValue && !EqualityComparer<T>.Default.Equals(x.Value, default));
+        return source.Where(static x => x.HasValue && !EqualityComparer<T>.Default.Equals(x.Value, default));
     }
 
     public static IObservable<T?> WhereHasValueAndIs<T>(this IObservable<T?> source, T comparison)
@@ -66,15 +68,12 @@ public static class IObservableExtensions
 
     public static IObservable<string> IsNotNullOrEmpty(this IObservable<string?> source)
     {
-        return source.Where(static str => !string.IsNullOrEmpty(str))
-            .Select(str => str!);
+        return source.Where(static str => !string.IsNullOrEmpty(str))!;
     }
 
     public static IObservable<string> IsNotNull(this IObservable<string?> source)
     {
-        return source
-            .Where(static str => str is not null)
-            .Select(str => str!);
+        return source.Where(static str => str is not null)!;
     }
 
     public static IObservable<T> GetValueOrDefault<T>(this IObservable<T?> source, T defaultValue = default(T))

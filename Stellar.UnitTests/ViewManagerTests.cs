@@ -200,6 +200,39 @@ public class ViewManagerTests
     }
 
     [Fact]
+    public void LifecycleStreams_AreCreatedOnceAndReused()
+    {
+        // The streams are built on first access rather than in the constructor, so a
+        // ViewManager costs nothing for the streams a view never touches. Repeated reads
+        // must still hand back the same instance rather than rebuilding the chain.
+        using var manager = new TestViewManager();
+
+        Assert.Same(manager.Activated, manager.Activated);
+        Assert.Same(manager.LifecycleEvents, manager.LifecycleEvents);
+        Assert.Same(manager.NavigatedTo, manager.NavigatedTo);
+        Assert.Same(manager.NavigationEvents, manager.NavigationEvents);
+    }
+
+    [Fact]
+    public void EventsRaisedBeforeAnyoneSubscribes_AreHarmless()
+    {
+        // No subscriber means no subject has been created; raising events must not force
+        // one into existence or throw.
+        using var manager = new TestViewManager();
+        var view = new FakeView(manager);
+
+        manager.OnLifecycle(view, LifecycleEvent.Activated);
+        manager.OnNavigating(view, NavigationEvent.NavigatedTo);
+
+        // Subscribing afterwards still works and sees subsequent events.
+        var seen = 0;
+        using var subscription = manager.Activated.Subscribe(_ => seen++);
+        manager.OnLifecycle(view, LifecycleEvent.Activated);
+
+        Assert.Equal(1, seen);
+    }
+
+    [Fact]
     public void Dispose_IsIdempotent()
     {
         var manager = new TestViewManager();
