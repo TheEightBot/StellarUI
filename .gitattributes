@@ -7,3 +7,5 @@
 
 # Declare files that will always have CRLF line endings on checkout.
 *.sln text eol=crlf
+
+.github/workflows/*.lock.yml linguist-generated=true merge=ours
