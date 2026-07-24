@@ -306,11 +306,17 @@ services.AddSingleton<IDataCache>(sp =>
 
 // Usage in ViewModel
 var item = await _cache.RetrieveAsync<MyModel>(cacheKey: "my-key", groupKey: "group");
-await _cache.StoreAsync(item, cacheKey: x => x.Id, groupKey: "group");
+await _cache.StoreAsync(model, cacheKey: "my-key", groupKey: "group");
+await _cache.StoreAsync(model, static x => x.Id, groupKey: "group");  // key from the item
+await _cache.StoreAsync(model);  // no key: stored as nameof(MyModel)
 var all = await _cache.RetrieveManyAsync<MyModel>("group");
-await _cache.RemoveAsync<MyModel>(cacheKey: "my-key");
+await _cache.RemoveAsync<MyModel>(cacheKey: "my-key");  // false if no such entry
 await _cache.ClearCacheAsync("group");  // or null to clear default "Cache" folder
 ```
+
+The `Func<T, string>` key selector on `StoreAsync`/`StoreManyAsync` is a required,
+non-nullable parameter — it is what distinguishes those overloads from the `string`
+ones. Do not give it a default value; that reintroduces CS0121 on `StoreAsync(item)`.
 
 ### 9. Avalonia Views
 

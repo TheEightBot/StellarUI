@@ -33,10 +33,7 @@ public sealed class DiskCacheTests : IDisposable
     {
         var item = new Widget("bolt", 42);
 
-        // The (string?) cast is required: StoreAsync's string and Func<T,string>
-        // overloads are both optional and nullable, so StoreAsync(item) alone is
-        // ambiguous and does not compile.
-        await _cache.StoreAsync(item, (string?)null);
+        await _cache.StoreAsync(item);
         var retrieved = await _cache.RetrieveAsync<Widget>();
 
         Assert.Equal(item, retrieved);
@@ -55,8 +52,8 @@ public sealed class DiskCacheTests : IDisposable
     {
         // The default key is typeof(T).Name, so a second store of the same type
         // overwrites rather than accumulating.
-        await _cache.StoreAsync(new Widget("first", 1), (string?)null);
-        await _cache.StoreAsync(new Widget("second", 2), (string?)null);
+        await _cache.StoreAsync(new Widget("first", 1));
+        await _cache.StoreAsync(new Widget("second", 2));
 
         var retrieved = await _cache.RetrieveAsync<Widget>();
 
@@ -71,6 +68,16 @@ public sealed class DiskCacheTests : IDisposable
 
         Assert.Equal(new Widget("a", 1), await _cache.RetrieveAsync<Widget>("one"));
         Assert.Equal(new Widget("b", 2), await _cache.RetrieveAsync<Widget>("two"));
+    }
+
+    [Fact]
+    public async Task StoreAsync_WithAKeySelector_KeysByTheProjectedValue()
+    {
+        // The selector overload takes a required delegate, so it binds without a
+        // cast even though the string overload's key is optional.
+        await _cache.StoreAsync(new Widget("a", 1), static w => w.Name);
+
+        Assert.Equal(new Widget("a", 1), await _cache.RetrieveAsync<Widget>("a"));
     }
 
     [Fact]
@@ -101,6 +108,20 @@ public sealed class DiskCacheTests : IDisposable
     }
 
     [Fact]
+    public async Task TheOverloadsBindThroughTheInterface()
+    {
+        // Consumers resolve IDataCache from DI rather than the concrete cache, and
+        // that is where both key-less calls used to be ambiguous.
+        IDataCache cache = _cache;
+
+        await cache.StoreAsync(new Widget("solo", 1));
+        await cache.StoreManyAsync(new[] { new Widget("gen", 2) }, "generated");
+
+        Assert.Equal(new Widget("solo", 1), await cache.RetrieveAsync<Widget>());
+        Assert.Equal(new[] { new Widget("gen", 2) }, await cache.RetrieveManyAsync<Widget>("generated"));
+    }
+
+    [Fact]
     public async Task RetrieveMany_ForAnUnknownGroup_IsEmpty()
     {
         var retrieved = await _cache.RetrieveManyAsync<Widget>("never-written");
@@ -117,18 +138,19 @@ public sealed class DiskCacheTests : IDisposable
 
         Assert.True(removed);
         Assert.Null(await _cache.RetrieveAsync<Widget>("target"));
+
+        // The entry is gone, so a second removal has nothing to report.
+        Assert.False(await _cache.RemoveAsync<Widget>("target"));
     }
 
     [Fact]
-    public async Task RemoveAsync_ForAMissingEntry_StillReportsSuccess()
+    public async Task RemoveAsync_ForAMissingEntry_ReportsNothingRemoved()
     {
-        // Documents actual behaviour rather than the intuitive reading: the bool
-        // means "no IO error", not "an entry was removed". File.Delete does not
-        // throw for a missing path, so this returns true. Worth knowing before
-        // branching on the result.
+        // The bool means "an entry existed and was removed", so a key that was
+        // never stored reports false rather than succeeding vacuously.
         var removed = await _cache.RemoveAsync<Widget>("absent");
 
-        Assert.True(removed);
+        Assert.False(removed);
     }
 
     [Fact]
