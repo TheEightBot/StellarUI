@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat code coverage">
+        <Configuration>
+          <Format>cobertura</Format>
+
+          <!-- Only the shipped Stellar assemblies. Without this the figure is diluted by
+               ReactiveGenerator's injected runtime types, which are neither written nor
+               maintained here. -->
+          <Include>[Stellar]*,[Stellar.DiskDataCache]*,[Stellar.FluentValidation]*</Include>
+
+          <!-- Source-generated members carry these, and generated code is exercised
+               through the types that use it rather than tested directly. -->
+          <!-- ReactiveGenerator injects its runtime helpers into the Stellar assembly, so
+               an assembly-level Include cannot filter them out. -->
+          <Exclude>[*]ReactiveGenerator.Internal.*,[*]*Attribute,[*]Stellar.ViewModel.Stellar_*</Exclude>
+
+          <ExcludeByAttribute>Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute</ExcludeByAttribute>
+
+          <SkipAutoProps>true</SkipAutoProps>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>

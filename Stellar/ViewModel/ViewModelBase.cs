@@ -2,9 +2,7 @@ namespace Stellar.ViewModel;
 
 using Stellar.Extensions;
 
-#pragma warning disable CA1001
-public abstract class ViewModelBase : ReactiveObject, IViewModel
-#pragma warning restore CA1001
+public abstract class ViewModelBase : ReactiveObject, IViewModel, IDisposable
 {
     protected static readonly Action DefaultAction = () => { };
 
