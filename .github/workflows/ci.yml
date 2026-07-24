@@ -1,0 +1,90 @@
+# Builds and tests every project on pull requests and pushes to the long-lived
+# branches. This is the gate that dependency-update pull requests are measured
+# against -- see .github/workflows/ for the scheduled updater.
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# A newer push to the same branch or pull request makes the in-flight run
+# irrelevant, so cancel it rather than paying for both.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  core:
+    name: Core (build + test)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.x'
+
+      # Stellar.slnf is the subset of the solution that builds without the MAUI
+      # workload, which keeps this job on a Linux runner and under a minute.
+      - name: Restore
+        run: dotnet restore Stellar.slnf
+
+      - name: Build
+        run: dotnet build Stellar.slnf --configuration Release --no-restore
+
+      - name: Test
+        run: >
+          dotnet test Stellar.UnitTests/Stellar.UnitTests.csproj
+          --configuration Release
+          --no-build
+          --logger "trx;LogFileName=test-results.trx"
+          --results-directory ./TestResults
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: ./TestResults/*.trx
+          if-no-files-found: warn
+
+  maui:
+    name: MAUI (build)
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.x'
+
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - name: Install MAUI workloads
+        run: dotnet workload install maui --ignore-failed-sources
+
+      # The shipped packages build first so a failure in the sample apps below
+      # does not hide whether the packages themselves are healthy.
+      - name: Build Stellar.Maui
+        run: dotnet build Stellar.Maui/Stellar.Maui.csproj --configuration Release
+
+      - name: Build Stellar.Maui.PopUp
+        run: dotnet build Stellar.Maui.PopUp/Stellar.Maui.PopUp.csproj --configuration Release
+
+      - name: Build Stellar.MauiSample
+        run: dotnet build Stellar.MauiSample/Stellar.MauiSample.csproj --configuration Release
+
+      - name: Build Stellar.MauiBlazorHybridSample
+        run: dotnet build Stellar.MauiBlazorHybridSample/Stellar.MauiBlazorHybridSample.csproj --configuration Release
