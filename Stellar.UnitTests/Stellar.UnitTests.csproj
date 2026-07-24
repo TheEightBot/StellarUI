@@ -25,5 +25,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Stellar\Stellar.csproj" />
+    <ProjectReference Include="..\Stellar.DiskDataCache\Stellar.DiskDataCache.csproj" />
   </ItemGroup>
 </Project>
