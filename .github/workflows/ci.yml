@@ -28,9 +28,9 @@ jobs:
     name: Core (build + test)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v6
         with:
           dotnet-version: '10.x'
 
@@ -52,7 +52,7 @@ jobs:
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: test-results
           path: ./TestResults/*.trx
@@ -60,15 +60,19 @@ jobs:
 
   maui:
     name: MAUI (build)
-    runs-on: macos-15
+    # macos-26, not macos-15: the .NET 10 iOS/MacCatalyst workload band
+    # 26.5.10301 requires Xcode 26.6, and the newest Xcode on the macos-15
+    # image is 26.3. Library builds do not enforce that check but app heads do,
+    # so Stellar.Maui built there while Stellar.MauiSample did not.
+    runs-on: macos-26
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v6
         with:
           dotnet-version: '10.x'
 
-      - uses: maxim-lobanov/setup-xcode@v1
+      - uses: maxim-lobanov/setup-xcode@v1.7.0
         with:
           xcode-version: latest-stable
 

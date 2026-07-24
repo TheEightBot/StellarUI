@@ -7,8 +7,8 @@
   <!-- Analyzers applied to every project via Directory.build.props. -->
   <ItemGroup>
     <PackageVersion Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.302" />
-    <PackageVersion Include="Roslynator.Analyzers" Version="4.14.0" />
-    <PackageVersion Include="stylecop.analyzers" Version="1.2.0-beta.435" />
+    <PackageVersion Include="Roslynator.Analyzers" Version="4.15.0" />
+    <PackageVersion Include="stylecop.analyzers" Version="1.2.0-beta.556" />
   </ItemGroup>
 
   <!-- Core -->
@@ -17,7 +17,7 @@
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.AutoActivation" Version="10.8.0" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="10.0.10" />
     <PackageVersion Include="System.Threading.RateLimiting" Version="10.0.10" />
-    <PackageVersion Include="FluentValidation" Version="12.0.0" />
+    <PackageVersion Include="FluentValidation" Version="12.1.1" />
   </ItemGroup>
 
   <!-- ReactiveUI. 21.x publishes no net10.0 target frameworks, so targeting
@@ -42,20 +42,20 @@
          so .NET 10 forces 14.x here as well. -->
     <PackageVersion Include="CommunityToolkit.Maui" Version="14.2.2" />
     <PackageVersion Include="CommunityToolkit.Maui.Markup" Version="7.0.1" />
-    <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageVersion Include="Mopups" Version="1.3.2" />
+    <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageVersion Include="Mopups" Version="1.3.4" />
   </ItemGroup>
 
   <!-- Avalonia is capped at 11.3.x: Avalonia itself has shipped 12.1.0, but
        Avalonia.ReactiveUI has no 12.x release (not even a prerelease), and
        Stellar.Avalonia depends on it. Revisit when 12.x lands there. -->
   <ItemGroup>
-    <PackageVersion Include="Avalonia" Version="11.3.9" />
-    <PackageVersion Include="Avalonia.Desktop" Version="11.3.9" />
-    <PackageVersion Include="Avalonia.Diagnostics" Version="11.3.9" />
-    <PackageVersion Include="Avalonia.Fonts.Inter" Version="11.3.9" />
+    <PackageVersion Include="Avalonia" Version="11.3.18" />
+    <PackageVersion Include="Avalonia.Desktop" Version="11.3.18" />
+    <PackageVersion Include="Avalonia.Diagnostics" Version="11.3.18" />
+    <PackageVersion Include="Avalonia.Fonts.Inter" Version="11.3.18" />
     <PackageVersion Include="Avalonia.ReactiveUI" Version="11.3.9" />
-    <PackageVersion Include="Avalonia.Themes.Fluent" Version="11.3.9" />
+    <PackageVersion Include="Avalonia.Themes.Fluent" Version="11.3.18" />
   </ItemGroup>
 
   <!-- Blazor -->
@@ -75,6 +75,6 @@
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageVersion Include="coverlet.collector" Version="6.0.4" />
     <PackageVersion Include="xunit" Version="2.9.3" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.4" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
   </ItemGroup>
 </Project>
