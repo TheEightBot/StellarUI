@@ -1,7 +1,9 @@
 ﻿using System.Reflection;
 using Avalonia;
+using Avalonia.ReactiveUI;
 using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
+using ReactiveUI.Builder;
 using Splat;
 
 namespace Stellar.Avalonia;
@@ -10,10 +12,27 @@ public static class AppBuilderExtensions
 {
     public static AppBuilder UseStellarComponents(this AppBuilder appBuilder)
     {
-        PlatformRegistrationManager.SetRegistrationNamespaces(RegistrationNamespace.Avalonia);
+        // Avalonia.ReactiveUI 11.3.9 was built against ReactiveUI 20 and its
+        // bootstrap types -- Registrations and AvaloniaMixins.UseReactiveUI --
+        // reference RxApp, PlatformRegistrationManager and Splat's IEnableLogger,
+        // all removed in ReactiveUI 23 / Splat 19. Those types now fail to load,
+        // so Stellar performs the registrations itself. The pieces it needs
+        // (AvaloniaActivationForViewFetcher, AvaloniaScheduler,
+        // AutoDataTemplateBindingHook, and the ReactiveWindow/ReactiveUserControl
+        // base classes) all load and work against ReactiveUI 23.
         Locator.CurrentMutable.InitializeSplat();
-        Locator.CurrentMutable.InitializeReactiveUI();
-        RxApp.TaskpoolScheduler = Schedulers.ShortTermThreadPoolScheduler;
+
+        RxAppBuilder
+            .CreateReactiveUIBuilder()
+            .WithRegistration(
+                static resolver =>
+                {
+                    resolver.RegisterConstant<IActivationForViewFetcher>(new AvaloniaActivationForViewFetcher());
+                    resolver.RegisterConstant<IPropertyBindingHook>(new AutoDataTemplateBindingHook());
+                })
+            .WithMainThreadScheduler(AvaloniaScheduler.Instance)
+            .WithTaskPoolScheduler(Schedulers.ShortTermThreadPoolScheduler)
+            .Build();
 
         return appBuilder;
     }
