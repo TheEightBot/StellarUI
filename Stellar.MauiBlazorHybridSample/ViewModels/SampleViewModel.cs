@@ -3,6 +3,11 @@ using Stellar.MauiSample.Services;
 
 namespace Stellar.MauiBlazorHybridSample.ViewModels;
 
+// CA2213 cannot trace disposal through WeakCompositeDisposable: every command below is
+// created in Bind and handed to the disposables the framework passes in, which tears them
+// down when bindings are unregistered.
+#pragma warning disable CA2213
+
 [ServiceRegistration]
 public partial class SampleViewModel(TestService testService)
     : ViewModelBase, ILifecycleEventAware
@@ -36,9 +41,19 @@ public partial class SampleViewModel(TestService testService)
     [property: QueryParameter]
     private long _parameterValue;
 
-    ~SampleViewModel()
+    // The finalizer exists so the sample can show the view model actually being
+    // collected. CA1063 requires it to do nothing but hand off to Dispose(false), so the
+    // logging moves into the dispose path.
+    ~SampleViewModel() => Dispose(false);
+
+    protected override void Dispose(bool disposing)
     {
-        Console.WriteLine("SimpleSampleViewModel Finalized");
+        if (!disposing)
+        {
+            Console.WriteLine("SimpleSampleViewModel Finalized");
+        }
+
+        base.Dispose(disposing);
     }
 
     protected override void Initialize()
@@ -110,3 +125,5 @@ public class TestItem : INotifyPropertyChanged
 
     public int Value2 { get; set; }
 }
+
+#pragma warning restore CA2213
