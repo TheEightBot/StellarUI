@@ -24,8 +24,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Microsoft.CodeAnalysis.Workspaces.Common was referenced but never used, and
+         RS1038 warns that a compiler extension should not reference Workspaces at
+         all: it is absent during command line compilation. -->
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" PrivateAssets="all" />
   </ItemGroup>
 
   <!-- Package the generator in the analyzer directory of the nuget package -->
