@@ -28,9 +28,7 @@
     <PackageVersion Include="ReactiveUI.Blazor" Version="23.2.28" />
     <PackageVersion Include="ReactiveUI.Maui" Version="23.2.28" />
     <PackageVersion Include="ReactiveGenerator" Version="0.12.0" />
-    <!-- Was 2.0.17 in Stellar.AvaloniaSample and 2.4.1 elsewhere; central
-         management requires one version, so the samples converge on 2.4.1. -->
-    <PackageVersion Include="ReactiveUI.SourceGenerators" Version="2.4.1" />
+    <PackageVersion Include="ReactiveUI.SourceGenerators" Version="3.1.0" />
     <PackageVersion Include="ReactiveMarbles.ObservableEvents.SourceGenerator" Version="1.3.1" />
   </ItemGroup>
 
