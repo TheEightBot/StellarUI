@@ -101,7 +101,7 @@ public static class NavigationObservableExtensions
 
                         await Task.WhenAll(
                             x.IsAppearingAsync,
-                            x.NavigationRoot.Navigation.PushAsync(x.Page, x.Animated));
+                            x.RequiredNavigationRoot.Navigation.PushAsync(x.Page, x.Animated));
 
                         x.PostNavigation?.Invoke(x.Page, x.Parameter);
                     }
@@ -169,7 +169,7 @@ public static class NavigationObservableExtensions
 
                         await Task.WhenAll(
                             x.IsAppearingAsync,
-                            x.NavigationRoot.Navigation.PushAsync(x.Page, x.Animated));
+                            x.RequiredNavigationRoot.Navigation.PushAsync(x.Page, x.Animated));
 
                         x.PostNavigation?.Invoke(x.Page, x.Parameter);
                     }
@@ -232,7 +232,7 @@ public static class NavigationObservableExtensions
 
                         await Task.WhenAll(
                             x.IsAppearingAsync,
-                            x.NavigationRoot.Navigation.PushAsync(x.Page, x.Animated));
+                            x.RequiredNavigationRoot.Navigation.PushAsync(x.Page, x.Animated));
 
                         x.PostNavigation?.Invoke(x.Page, x.Parameter);
                     }
@@ -278,7 +278,7 @@ public static class NavigationObservableExtensions
                     try
                     {
                         x.PreNavigation?.Invoke(x.Parameter);
-                        var pages = await x.NavigationRoot!.PopTo<TPage>(x.Animated);
+                        var pages = await x.RequiredNavigationRoot.PopTo<TPage>(x.Animated);
                         x.PostNavigation?.Invoke(x.Parameter);
                     }
                     finally
@@ -322,7 +322,7 @@ public static class NavigationObservableExtensions
                     try
                     {
                         x.PreNavigation?.Invoke(x.Parameter);
-                        var page = await x.NavigationRoot.Navigation.PopAsync(x.Animated);
+                        var page = await x.RequiredNavigationRoot.Navigation.PopAsync(x.Animated);
                         x.PostNavigation?.Invoke(x.Parameter);
                     }
                     finally
@@ -366,7 +366,7 @@ public static class NavigationObservableExtensions
                     try
                     {
                         x.PreNavigation?.Invoke(x.Parameter);
-                        await x.NavigationRoot.Navigation.PopToRootAsync(x.Animated);
+                        await x.RequiredNavigationRoot.Navigation.PopToRootAsync(x.Animated);
                         x.PostNavigation?.Invoke(x.Parameter);
                     }
                     finally
@@ -448,7 +448,7 @@ public static class NavigationObservableExtensions
                         x.PreNavigation?.Invoke(x.Page, x.Parameter);
                         await Task.WhenAll(
                             x.IsAppearingAsync,
-                            x.NavigationRoot.Navigation.PushModalAsync(x.Page, x.Animated));
+                            x.RequiredNavigationRoot.Navigation.PushModalAsync(x.Page, x.Animated));
                         x.PostNavigation?.Invoke(x.Page, x.Parameter);
                     }
                     finally
@@ -509,7 +509,7 @@ public static class NavigationObservableExtensions
                         x.PreNavigation?.Invoke(x.Page, x.Parameter);
                         await Task.WhenAll(
                             x.IsAppearingAsync,
-                            x.NavigationRoot.Navigation.PushModalAsync(x.Page, x.Animated));
+                            x.RequiredNavigationRoot.Navigation.PushModalAsync(x.Page, x.Animated));
                         x.PostNavigation?.Invoke(x.Page, x.Parameter);
                     }
                     finally
@@ -569,7 +569,7 @@ public static class NavigationObservableExtensions
                         x.PreNavigation?.Invoke(x.Page, x.Parameter);
                         await Task.WhenAll(
                             x.IsAppearingAsync,
-                            x.NavigationRoot.Navigation.PushModalAsync(x.Page, x.Animated));
+                            x.RequiredNavigationRoot.Navigation.PushModalAsync(x.Page, x.Animated));
                         x.PostNavigation?.Invoke(x.Page, x.Parameter);
                     }
                     finally
@@ -613,7 +613,7 @@ public static class NavigationObservableExtensions
                     try
                     {
                         x.PreNavigation?.Invoke(x.Parameter);
-                        var page = await x.NavigationRoot.Navigation.PopModalAsync(x.Animated);
+                        var page = await x.RequiredNavigationRoot.Navigation.PopModalAsync(x.Animated);
                         x.PostNavigation?.Invoke(x.Parameter);
                     }
                     finally
@@ -731,6 +731,20 @@ public static class NavigationObservableExtensions
         }
 
         public VisualElement? NavigationRoot { get; }
+
+        /// <summary>
+        /// Gets the navigation root, throwing if these options were built without one.
+        /// </summary>
+        /// <remarks>
+        /// The parameterless constructor leaves <see cref="NavigationRoot"/> null, so every
+        /// navigating call site has to account for it. Going through here turns that into one
+        /// explanatory exception instead of a bare <see cref="NullReferenceException"/> raised
+        /// somewhere inside the navigation stack.
+        /// </remarks>
+        internal VisualElement RequiredNavigationRoot =>
+            NavigationRoot
+            ?? throw new InvalidOperationException(
+                "This navigation operation needs a navigation root, but the NavigationOptions were created without one. Use the constructor that takes a VisualElement.");
 
         public TParameter? Parameter { get; set; }
 

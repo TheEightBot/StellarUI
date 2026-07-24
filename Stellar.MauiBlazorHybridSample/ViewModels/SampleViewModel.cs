@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using Stellar.MauiSample.Services;
 
 namespace Stellar.MauiBlazorHybridSample.ViewModels;
@@ -12,25 +12,25 @@ public partial class SampleViewModel(TestService testService)
     private readonly Guid _id = Guid.NewGuid();
 
     [Reactive]
-    private ReactiveCommand<Unit, Unit> _goPopup;
+    private ReactiveCommand<Unit, Unit> _goPopup = null!;
 
     [Reactive]
-    private ReactiveCommand<Unit, Unit> _goModal;
+    private ReactiveCommand<Unit, Unit> _goModal = null!;
 
     [Reactive]
-    private ReactiveCommand<Unit, Unit> _goValidation;
+    private ReactiveCommand<Unit, Unit> _goValidation = null!;
 
     [Reactive]
-    private ReactiveCommand<Unit, Unit> _goNext;
+    private ReactiveCommand<Unit, Unit> _goNext = null!;
 
     [Reactive]
-    private byte[] _colorArray;
+    private byte[] _colorArray = null!;
 
     [Reactive]
-    private IEnumerable<TestItem> _testItems;
+    private IEnumerable<TestItem> _testItems = null!;
 
     [Reactive]
-    private TestItem _selectedTestItem;
+    private TestItem _selectedTestItem = null!;
 
     [Reactive]
     [property: QueryParameter]
@@ -98,7 +98,7 @@ public partial class SampleViewModel(TestService testService)
 public class TestItem : INotifyPropertyChanged
 {
 #pragma warning disable CS0067
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 #pragma warning restore CS0067
 
     ~TestItem()

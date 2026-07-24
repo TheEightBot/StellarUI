@@ -1,4 +1,4 @@
-﻿@page "/"
+@page "/"
 
 @inject NavigationManager _nav
 
@@ -10,9 +10,9 @@
 
 Welcome to your new app.
 
-<div>@ViewModel.Interval</div>
+<div>@ViewModel!.Interval</div>
 
-<div>Parameter: @ViewModel.ParameterInput</div>
+<div>Parameter: @ViewModel!.ParameterInput</div>
 
 <SurveyPrompt Title="How is Blazor working for you?" />
 

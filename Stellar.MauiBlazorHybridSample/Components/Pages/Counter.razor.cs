@@ -1,19 +1,15 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using Stellar.MauiBlazorHybridSample.ViewModels;
 
 namespace Stellar.MauiBlazorHybridSample.Components.Pages;
 
 public partial class Counter
 {
-    [Inject]
-    public NavigationManager Navigation { get; private set; }
-
+    // Blazor assigns [Parameter] members directly, so they must be auto-properties.
+    // The route value is pushed into the view model from OnParametersSet rather than
+    // proxied through the property body, which is what BL0007 warns about.
     [Parameter]
-    public long Count
-    {
-        get => ViewModel.Count;
-        set => ViewModel.Count = value;
-    }
+    public long Count { get; set; }
 
     public Counter(CounterViewModel viewModel)
     {
@@ -22,15 +18,26 @@ public partial class Counter
 
     public override void Bind(WeakCompositeDisposable disposables)
     {
+        // The interval runs until the component goes away, so the subscription has to be
+        // handed to the disposables the framework passes in. Without that it outlives the
+        // component and keeps it alive.
         Observable
             .Interval(TimeSpan.FromSeconds(1), RxSchedulers.TaskpoolScheduler)
-            .Do(i => Count += i)
-            .Subscribe();
+            .Do(i => ViewModel!.Count += i)
+            .Subscribe()
+            .DisposeWith(disposables);
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        ViewModel!.Count = Count;
     }
 
     private void IncrementCount()
     {
-        ViewModel.Count++;
+        ViewModel!.Count++;
     }
 
     private void Navigate()

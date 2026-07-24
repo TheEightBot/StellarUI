@@ -1,4 +1,9 @@
-﻿using System;
+// This sample deliberately demonstrates StellarUI's ListView support, which the framework
+// keeps for as long as .NET MAUI ships ListView. MAUI marks it obsolete in favour of
+// CollectionView; the deprecation is suppressed here so the sample stays warning-clean.
+#pragma warning disable CS0618 // Type or member is obsolete
+
+using System;
 using System.Reactive.Disposables;
 using Stellar.MauiSample.ViewModels;
 
@@ -104,3 +109,5 @@ public class SamplePopupPage : PopupPageBase<SampleViewModel>
             .DisposeWith(disposables);
     }
 }
+
+#pragma warning restore CS0618

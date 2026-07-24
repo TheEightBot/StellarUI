@@ -1,3 +1,9 @@
+// StellarUI continues to support ListView for as long as .NET MAUI ships it. MAUI marks
+// ListView and its cell types obsolete in favour of CollectionView, but removing this
+// surface would break every consumer still using it, so the deprecation is suppressed here
+// rather than propagated. Revisit when MAUI actually removes the types.
+#pragma warning disable CS0618 // Type or member is obsolete
+
 using System.Collections.Concurrent;
 
 namespace Stellar.Maui.Views;
@@ -6,7 +12,9 @@ public class ActivatableListView : ListView
 {
     private readonly ConcurrentDictionary<Cell, IDisposable> _cellActivators = new();
 
-    private Action<CompositeDisposable, Cell, int> _cellActivatedAction;
+    // Null until SetCellActivationAction is called, and null again once the returned
+    // subscription is disposed, which SetupContent already accounts for.
+    private Action<CompositeDisposable, Cell, int>? _cellActivatedAction;
 
     public ActivatableListView()
         : this(ListViewCachingStrategy.RecycleElement)
@@ -69,3 +77,5 @@ public static class ActivatableListViewExtensions
         return reactiveList.SetCellActivationAction(whenCellActivated);
     }
 }
+
+#pragma warning restore CS0618
