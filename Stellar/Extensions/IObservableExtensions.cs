@@ -129,13 +129,13 @@ public static class IObservableExtensions
             return source
                 .Select(x =>
                     Observable
-                        .Start(() => onNext(x))
+                        .Defer(() => Observable.Start(() => onNext(x)))
                         .SubscribeOn(scheduler))
                 .Merge(concurrentSubscriptions);
         }
 
         return source
-            .Select(x => Observable.Start(() => onNext(x)))
+            .Select(x => Observable.Defer(() => Observable.Start(() => onNext(x))))
             .Merge(concurrentSubscriptions);
     }
 
@@ -146,13 +146,13 @@ public static class IObservableExtensions
             return source
                 .Select(x =>
                     Observable
-                        .Start(() => onNext(x, cancellationToken))
+                        .Defer(() => Observable.Start(() => onNext(x, cancellationToken)))
                         .SubscribeOn(scheduler))
                 .Merge(concurrentSubscriptions);
         }
 
         return source
-            .Select(x => Observable.Start(() => onNext(x, cancellationToken)))
+            .Select(x => Observable.Defer(() => Observable.Start(() => onNext(x, cancellationToken))))
             .Merge(concurrentSubscriptions);
     }
 
@@ -163,13 +163,13 @@ public static class IObservableExtensions
             return source
                 .Select(xIn =>
                     Observable
-                        .Start(() => onNext(xIn))
+                        .Defer(() => Observable.Start(() => onNext(xIn)))
                         .SubscribeOn(scheduler))
                 .Merge(concurrentSubscriptions);
         }
 
         return source
-            .Select(xIn => Observable.Start(() => onNext(xIn)))
+            .Select(xIn => Observable.Defer(() => Observable.Start(() => onNext(xIn))))
             .Merge(concurrentSubscriptions);
     }
 
@@ -180,13 +180,13 @@ public static class IObservableExtensions
             return source
                 .Select(xIn =>
                     Observable
-                        .Start(() => onNext(xIn, cancellationToken))
+                        .Defer(() => Observable.Start(() => onNext(xIn, cancellationToken)))
                         .SubscribeOn(scheduler))
                 .Merge(concurrentSubscriptions);
         }
 
         return source
-            .Select(xIn => Observable.Start(() => onNext(xIn, cancellationToken)))
+            .Select(xIn => Observable.Defer(() => Observable.Start(() => onNext(xIn, cancellationToken))))
             .Merge(concurrentSubscriptions);
     }
 
@@ -197,13 +197,13 @@ public static class IObservableExtensions
             return source
                 .Select(x =>
                     Observable
-                        .Start(() => onNext(x, cancellationToken))
+                        .Defer(() => Observable.Start(() => onNext(x, cancellationToken)))
                         .SubscribeOn(scheduler))
                 .Concat();
         }
 
         return source
-            .Select(x => Observable.Start(() => onNext(x, cancellationToken)))
+            .Select(x => Observable.Defer(() => Observable.Start(() => onNext(x, cancellationToken))))
             .Concat();
     }
 
@@ -214,13 +214,13 @@ public static class IObservableExtensions
             return source
                 .Select(xIn =>
                     Observable
-                        .Start(() => onNext(xIn))
+                        .Defer(() => Observable.Start(() => onNext(xIn)))
                         .SubscribeOn(scheduler))
                 .Concat();
         }
 
         return source
-            .Select(xIn => Observable.Start(() => onNext(xIn)))
+            .Select(xIn => Observable.Defer(() => Observable.Start(() => onNext(xIn))))
             .Concat();
     }
 
@@ -231,13 +231,13 @@ public static class IObservableExtensions
             return source
                 .Select(xIn =>
                     Observable
-                        .Start(() => onNext(xIn, cancellationToken))
+                        .Defer(() => Observable.Start(() => onNext(xIn, cancellationToken)))
                         .SubscribeOn(scheduler))
                 .Concat();
         }
 
         return source
-            .Select(xIn => Observable.Start(() => onNext(xIn, cancellationToken)))
+            .Select(xIn => Observable.Defer(() => Observable.Start(() => onNext(xIn, cancellationToken))))
             .Concat();
     }
 
