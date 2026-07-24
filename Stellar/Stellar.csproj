@@ -14,12 +14,11 @@
         <PackageTags>.NET UI;MVVM;Reactive UI;Reactive Extensions;Eight-Bot</PackageTags>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="ReactiveGenerator" Version="0.12.0">
+        <PackageReference Include="ReactiveGenerator">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="ReactiveUI" Version="21.0.1" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />
-        <PackageReference Update="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0" />
+        <PackageReference Include="ReactiveUI" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     </ItemGroup>
 </Project>

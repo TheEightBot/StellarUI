@@ -1,0 +1,74 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+
+  <!-- Analyzers applied to every project via Directory.build.props. -->
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0" />
+    <PackageVersion Include="Roslynator.Analyzers" Version="4.14.0" />
+    <PackageVersion Include="stylecop.analyzers" Version="1.2.0-beta.435" />
+  </ItemGroup>
+
+  <!-- Core -->
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.AutoActivation" Version="9.8.0" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="9.0.9" />
+    <PackageVersion Include="System.Threading.RateLimiting" Version="9.0.9" />
+    <PackageVersion Include="FluentValidation" Version="12.0.0" />
+  </ItemGroup>
+
+  <!-- ReactiveUI -->
+  <ItemGroup>
+    <PackageVersion Include="ReactiveUI" Version="21.0.1" />
+    <PackageVersion Include="ReactiveUI.Blazor" Version="21.0.1" />
+    <PackageVersion Include="ReactiveUI.Maui" Version="21.0.1" />
+    <PackageVersion Include="ReactiveGenerator" Version="0.12.0" />
+    <!-- Was 2.0.17 in Stellar.AvaloniaSample and 2.4.1 elsewhere; central
+         management requires one version, so the samples converge on 2.4.1. -->
+    <PackageVersion Include="ReactiveUI.SourceGenerators" Version="2.4.1" />
+    <PackageVersion Include="ReactiveMarbles.ObservableEvents.SourceGenerator" Version="1.3.1" />
+  </ItemGroup>
+
+  <!-- MAUI -->
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.Maui.Controls" Version="9.0.100" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="9.0.100" />
+    <PackageVersion Include="CommunityToolkit.Maui" Version="12.2.0" />
+    <PackageVersion Include="CommunityToolkit.Maui.Markup" Version="6.0.1" />
+    <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageVersion Include="Mopups" Version="1.3.2" />
+  </ItemGroup>
+
+  <!-- Avalonia -->
+  <ItemGroup>
+    <PackageVersion Include="Avalonia" Version="11.3.5" />
+    <PackageVersion Include="Avalonia.Desktop" Version="11.3.5" />
+    <PackageVersion Include="Avalonia.Diagnostics" Version="11.3.5" />
+    <PackageVersion Include="Avalonia.Fonts.Inter" Version="11.3.5" />
+    <PackageVersion Include="Avalonia.ReactiveUI" Version="11.3.5" />
+    <PackageVersion Include="Avalonia.Themes.Fluent" Version="11.3.5" />
+  </ItemGroup>
+
+  <!-- Blazor -->
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.9" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.9" />
+  </ItemGroup>
+
+  <!-- Source generators -->
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.12.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.12.0" />
+  </ItemGroup>
+
+  <!-- Test -->
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageVersion Include="coverlet.collector" Version="6.0.4" />
+    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.4" />
+  </ItemGroup>
+</Project>
