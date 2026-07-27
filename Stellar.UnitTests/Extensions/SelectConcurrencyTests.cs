@@ -1,4 +1,5 @@
 using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 
 namespace Stellar.UnitTests.Extensions;
@@ -236,6 +237,62 @@ public class SelectConcurrencyTests
 
         Assert.Empty(results);
         Assert.Equal(0, probe.TotalCalls);
+    }
+
+    [Fact]
+    public void SelectSequential_ActionOverload_RunsOneAtATimeInOrder()
+    {
+        // This overload previously did not exist: SelectConcurrent accepted a bare
+        // Action<T> but SelectSequential forced callers to invent a return value.
+        var order = new List<int>();
+
+        Drain(
+            Observable.Range(1, 5)
+                .SelectSequential(x =>
+                {
+                    lock (order)
+                    {
+                        order.Add(x);
+                    }
+                }));
+
+        Assert.Equal(new[] { 1, 2, 3, 4, 5 }, order);
+    }
+
+    [Fact]
+    public void SelectSequential_ActionOverload_NeverOverlaps()
+    {
+        using var probe = new ConcurrencyProbe();
+
+        Drain(Observable.Range(1, 8).SelectSequential(probe.Run));
+
+        Assert.Equal(1, probe.MaxObserved);
+        Assert.Equal(8, probe.TotalCalls);
+    }
+
+    [Fact]
+    public void TheSchedulerArgument_DecidesWhereTheWorkRuns()
+    {
+        // Work now runs on the supplied scheduler. Previously the argument only moved the
+        // subscribe call via SubscribeOn while Observable.Start dispatched the work to the
+        // default scheduler regardless, so passing a scheduler did not decide anything.
+        var callingThread = Environment.CurrentManagedThreadId;
+        var workThreads = new List<int>();
+
+        Drain(
+            Observable.Range(1, 3)
+                .SelectSequential(
+                    _ =>
+                    {
+                        lock (workThreads)
+                        {
+                            workThreads.Add(Environment.CurrentManagedThreadId);
+                        }
+                    },
+                    ImmediateScheduler.Instance));
+
+        Assert.Equal(3, workThreads.Count);
+        Assert.All(workThreads, t => Assert.Equal(callingThread, t));
     }
 
     /// <summary>

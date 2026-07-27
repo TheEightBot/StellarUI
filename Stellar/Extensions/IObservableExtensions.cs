@@ -124,121 +124,102 @@ public static class IObservableExtensions
 
     public static IObservable<Unit> SelectConcurrent<T>(this IObservable<T> source, Action<T> onNext, int concurrentSubscriptions = 1, IScheduler? scheduler = null)
     {
-        if (scheduler is not null)
-        {
-            return source
-                .Select(x =>
-                    Observable
-                        .Defer(() => Observable.Start(() => onNext(x)))
-                        .SubscribeOn(scheduler))
-                .Merge(concurrentSubscriptions);
-        }
-
         return source
-            .Select(x => Observable.Defer(() => Observable.Start(() => onNext(x))))
+            .Select(AsUnitWork(onNext, scheduler))
             .Merge(concurrentSubscriptions);
     }
 
     public static IObservable<Unit> SelectConcurrent<T>(this IObservable<T> source, Action<T, CancellationToken> onNext, CancellationToken cancellationToken, int concurrentSubscriptions = 1, IScheduler? scheduler = null)
     {
-        if (scheduler is not null)
-        {
-            return source
-                .Select(x =>
-                    Observable
-                        .Defer(() => Observable.Start(() => onNext(x, cancellationToken)))
-                        .SubscribeOn(scheduler))
-                .Merge(concurrentSubscriptions);
-        }
-
         return source
-            .Select(x => Observable.Defer(() => Observable.Start(() => onNext(x, cancellationToken))))
+            .Select(AsUnitWork(onNext, cancellationToken, scheduler))
             .Merge(concurrentSubscriptions);
     }
 
     public static IObservable<TOut> SelectConcurrent<TIn, TOut>(this IObservable<TIn> source, Func<TIn, TOut> onNext, int concurrentSubscriptions = 1, IScheduler? scheduler = null)
     {
-        if (scheduler is not null)
-        {
-            return source
-                .Select(xIn =>
-                    Observable
-                        .Defer(() => Observable.Start(() => onNext(xIn)))
-                        .SubscribeOn(scheduler))
-                .Merge(concurrentSubscriptions);
-        }
-
         return source
-            .Select(xIn => Observable.Defer(() => Observable.Start(() => onNext(xIn))))
+            .Select(AsWork(onNext, scheduler))
             .Merge(concurrentSubscriptions);
     }
 
     public static IObservable<TOut> SelectConcurrent<TIn, TOut>(this IObservable<TIn> source, Func<TIn, CancellationToken, TOut> onNext, CancellationToken cancellationToken, int concurrentSubscriptions = 1, IScheduler? scheduler = null)
     {
-        if (scheduler is not null)
-        {
-            return source
-                .Select(xIn =>
-                    Observable
-                        .Defer(() => Observable.Start(() => onNext(xIn, cancellationToken)))
-                        .SubscribeOn(scheduler))
-                .Merge(concurrentSubscriptions);
-        }
-
         return source
-            .Select(xIn => Observable.Defer(() => Observable.Start(() => onNext(xIn, cancellationToken))))
+            .Select(AsWork(onNext, cancellationToken, scheduler))
             .Merge(concurrentSubscriptions);
+    }
+
+    public static IObservable<Unit> SelectSequential<T>(this IObservable<T> source, Action<T> onNext, IScheduler? scheduler = null)
+    {
+        return source
+            .Select(AsUnitWork(onNext, scheduler))
+            .Concat();
     }
 
     public static IObservable<Unit> SelectSequential<T>(this IObservable<T> source, Action<T, CancellationToken> onNext, CancellationToken cancellationToken, IScheduler? scheduler = null)
     {
-        if (scheduler is not null)
-        {
-            return source
-                .Select(x =>
-                    Observable
-                        .Defer(() => Observable.Start(() => onNext(x, cancellationToken)))
-                        .SubscribeOn(scheduler))
-                .Concat();
-        }
-
         return source
-            .Select(x => Observable.Defer(() => Observable.Start(() => onNext(x, cancellationToken))))
+            .Select(AsUnitWork(onNext, cancellationToken, scheduler))
             .Concat();
     }
 
     public static IObservable<TOut> SelectSequential<TIn, TOut>(this IObservable<TIn> source, Func<TIn, TOut> onNext, IScheduler? scheduler = null)
     {
-        if (scheduler is not null)
-        {
-            return source
-                .Select(xIn =>
-                    Observable
-                        .Defer(() => Observable.Start(() => onNext(xIn)))
-                        .SubscribeOn(scheduler))
-                .Concat();
-        }
-
         return source
-            .Select(xIn => Observable.Defer(() => Observable.Start(() => onNext(xIn))))
+            .Select(AsWork(onNext, scheduler))
             .Concat();
     }
 
     public static IObservable<TOut> SelectSequential<TIn, TOut>(this IObservable<TIn> source, Func<TIn, CancellationToken, TOut> onNext, CancellationToken cancellationToken, IScheduler? scheduler = null)
     {
-        if (scheduler is not null)
-        {
-            return source
-                .Select(xIn =>
-                    Observable
-                        .Defer(() => Observable.Start(() => onNext(xIn, cancellationToken)))
-                        .SubscribeOn(scheduler))
-                .Concat();
-        }
-
         return source
-            .Select(xIn => Observable.Defer(() => Observable.Start(() => onNext(xIn, cancellationToken))))
+            .Select(AsWork(onNext, cancellationToken, scheduler))
             .Concat();
+    }
+
+    // The four factories below each allocate one closure per call to the operator, not per
+    // element. Everything the per-element work needs is then carried by a single
+    // ScheduledWork instance rather than the nested closures the previous
+    // Defer(() => Start(() => onNext(x))) shape required.
+    private static Func<TIn, IObservable<TOut>> AsWork<TIn, TOut>(Func<TIn, TOut> onNext, IScheduler? scheduler)
+    {
+        var schedulerOrDefault = scheduler ?? Scheduler.Default;
+
+        return x => new ScheduledWork<TIn, TOut>(x, onNext, schedulerOrDefault);
+    }
+
+    private static Func<TIn, IObservable<TOut>> AsWork<TIn, TOut>(Func<TIn, CancellationToken, TOut> onNext, CancellationToken cancellationToken, IScheduler? scheduler)
+    {
+        var schedulerOrDefault = scheduler ?? Scheduler.Default;
+
+        return x => new ScheduledWork<TIn, TOut>(x, v => onNext(v, cancellationToken), schedulerOrDefault);
+    }
+
+    private static Func<T, IObservable<Unit>> AsUnitWork<T>(Action<T> onNext, IScheduler? scheduler)
+    {
+        var schedulerOrDefault = scheduler ?? Scheduler.Default;
+
+        Func<T, Unit> work = x =>
+        {
+            onNext(x);
+            return Unit.Default;
+        };
+
+        return x => new ScheduledWork<T, Unit>(x, work, schedulerOrDefault);
+    }
+
+    private static Func<T, IObservable<Unit>> AsUnitWork<T>(Action<T, CancellationToken> onNext, CancellationToken cancellationToken, IScheduler? scheduler)
+    {
+        var schedulerOrDefault = scheduler ?? Scheduler.Default;
+
+        Func<T, Unit> work = x =>
+        {
+            onNext(x, cancellationToken);
+            return Unit.Default;
+        };
+
+        return x => new ScheduledWork<T, Unit>(x, work, schedulerOrDefault);
     }
 
     public static IObservable<Unit> SelectManyConcurrent<T>(this IObservable<T> source, Func<T, Task> onNext, int concurrentSubscriptions = 1, IScheduler? scheduler = null)
