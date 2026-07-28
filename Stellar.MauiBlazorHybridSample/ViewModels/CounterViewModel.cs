@@ -13,6 +13,7 @@ public partial class CounterViewModel : ViewModelBase
         Observable
             .Interval(TimeSpan.FromSeconds(2), RxSchedulers.TaskpoolScheduler)
             .Do(i => Count *= i)
-            .Subscribe();
+            .Subscribe()
+            .DisposeWith(disposables);
     }
 }
