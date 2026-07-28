@@ -82,7 +82,7 @@ public partial class MyViewModel : ViewModelBase
     {
         this.WhenAnyValue(static x => x.SomeProperty)
             .SelectMany(x => _service.GetAsync(x).ToObservable())
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .Subscribe(result => Items = result)
             .DisposeWith(disposables);
     }
