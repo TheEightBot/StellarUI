@@ -62,7 +62,7 @@ public partial class ${Name}ViewModel : ViewModelBase
         // React to property changes
         this.WhenAnyValue(static x => x.Title)
             .Where(static x => !string.IsNullOrEmpty(x))
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .Subscribe(title => { /* respond to title change */ })
             .DisposeWith(disposables);
 
