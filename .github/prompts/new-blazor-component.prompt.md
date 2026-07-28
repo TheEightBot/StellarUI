@@ -94,7 +94,7 @@ public override void Bind(WeakCompositeDisposable disposables)
             static vm => vm.IsLoading,
             static vm => vm.Title,
             static vm => vm.Items)
-        .ObserveOn(RxApp.MainThreadScheduler)
+        .ObserveOn(RxSchedulers.MainThreadScheduler)
         .Subscribe(_ => StateHasChanged())
         .DisposeWith(disposables);
 }
