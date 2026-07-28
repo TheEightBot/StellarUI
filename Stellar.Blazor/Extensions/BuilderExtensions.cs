@@ -1,7 +1,6 @@
-﻿using System.Reflection;
+using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI.Builder;
-using Splat;
 
 namespace Stellar.Blazor;
 
