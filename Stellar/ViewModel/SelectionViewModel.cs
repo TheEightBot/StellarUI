@@ -1,6 +1,6 @@
 ﻿namespace Stellar.ViewModel;
 
-public sealed partial class SelectionViewModel<TSelectedValKey> : ViewModelBase
+public partial class SelectionViewModel<TSelectedValKey> : ViewModelBase
 {
     [Reactive]
     public partial TSelectedValKey? Key { get; set; }
