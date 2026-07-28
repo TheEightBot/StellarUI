@@ -1,0 +1,16 @@
+{
+  "solution": {
+    "path": "Stellar.sln",
+    "projects": [
+      "Stellar\\Stellar.csproj",
+      "Stellar.Avalonia\\Stellar.Avalonia.csproj",
+      "Stellar.AvaloniaSample\\Stellar.AvaloniaSample.csproj",
+      "Stellar.Blazor\\Stellar.Blazor.csproj",
+      "Stellar.BlazorSample\\Stellar.BlazorSample.csproj",
+      "Stellar.DiskDataCache\\Stellar.DiskDataCache.csproj",
+      "Stellar.FluentValidation\\Stellar.FluentValidation.csproj",
+      "Stellar.SourceGenerators\\Stellar.SourceGenerators.csproj",
+      "Stellar.UnitTests\\Stellar.UnitTests.csproj"
+    ]
+  }
+}

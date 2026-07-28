@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Avalonia.Controls;
@@ -10,7 +10,8 @@ namespace Stellar.AvaloniaSample.Views;
 
 public class StellarMainWindow : WindowBase<ViewModels.MainWindowViewModel>
 {
-    private TextBox _text;
+    // Built in SetupUserInterface, which the Stellar lifecycle runs before Bind.
+    private TextBox _text = null!;
 
     public StellarMainWindow()
     {
@@ -39,9 +40,9 @@ public class StellarMainWindow : WindowBase<ViewModels.MainWindowViewModel>
         this.Bind(ViewModel, vm => vm.Greeting, ui => ui._text.Text)
             .DisposeWith(disposables);
 
-        this.WhenAnyValue(x => x.ViewModel.Greeting)
+        this.WhenAnyValue(x => x.ViewModel!.Greeting)
             .Select(x => (x?.Length ?? 0) / 100d)
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .BindTo(this, x => x._text.Opacity)
             .DisposeWith(disposables);
     }

@@ -1,4 +1,4 @@
-﻿using System.Reactive;
+using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using Mopups.Pages;
@@ -63,7 +63,7 @@ public static class PopupNavigationObservableExtensions
                         Animated = animated,
                     };
                 })
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .SelectMany(
                 static async x =>
                 {
@@ -125,7 +125,7 @@ public static class PopupNavigationObservableExtensions
                         Animated = animated,
                     };
                 })
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .SelectMany(
                 static async x =>
                 {
@@ -158,7 +158,7 @@ public static class PopupNavigationObservableExtensions
 
     public static IDisposable NavigateToPopupPage<TParameter, TPage, TViewModel>(
         this IObservable<TParameter> observable,
-        Func<TParameter, TPage> pageCreator,
+        Func<TParameter?, TPage> pageCreator,
         Action<TPage, TParameter?>? preNavigation = null,
         Action<TPage, TParameter?>? postNavigation = null,
         Action<TParameter?, TViewModel>? viewModelMap = null,
@@ -188,7 +188,7 @@ public static class PopupNavigationObservableExtensions
                         Animated = animated,
                     };
                 })
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .SelectMany(
                 static async x =>
                 {
@@ -240,7 +240,7 @@ public static class PopupNavigationObservableExtensions
                         Animated = animated,
                     };
                 })
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .SelectMany(
                 static async x =>
                 {
@@ -283,7 +283,7 @@ public static class PopupNavigationObservableExtensions
                         Animated = animated,
                     };
                 })
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .SelectMany(
                 static async x =>
                 {
@@ -328,7 +328,7 @@ public static class PopupNavigationObservableExtensions
                         Animated = animated,
                     };
                 })
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .SelectMany(
                 static async x =>
                 {

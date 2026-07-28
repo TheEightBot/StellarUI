@@ -1,4 +1,10 @@
-﻿using System.ComponentModel;
+// StellarUI continues to support ListView for as long as .NET MAUI ships it. MAUI marks
+// ListView and its cell types obsolete in favour of CollectionView, but removing this
+// surface would break every consumer still using it, so the deprecation is suppressed here
+// rather than propagated. Revisit when MAUI actually removes the types.
+#pragma warning disable CS0618 // Type or member is obsolete
+
+using System.ComponentModel;
 
 namespace Stellar.Maui.Views;
 
@@ -123,3 +129,5 @@ public abstract class ViewCellBase<TViewModel, TDataModel> : ReactiveViewCell<TV
         }
     }
 }
+
+#pragma warning restore CS0618

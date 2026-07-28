@@ -55,9 +55,9 @@ public class DiskCache : IDataCache, IDisposable
         await SerializeJsonToFileAsync(groupKey, cacheKey ?? typeof(T).Name, item).ConfigureAwait(false);
     }
 
-    public async Task StoreAsync<T>(T item, Func<T, string>? cacheKey = null, string? groupKey = null)
+    public async Task StoreAsync<T>(T item, Func<T, string> cacheKey, string? groupKey = null)
     {
-        await this.SerializeJsonToFileAsync(groupKey, cacheKey?.Invoke(item) ?? typeof(T).Name, item).ConfigureAwait(false);
+        await this.SerializeJsonToFileAsync(groupKey, cacheKey(item), item).ConfigureAwait(false);
     }
 
     public async Task StoreManyAsync<T>(IEnumerable<T> items, string? groupKey = null)
@@ -110,9 +110,7 @@ public class DiskCache : IDataCache, IDisposable
         using var lease = await _writeLimiter.AcquireAsync().ConfigureAwait(false);
         try
         {
-            RemoveFile(groupKey, cacheKey ?? typeof(T).Name);
-
-            return true;
+            return RemoveFile(groupKey, cacheKey ?? typeof(T).Name);
         }
         catch (IOException)
         {
@@ -196,16 +194,20 @@ public class DiskCache : IDataCache, IDisposable
             : Stream.Null;
     }
 
-    private void RemoveFile(string? cacheDirectoryName, string fileName)
+    private bool RemoveFile(string? cacheDirectoryName, string fileName)
     {
         var cacheDirectory = GetCacheDirectory(cacheDirectoryName);
 
         var filePath = Path.Combine(cacheDirectory.FullName, fileName);
 
-        if (File.Exists(filePath))
+        if (!File.Exists(filePath))
         {
-            File.Delete(filePath);
+            return false;
         }
+
+        File.Delete(filePath);
+
+        return true;
     }
 
     public void Dispose()

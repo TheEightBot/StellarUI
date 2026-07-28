@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Reactive;
 using System.Reactive.Disposables;
 
@@ -69,7 +69,7 @@ public abstract class PopupPageBase<TViewModel> : ReactivePopupPage<TViewModel>,
         base.OnDisappearing();
     }
 
-    protected override void OnPropertyChanged(string propertyName = null)
+    protected override void OnPropertyChanged(string? propertyName = null)
     {
         ViewManager.PropertyChanged(this, propertyName);
 

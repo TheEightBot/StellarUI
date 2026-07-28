@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-14
+    runs-on: macos-26
     strategy:
       matrix:
         include:
@@ -39,18 +39,18 @@ jobs:
             project: Stellar.SourceGenerators/Stellar.SourceGenerators.csproj
             output: Stellar.SourceGenerators/bin/Release
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-dotnet@v3
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: '9.x'
-      - uses: maxim-lobanov/setup-xcode@v1
+          dotnet-version: '10.x'
+      - uses: maxim-lobanov/setup-xcode@v1.7.0
         with:
           xcode-version: latest-stable
       - name: Install MAUI Workloads
         run: dotnet workload install maui --ignore-failed-sources
       - name: Semver Parse
         id: version
-        uses: release-kit/semver@v1.0.10
+        uses: release-kit/semver@v2.0.7
       - name: Build ${{ matrix.name }}
         run: dotnet build ${{ matrix.project }}
       - name: Pack ${{ matrix.name }}

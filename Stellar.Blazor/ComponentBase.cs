@@ -12,9 +12,11 @@ public abstract class ComponentBase<TViewModel> : ReactiveComponentBase<TViewMod
 {
     private bool _isDisposed;
 
+    // Assigned by Blazor dependency injection after construction, which the compiler
+    // cannot see; default! is the standard idiom for an [Inject] member.
     [Inject]
     [Required]
-    protected NavigationManager Navigation { get; private set; }
+    protected NavigationManager Navigation { get; private set; } = default!;
 
     [EditorBrowsable(EditorBrowsableState.Never)]
     public ViewManager<TViewModel> ViewManager { get; } = new BlazorViewManager<TViewModel>();

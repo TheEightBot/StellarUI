@@ -1,4 +1,4 @@
-﻿using Avalonia.Controls;
+using Avalonia.Controls;
 using Avalonia.Threading;
 
 namespace Stellar.Avalonia;
@@ -6,7 +6,8 @@ namespace Stellar.Avalonia;
 public class AvaloniaViewManager<TViewModel> : ViewManager<TViewModel>
     where TViewModel : class
 {
-    private IStellarView<TViewModel> _view;
+    // Null whenever no view is activated, which HandleDeactivated relies on.
+    private IStellarView<TViewModel>? _view;
 
     public override void HandleActivated(IStellarView<TViewModel> view)
     {
@@ -14,7 +15,7 @@ public class AvaloniaViewManager<TViewModel> : ViewManager<TViewModel>
 
         if (HotReloadService.HotReloadAware)
         {
-            _view = view as IStellarView<TViewModel>;
+            _view = view;
             HotReloadService.UpdateApplicationEvent -= HandleHotReload;
             HotReloadService.UpdateApplicationEvent += HandleHotReload;
         }

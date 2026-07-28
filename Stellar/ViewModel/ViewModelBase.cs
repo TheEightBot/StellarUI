@@ -2,15 +2,18 @@ namespace Stellar.ViewModel;
 
 using Stellar.Extensions;
 
-#pragma warning disable CA1001
-public abstract class ViewModelBase : ReactiveObject, IViewModel
-#pragma warning restore CA1001
+public abstract class ViewModelBase : ReactiveObject, IViewModel, IDisposable
 {
     protected static readonly Action DefaultAction = () => { };
 
     private readonly Lock _vmLock = new();
     private readonly WeakCompositeDisposable _viewModelBindings;
-    private readonly Lazy<bool> _shouldMaintain;
+
+    // Nullable bool rather than Lazy<bool>: a view model is created per view, and the
+    // Lazy plus its capturing closure were two heap allocations per instance for a value
+    // that is only read when bindings are unregistered. AttributeCache already memoises
+    // the reflection per type, so recomputing on a race is cheap.
+    private bool? _shouldMaintain;
 
     private bool _bindingsRegistered;
     private bool _initialized;
@@ -19,19 +22,12 @@ public abstract class ViewModelBase : ReactiveObject, IViewModel
     protected ViewModelBase()
     {
         _viewModelBindings = new(this);
-
-        // Cache attribute lookup using lazy initialization with the fast AttributeCache
-        _shouldMaintain = new Lazy<bool>(() =>
-        {
-            var sra = AttributeCache.GetAttribute<ServiceRegistrationAttribute>(this.GetType());
-            if (sra != null)
-            {
-                return sra.ServiceRegistrationType is Lifetime.Scoped or Lifetime.Singleton;
-            }
-
-            return false;
-        });
     }
+
+    private bool ShouldMaintain =>
+        _shouldMaintain ??=
+            AttributeCache.GetAttribute<ServiceRegistrationAttribute>(GetType())
+                is { ServiceRegistrationType: Lifetime.Scoped or Lifetime.Singleton };
 
     public bool Maintain { get; set; }
 
@@ -136,7 +132,7 @@ public abstract class ViewModelBase : ReactiveObject, IViewModel
             if (!_initialized)
             {
                 // Use cached attribute lookup
-                Maintain = _shouldMaintain.Value;
+                Maintain = ShouldMaintain;
                 Initialize();
                 Initialized = true;
             }

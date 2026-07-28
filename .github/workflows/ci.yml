@@ -1,0 +1,147 @@
+# Builds and tests every project on pull requests and pushes to the long-lived
+# branches. This is the gate that dependency-update pull requests are measured
+# against -- see .github/workflows/ for the scheduled updater.
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# A newer push to the same branch or pull request makes the in-flight run
+# irrelevant, so cancel it rather than paying for both.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  core:
+    name: Core (build + test)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.x'
+
+      # Stellar.slnf is the subset of the solution that builds without the MAUI
+      # workload, which keeps this job on a Linux runner and under a minute.
+      - name: Restore
+        run: dotnet restore Stellar.slnf
+
+      - name: Build
+        run: dotnet build Stellar.slnf --configuration Release --no-restore
+
+      - name: Test
+        run: >
+          dotnet test Stellar.UnitTests/Stellar.UnitTests.csproj
+          --configuration Release
+          --no-build
+          --settings Stellar.UnitTests/coverlet.runsettings
+          --collect:"XPlat Code Coverage"
+          --logger "trx;LogFileName=test-results.trx"
+          --results-directory ./TestResults
+
+      # A ratchet against silent regression, not a target. Raise MINIMUM when coverage
+      # rises; do not lower it to make a build pass. Checked here rather than through
+      # coverlet's Threshold setting, which the XPlat data collector silently ignores.
+      - name: Check coverage floor
+        run: |
+          python3 - <<'PY'
+          import glob, sys, xml.etree.ElementTree as ET
+
+          MINIMUM = 85.0
+
+          reports = glob.glob('TestResults/**/coverage.cobertura.xml', recursive=True)
+          if not reports:
+              sys.exit('No coverage report was produced.')
+
+          rate = float(ET.parse(reports[0]).getroot().get('line-rate')) * 100
+          print(f'Line coverage: {rate:.1f}% (floor {MINIMUM:.0f}%)')
+
+          if rate < MINIMUM:
+              sys.exit(f'Coverage {rate:.1f}% is below the {MINIMUM:.0f}% floor.')
+          PY
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-results
+          path: |
+            ./TestResults/*.trx
+            ./TestResults/**/coverage.cobertura.xml
+          if-no-files-found: warn
+
+  maui:
+    name: MAUI packages
+    # macos-26, not macos-15: the .NET 10 iOS/MacCatalyst workload band
+    # 26.5.10301 requires Xcode 26.6, and the newest Xcode on the macos-15
+    # image is 26.3. Library builds do not enforce that check but app heads do,
+    # so Stellar.Maui built there while Stellar.MauiSample did not.
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.x'
+
+      - uses: maxim-lobanov/setup-xcode@v1.7.0
+        with:
+          xcode-version: latest-stable
+
+      - name: Install MAUI workloads
+        run: dotnet workload install maui --ignore-failed-sources
+
+      - name: Build Stellar.Maui
+        run: dotnet build Stellar.Maui/Stellar.Maui.csproj --configuration Release
+
+      - name: Build Stellar.Maui.PopUp
+        run: dotnet build Stellar.Maui.PopUp/Stellar.Maui.PopUp.csproj --configuration Release
+
+  # The sample heads are 94% of the MAUI build time (13.7 and 10.8 minutes
+  # against 1.4 for the packages), so they are split out: one job each so they
+  # run concurrently rather than back to back, and skippable for routine
+  # dependency bumps via the skip-samples label.
+  #
+  # They are not merely decorative. The samples, and only the samples, caught
+  # the CommunityToolkit.Maui / Microsoft.Maui.Essentials version conflict and
+  # the Android minSdk 21 break during the .NET 10 upgrade. Skip them for a
+  # patch bump; do not skip them for anything that moves a major.
+  samples:
+    name: Sample apps (${{ matrix.project }})
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-samples') }}
+    runs-on: macos-26
+    strategy:
+      fail-fast: false
+      matrix:
+        project:
+          - Stellar.MauiSample
+          - Stellar.MauiBlazorHybridSample
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.x'
+
+      - uses: maxim-lobanov/setup-xcode@v1.7.0
+        with:
+          xcode-version: latest-stable
+
+      - name: Install MAUI workloads
+        run: dotnet workload install maui --ignore-failed-sources
+
+      - name: Build ${{ matrix.project }}
+        run: dotnet build ${{ matrix.project }}/${{ matrix.project }}.csproj --configuration Release

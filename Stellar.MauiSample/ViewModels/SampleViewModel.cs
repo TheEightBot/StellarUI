@@ -44,9 +44,19 @@ public partial class SampleViewModel(TestService testService)
         set => this.RaiseAndSetIfChanged(ref _parameterValue, value);
     }
 
-    ~SampleViewModel()
+    // The finalizer exists so the sample can show the view model actually being
+    // collected. CA1063 requires it to do nothing but hand off to Dispose(false), so the
+    // logging moves into the dispose path.
+    ~SampleViewModel() => Dispose(false);
+
+    protected override void Dispose(bool disposing)
     {
-        Console.WriteLine("SimpleSampleViewModel Finalized");
+        if (!disposing)
+        {
+            Console.WriteLine("SimpleSampleViewModel Finalized");
+        }
+
+        base.Dispose(disposing);
     }
 
     protected override void Initialize()

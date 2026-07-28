@@ -449,8 +449,9 @@ public partial class UserViewModel : ViewModelBase, IProvideValidation
 The `Stellar.DiskDataCache` package provides disk-based caching capabilities:
 
 ```csharp
-// Register the cache in your DI setup
-services.AddSingleton<IDataCache, DiskCache>();
+// Register the cache in your DI setup. DiskCache needs the directory to write
+// into, so register it with a factory rather than by type.
+services.AddSingleton<IDataCache>(_ => new DiskCache(FileSystem.AppDataDirectory));
 
 // Use the cache in a view model
 [ServiceRegistration]
@@ -469,7 +470,7 @@ public partial class CachedDataViewModel : ViewModelBase
     protected override async void Initialize()
     {
         // Try to load from cache first
-        var cachedItems = await _cache.GetAsync<List<string>>("items");
+        var cachedItems = await _cache.RetrieveAsync<List<string>>("items");
         if (cachedItems != null)
         {
             Items = new ObservableCollection<string>(cachedItems);
@@ -482,9 +483,30 @@ public partial class CachedDataViewModel : ViewModelBase
     
     public async Task SaveItems()
     {
-        await _cache.SetAsync("items", Items.ToList());
+        // The item comes first, then the key.
+        await _cache.StoreAsync(Items.ToList(), cacheKey: "items");
     }
 }
+```
+
+The rest of the surface:
+
+```csharp
+// Key by an explicit string, or omit the key to store one entry per type.
+await _cache.StoreAsync(model, cacheKey: "my-key", groupKey: "group");
+await _cache.StoreAsync(model);                       // keyed by nameof(MyModel)
+
+// Or derive the key from the item. This overload requires the selector.
+await _cache.StoreAsync(model, static x => x.Id, groupKey: "group");
+await _cache.StoreManyAsync(models, static x => x.Id, groupKey: "group");
+
+// Group keys are directories, so RetrieveManyAsync reads a whole group back.
+var all = await _cache.RetrieveManyAsync<MyModel>("group");
+
+// RemoveAsync reports whether an entry actually existed.
+var removed = await _cache.RemoveAsync<MyModel>(cacheKey: "my-key");
+
+await _cache.ClearCacheAsync("group");                // null clears the default group
 ```
 
 ### Hot Reload

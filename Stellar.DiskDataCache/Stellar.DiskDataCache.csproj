@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <PackageId>StellarUI.DiskDataCache</PackageId>
@@ -18,8 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="System.Threading.RateLimiting" Version="9.0.9" />
-      <PackageReference Update="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0" />
+      <PackageReference Include="System.Threading.RateLimiting" />
     </ItemGroup>
 
 </Project>

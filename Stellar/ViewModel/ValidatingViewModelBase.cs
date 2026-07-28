@@ -1,9 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq.Expressions;
-using System.Runtime.Serialization;
 using Splat;
 
 namespace Stellar.ViewModel;
@@ -29,7 +28,7 @@ public abstract partial class ValidatingViewModelBase<TNeedsValidation> : ViewMo
 
     protected IDisposable RegisterValidation<TDoesntMatter>(IObservable<TDoesntMatter> validationTrigger, IScheduler? observationScheduler = null, TimeSpan? changeThrottleDuration = null)
     {
-        return RegisterValidation(validationTrigger.Select(_ => Unit.Default), observationScheduler, changeThrottleDuration);
+        return RegisterValidation(validationTrigger.Select(static _ => Unit.Default), observationScheduler, changeThrottleDuration);
     }
 
     protected IDisposable RegisterValidation(IObservable<Unit>? validationTrigger = null, IScheduler? observationScheduler = null, TimeSpan? changeThrottleDuration = null)
@@ -46,10 +45,10 @@ public abstract partial class ValidatingViewModelBase<TNeedsValidation> : ViewMo
 
         validatorDisposable.Disposable =
             validationTrigger
-                .ObserveOn(RxApp.TaskpoolScheduler)
-                .ThrottleFirst(changeThrottleDuration ?? DefaultValidationChangeThrottleDuration, RxApp.TaskpoolScheduler)
+                .ObserveOn(RxSchedulers.TaskpoolScheduler)
+                .ThrottleFirst(changeThrottleDuration ?? DefaultValidationChangeThrottleDuration, RxSchedulers.TaskpoolScheduler)
                 .Select(_ => ValidateWithWeakReference(weakThis, validator))
-                .ObserveOn(observationScheduler ?? RxApp.MainThreadScheduler)
+                .ObserveOn(observationScheduler ?? RxSchedulers.MainThreadScheduler)
                 .Subscribe(validationResult => UpdateValidationState(weakThis, validationResult));
 
         return validatorDisposable;
@@ -78,8 +77,8 @@ public abstract partial class ValidatingViewModelBase<TNeedsValidation> : ViewMo
                         target.PropertyChanged -= handler;
                     }
                 },
-                RxApp.TaskpoolScheduler)
-            .Select(_ => Unit.Default)
+                RxSchedulers.TaskpoolScheduler)
+            .Select(static _ => Unit.Default)
             .StartWith(Unit.Default);
     }
 
@@ -125,10 +124,13 @@ public abstract partial class ValidatingViewModelBase<TNeedsValidation> : ViewMo
         }
         else
         {
-            // Replace or add items positionally to minimize CollectionChanged events
-            int i = 0;
-            foreach (var item in newItems!)
+            // Replace or add items positionally to minimize CollectionChanged events.
+            // Indexed rather than foreach: this runs on every validation pass, and
+            // enumerating through IReadOnlyList would allocate an enumerator each time.
+            for (int i = 0; i < newCount; i++)
             {
+                var item = newItems![i];
+
                 if (i < oldCount)
                 {
                     errors[i] = item;
@@ -137,8 +139,6 @@ public abstract partial class ValidatingViewModelBase<TNeedsValidation> : ViewMo
                 {
                     errors.Add(item);
                 }
-
-                i++;
             }
 
             // Remove any trailing excess items
@@ -186,7 +186,7 @@ public abstract partial class ValidatingViewModelBase<TNeedsValidation> : ViewMo
                         errors.CollectionChanged -= handler;
                     }
                 })
-            .ObserveOn(RxApp.TaskpoolScheduler)
+            .ObserveOn(RxSchedulers.TaskpoolScheduler)
             .Select(_ => GetValidationInformation(weakErrors, propertyName, validInformation))
             .StartWith(validInformation)
             .DistinctUntilChanged();
