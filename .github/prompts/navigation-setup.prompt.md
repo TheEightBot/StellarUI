@@ -110,6 +110,6 @@ OpenDetailCommand = ReactiveCommand
 - All navigation is **extension methods on `IObservable<T>`** — not service method calls
 - Navigation is **automatically throttled** (~204ms) to prevent double-tap
 - Target pages are resolved from **DI** — they must be registered with `[ServiceRegistration]`
-- Navigation runs on `RxApp.MainThreadScheduler`; page creation on background thread
+- Navigation runs on `RxSchedulers.MainThreadScheduler`; page creation on background thread
 - `[QueryParameter]` on ViewModel property is required to receive passed parameters
 - Subscribe **in `Bind()`** and **always** `.DisposeWith(disposables)`
