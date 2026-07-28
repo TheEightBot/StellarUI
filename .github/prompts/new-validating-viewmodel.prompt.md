@@ -94,4 +94,4 @@ public override void Bind(WeakCompositeDisposable disposables)
 - Constructor must call `base(validator)`
 - `RegisterValidation()` must be called inside `Bind()` and `.DisposeWith(disposables)`
 - `IsValid` and `ValidationErrors` are provided by the base class — do not redeclare them
-- Validation runs on `RxApp.TaskpoolScheduler` with `ThrottleFirst` debouncing
+- Validation runs on `RxSchedulers.TaskpoolScheduler` with `ThrottleFirst` debouncing
