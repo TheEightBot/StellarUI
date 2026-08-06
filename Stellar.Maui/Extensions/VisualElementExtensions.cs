@@ -1,5 +1,4 @@
 ﻿using System.Runtime.CompilerServices;
-using DynamicData.Diagnostics;
 using Stellar.Exceptions;
 using Stellar.ViewModel;
 

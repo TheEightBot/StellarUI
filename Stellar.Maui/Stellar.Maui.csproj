@@ -33,7 +33,7 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.Maui.Controls" />
-        <PackageReference Include="ReactiveUI.Maui" />
+        <PackageReference Include="ReactiveUI.Maui.Reactive" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Stellar\Stellar.csproj" />

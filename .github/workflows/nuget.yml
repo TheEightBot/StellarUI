@@ -38,6 +38,18 @@ jobs:
           - name: Stellar.SourceGenerators
             project: Stellar.SourceGenerators/Stellar.SourceGenerators.csproj
             output: Stellar.SourceGenerators/bin/Release
+          # The Windows-targeted projects cross-compile on the macOS runner via
+          # EnableWindowsTargeting; Stellar.WinUI additionally disables the PRI/MSIX
+          # tooling on non-Windows hosts in its csproj.
+          - name: Stellar.Wpf
+            project: Stellar.Wpf/Stellar.Wpf.csproj
+            output: Stellar.Wpf/bin/Release
+          - name: Stellar.WinUI
+            project: Stellar.WinUI/Stellar.WinUI.csproj
+            output: Stellar.WinUI/bin/Release
+          - name: Stellar.Uno
+            project: Stellar.Uno/Stellar.Uno.csproj
+            output: Stellar.Uno/bin/Release
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-dotnet@v6

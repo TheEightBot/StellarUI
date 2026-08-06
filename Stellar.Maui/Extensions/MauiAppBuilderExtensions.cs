@@ -1,7 +1,7 @@
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using ReactiveUI.Builder;
-using ReactiveUI.Maui;
+using ReactiveUI.Reactive.Builder;
+using ReactiveUI.Reactive.Maui;
 using Splat;
 
 namespace Stellar.Maui;

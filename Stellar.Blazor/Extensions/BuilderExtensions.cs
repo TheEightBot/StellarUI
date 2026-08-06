@@ -1,6 +1,6 @@
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using ReactiveUI.Builder;
+using ReactiveUI.Reactive.Builder;
 
 namespace Stellar.Blazor;
 

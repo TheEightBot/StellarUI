@@ -10,7 +10,10 @@
       "Stellar.DiskDataCache\\Stellar.DiskDataCache.csproj",
       "Stellar.FluentValidation\\Stellar.FluentValidation.csproj",
       "Stellar.SourceGenerators\\Stellar.SourceGenerators.csproj",
-      "Stellar.UnitTests\\Stellar.UnitTests.csproj"
+      "Stellar.UnitTests\\Stellar.UnitTests.csproj",
+      "Stellar.Uno\\Stellar.Uno.csproj",
+      "Stellar.WinUI\\Stellar.WinUI.csproj",
+      "Stellar.Wpf\\Stellar.Wpf.csproj"
     ]
   }
 }

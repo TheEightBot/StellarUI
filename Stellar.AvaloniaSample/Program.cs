@@ -1,6 +1,5 @@
 ﻿using System;
 using Avalonia;
-using Avalonia.ReactiveUI;
 using Stellar.Avalonia;
 
 namespace Stellar.AvaloniaSample;
@@ -21,9 +20,8 @@ public static class Program
             .UsePlatformDetect()
             .WithInterFont()
             .LogToTrace()
-            .UseStellarComponents()
 #if DEBUG
             .EnableHotReload()
 #endif
-            .UseReactiveUI();
+            .UseStellarComponents();
 }

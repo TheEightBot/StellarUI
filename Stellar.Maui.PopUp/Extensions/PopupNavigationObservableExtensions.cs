@@ -4,6 +4,7 @@ using System.Reactive.Linq;
 using Mopups.Pages;
 using Mopups.Services;
 using ReactiveUI;
+using ReactiveUI.Reactive;
 using Stellar.Exceptions;
 using Stellar.Maui.Exceptions;
 using static Stellar.Maui.NavigationObservableExtensions;
