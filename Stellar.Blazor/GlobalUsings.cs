@@ -5,4 +5,5 @@ global using System.Reactive.Disposables;
 global using System.Reactive.Linq;
 global using System.Reactive.Subjects;
 global using ReactiveUI;
-global using ReactiveUI.Blazor;
+global using ReactiveUI.Reactive;
+global using ReactiveUI.Reactive.Blazor;

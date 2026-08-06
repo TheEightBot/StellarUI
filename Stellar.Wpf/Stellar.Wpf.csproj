@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <!-- windows10.0.19041 rather than plain -windows: ReactiveUI.WPF.Reactive only
+         carries its net10.0 build under the windows10 TFM, and plain net10.0-windows
+         (windows7.0) silently falls back to the package's .NET Framework assets. -->
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <!-- Allows compiling (not running) this Windows-only library on macOS/Linux dev
+         machines and CI. Harmless when building on Windows. -->
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <SingleProject>true</SingleProject>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PackageId>StellarUI.Wpf</PackageId>
+    <Title>Stellar UI - WPF</Title>
+    <Authors>Eight-Bot</Authors>
+    <Copyright>Eight-Bot 2026</Copyright>
+    <PackageLicenseUrl>https://github.com/TheEightBot/StellarUI/blob/main/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/TheEightBot/StellarUI</RepositoryUrl>
+    <PackageTags>WPF;MVVM;Reactive UI;Reactive Extensions;Eight-Bot</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="ReactiveUI.WPF.Reactive" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Stellar\Stellar.csproj" />
+  </ItemGroup>
+</Project>

@@ -72,7 +72,7 @@
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" />
         <PackageReference Include="ReactiveMarbles.ObservableEvents.SourceGenerator" />
         <!-- This should be cleaned-up or replaced later on -->
-        <PackageReference Include="ReactiveUI.Maui" />
+        <PackageReference Include="ReactiveUI.Maui.Reactive" />
         <PackageReference Include="ReactiveUI.SourceGenerators">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

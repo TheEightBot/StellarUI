@@ -6,3 +6,4 @@ global using System.Reactive.Disposables;
 global using System.Reactive.Linq;
 global using ReactiveGenerator;
 global using ReactiveUI;
+global using ReactiveUI.Reactive;

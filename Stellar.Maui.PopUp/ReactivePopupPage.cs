@@ -1,5 +1,6 @@
 using Mopups.Pages;
 using ReactiveUI;
+using ReactiveUI.Reactive;
 
 namespace Stellar.Maui.Pages;
 

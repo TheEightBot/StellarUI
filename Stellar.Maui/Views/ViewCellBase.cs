@@ -5,6 +5,7 @@
 #pragma warning disable CS0618 // Type or member is obsolete
 
 using System.ComponentModel;
+using ReactiveUI.Maui.Views;
 
 namespace Stellar.Maui.Views;
 

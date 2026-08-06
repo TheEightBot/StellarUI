@@ -3,6 +3,7 @@ global using System.Reactive.Disposables;
 global using System.Reactive.Linq;
 global using CommunityToolkit.Maui.Markup;
 global using ReactiveUI;
+global using ReactiveUI.Reactive;
 global using ReactiveUI.SourceGenerators;
 global using Stellar.Maui;
 global using Stellar.Maui.Pages;

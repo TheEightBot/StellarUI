@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
-using ReactiveUI.Blazor;
+using ReactiveUI.Reactive.Blazor;
 
 namespace Stellar.Blazor;
 

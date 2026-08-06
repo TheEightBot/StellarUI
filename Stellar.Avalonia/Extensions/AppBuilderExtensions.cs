@@ -1,9 +1,8 @@
 ﻿using System.Reflection;
 using Avalonia;
-using Avalonia.ReactiveUI;
 using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
-using ReactiveUI.Builder;
+using ReactiveUI.Reactive.Builder;
 using Splat;
 
 namespace Stellar.Avalonia;
@@ -12,24 +11,19 @@ public static class AppBuilderExtensions
 {
     public static AppBuilder UseStellarComponents(this AppBuilder appBuilder)
     {
-        // Avalonia.ReactiveUI 11.3.9 was built against ReactiveUI 20 and its
-        // bootstrap types -- Registrations and AvaloniaMixins.UseReactiveUI --
-        // reference RxApp, PlatformRegistrationManager and Splat's IEnableLogger,
-        // all removed in ReactiveUI 23 / Splat 19. Those types now fail to load,
-        // so Stellar performs the registrations itself. The pieces it needs
-        // (AvaloniaActivationForViewFetcher, AvaloniaScheduler,
-        // AutoDataTemplateBindingHook, and the ReactiveWindow/ReactiveUserControl
-        // base classes) all load and work against ReactiveUI 23.
+        // Avalonia.ReactiveUI has no release compatible with ReactiveUI 24 (or with
+        // Avalonia 12), so Stellar no longer references it and provides the pieces it
+        // needs itself: Stellar's own AvaloniaActivationForViewFetcher and
+        // AvaloniaScheduler here, and the IViewFor implementations in
+        // WindowBase/UserControlBase. Avalonia.ReactiveUI's AutoDataTemplateBindingHook
+        // is intentionally not re-implemented: it only supplied automatic data
+        // templates for ViewModelViewHost, which Stellar's view management never uses.
         Locator.CurrentMutable.InitializeSplat();
 
         RxAppBuilder
             .CreateReactiveUIBuilder()
             .WithRegistration(
-                static resolver =>
-                {
-                    resolver.RegisterConstant<IActivationForViewFetcher>(new AvaloniaActivationForViewFetcher());
-                    resolver.RegisterConstant<IPropertyBindingHook>(new AutoDataTemplateBindingHook());
-                })
+                static resolver => resolver.RegisterConstant<IActivationForViewFetcher>(new AvaloniaActivationForViewFetcher()))
             .WithMainThreadScheduler(AvaloniaScheduler.Instance)
             .WithTaskPoolScheduler(Schedulers.ShortTermThreadPoolScheduler)
             .Build();
