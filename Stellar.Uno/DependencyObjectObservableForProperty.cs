@@ -38,16 +38,29 @@ public sealed class DependencyObjectObservableForProperty : ICreatesObservableFo
     public IObservable<IObservedChange<object?, object?>> GetNotificationForProperty(object sender, Expression expression, string propertyName, bool beforeChanged) =>
         GetNotificationForProperty(sender, expression, propertyName, beforeChanged, suppressWarnings: false);
 
-    public IObservable<IObservedChange<object?, object?>> GetNotificationForProperty(object sender, Expression expression, string propertyName, bool beforeChanged, bool suppressWarnings)
+public IObservable<IObservedChange<object?, object?>> GetNotificationForProperty(object sender, Expression expression, string propertyName, bool beforeChanged, bool suppressWarnings)
+{
+    if (beforeChanged)
     {
-        if (sender is not DependencyObject dependencyObject)
+        return Observable.Never<IObservedChange<object?, object?>>();
+    }
+
+    if (sender is not DependencyObject dependencyObject)
+    {
+        throw new ArgumentException($"Sender must be a DependencyObject, but was {sender?.GetType().FullName ?? \"null\"}.", nameof(sender));
+    }
+
+    var dependencyProperty = GetDependencyProperty(sender.GetType(), propertyName);
+
+    if (dependencyProperty is null)
+    {
+        if (suppressWarnings)
         {
-            throw new ArgumentException($"Sender must be a DependencyObject, but was {sender?.GetType().FullName ?? "null"}.", nameof(sender));
+            return Observable.Never<IObservedChange<object?, object?>>();
         }
 
-        var dependencyProperty = GetDependencyProperty(sender.GetType(), propertyName)
-            ?? throw new ArgumentException($"No DependencyProperty named '{propertyName}Property' was found on {sender.GetType().FullName}.", nameof(propertyName));
-
+        throw new ArgumentException($"No DependencyProperty named '{propertyName}Property' was found on {sender.GetType().FullName}.", nameof(propertyName));
+    }
         return Observable.Create<IObservedChange<object?, object?>>(
             observer =>
             {
