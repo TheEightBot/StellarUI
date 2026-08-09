@@ -74,7 +74,7 @@
        Stellar.Avalonia does. -->
   <ItemGroup>
     <PackageVersion Include="Microsoft.WindowsAppSDK" Version="2.3.1" />
-    <PackageVersion Include="Uno.WinUI" Version="6.6.176" />
+    <PackageVersion Include="Uno.WinUI" Version="6.6.184" />
   </ItemGroup>
 
   <!-- Source generators. Roslyn is pinned to 5.0.0 rather than the newest
