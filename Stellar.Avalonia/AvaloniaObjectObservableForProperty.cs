@@ -51,8 +51,7 @@ public sealed class AvaloniaObjectObservableForProperty : ICreatesObservableForP
         return Observable.Create<IObservedChange<object?, object?>>(
             observer =>
             {
-                void Handler(object? handlerSender, AvaloniaPropertyChangedEventArgs args)
-                {
+void Handler(object? _, AvaloniaPropertyChangedEventArgs args)
                     if (args.Property == property)
                     {
                         observer.OnNext(new ObservedChange<object?, object?>(sender, expression, default));
