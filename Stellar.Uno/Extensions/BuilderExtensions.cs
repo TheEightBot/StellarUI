@@ -30,11 +30,16 @@ public static class BuilderExtensions
                 "UseStellarComponents must be called from the UI thread so the DispatcherQueue can be captured.");
 
         // There is no ReactiveUI 24-compatible Uno platform package, so the activation
-        // fetcher and schedulers are registered here directly, mirroring Stellar.Avalonia.
+        // fetcher, DependencyProperty observation and schedulers are registered here
+        // directly, mirroring Stellar.Avalonia.
         RxAppBuilder
             .CreateReactiveUIBuilder()
             .WithRegistration(
-                static resolver => resolver.RegisterConstant<IActivationForViewFetcher>(new UnoActivationForViewFetcher()))
+                static resolver =>
+                {
+                    resolver.RegisterConstant<IActivationForViewFetcher>(new UnoActivationForViewFetcher());
+                    resolver.RegisterConstant<ICreatesObservableForProperty>(new DependencyObjectObservableForProperty());
+                })
             .WithMainThreadScheduler(new UnoScheduler(dispatcherQueue))
             .WithTaskPoolScheduler(Schedulers.ShortTermThreadPoolScheduler)
             .Build();

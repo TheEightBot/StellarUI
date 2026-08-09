@@ -23,7 +23,11 @@ public static class AppBuilderExtensions
         RxAppBuilder
             .CreateReactiveUIBuilder()
             .WithRegistration(
-                static resolver => resolver.RegisterConstant<IActivationForViewFetcher>(new AvaloniaActivationForViewFetcher()))
+                static resolver =>
+                {
+                    resolver.RegisterConstant<IActivationForViewFetcher>(new AvaloniaActivationForViewFetcher());
+                    resolver.RegisterConstant<ICreatesObservableForProperty>(new AvaloniaObjectObservableForProperty());
+                })
             .WithMainThreadScheduler(AvaloniaScheduler.Instance)
             .WithTaskPoolScheduler(Schedulers.ShortTermThreadPoolScheduler)
             .Build();
