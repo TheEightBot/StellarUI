@@ -38,33 +38,37 @@ public sealed class AvaloniaObjectObservableForProperty : ICreatesObservableForP
     public IObservable<IObservedChange<object?, object?>> GetNotificationForProperty(object sender, Expression expression, string propertyName, bool beforeChanged) =>
         GetNotificationForProperty(sender, expression, propertyName, beforeChanged, suppressWarnings: false);
 
-public IObservable<IObservedChange<object?, object?>> GetNotificationForProperty(object sender, Expression expression, string propertyName, bool beforeChanged, bool suppressWarnings)
-{
-    if (beforeChanged)
+    public IObservable<IObservedChange<object?, object?>> GetNotificationForProperty(object sender, Expression expression, string propertyName, bool beforeChanged, bool suppressWarnings)
     {
-        return Observable.Never<IObservedChange<object?, object?>>();
-    }
-
-    if (sender is not AvaloniaObject avaloniaObject)
-    {
-        throw new ArgumentException($"Sender must be an AvaloniaObject, but was {sender?.GetType().FullName ?? \"null\"}.", nameof(sender));
-    }
-
-    var property = AvaloniaPropertyRegistry.Instance.FindRegistered(sender.GetType(), propertyName);
-
-    if (property is null)
-    {
-        if (suppressWarnings)
+        // GetAffinityForObject already declines beforeChanged requests, so this is
+        // defensive: the PropertyChanged event cannot report values before they change.
+        if (beforeChanged)
         {
             return Observable.Never<IObservedChange<object?, object?>>();
         }
 
-        throw new ArgumentException($"No AvaloniaProperty named '{propertyName}' is registered on {sender.GetType().FullName}.", nameof(propertyName));
-    }
+        if (sender is not AvaloniaObject avaloniaObject)
+        {
+            throw new ArgumentException($"Sender must be an AvaloniaObject, but was {sender?.GetType().FullName ?? "null"}.", nameof(sender));
+        }
+
+        var property = AvaloniaPropertyRegistry.Instance.FindRegistered(sender.GetType(), propertyName);
+
+        if (property is null)
+        {
+            if (suppressWarnings)
+            {
+                return Observable.Never<IObservedChange<object?, object?>>();
+            }
+
+            throw new ArgumentException($"No AvaloniaProperty named '{propertyName}' is registered on {sender.GetType().FullName}.", nameof(propertyName));
+        }
+
         return Observable.Create<IObservedChange<object?, object?>>(
             observer =>
             {
-void Handler(object? _, AvaloniaPropertyChangedEventArgs args)
+                void Handler(object? handlerSender, AvaloniaPropertyChangedEventArgs args)
+                {
                     if (args.Property == property)
                     {
                         observer.OnNext(new ObservedChange<object?, object?>(sender, expression, default));
