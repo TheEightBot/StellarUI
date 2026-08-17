@@ -47,7 +47,7 @@ public IObservable<IObservedChange<object?, object?>> GetNotificationForProperty
 
     if (sender is not AvaloniaObject avaloniaObject)
     {
-        throw new ArgumentException($"Sender must be an AvaloniaObject, but was {sender?.GetType().FullName ?? \"null\"}.", nameof(sender));
+        throw new ArgumentException($"Sender must be an AvaloniaObject, but was {sender?.GetType().FullName ?? "null"}.", nameof(sender));
     }
 
     var property = AvaloniaPropertyRegistry.Instance.FindRegistered(sender.GetType(), propertyName);
@@ -65,6 +65,7 @@ public IObservable<IObservedChange<object?, object?>> GetNotificationForProperty
             observer =>
             {
 void Handler(object? _, AvaloniaPropertyChangedEventArgs args)
+                {
                     if (args.Property == property)
                     {
                         observer.OnNext(new ObservedChange<object?, object?>(sender, expression, default));

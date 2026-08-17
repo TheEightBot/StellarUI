@@ -47,7 +47,7 @@ public IObservable<IObservedChange<object?, object?>> GetNotificationForProperty
 
     if (sender is not DependencyObject dependencyObject)
     {
-        throw new ArgumentException($"Sender must be a DependencyObject, but was {sender?.GetType().FullName ?? \"null\"}.", nameof(sender));
+        throw new ArgumentException($"Sender must be a DependencyObject, but was {sender?.GetType().FullName ?? "null"}.", nameof(sender));
     }
 
     var dependencyProperty = GetDependencyProperty(sender.GetType(), propertyName);
