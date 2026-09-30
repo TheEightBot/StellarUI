@@ -321,6 +321,70 @@ public class ItemsViewRecyclingTests : MauiTestBase
     }
 
     [Fact]
+    public void RecycledItemViewLimit_RaisedToMatchALargerPool_KeepsThatManyViews()
+    {
+        var source = new LongLivedSource();
+        var list = new ListHarness();
+        list.List.RecycledItemViewLimit(24);
+        var cells = BindCells(list, source, 30);
+
+        foreach (var cell in cells)
+        {
+            list.Recycle(cell);
+        }
+
+        Assert.All(cells.Take(24), static cell => Assert.True(cell.ViewManager.ControlsBound));
+        Assert.All(cells.Skip(24), static cell => Assert.False(cell.ViewManager.ControlsBound));
+
+        list.RemoveFromWindow();
+
+        Assert.Equal(0, source.HandlerCount);
+    }
+
+    [Fact]
+    public void RecycledItemViewLimit_OfZero_TearsEveryViewDownAsBefore()
+    {
+        var source = new LongLivedSource();
+        var list = new ListHarness();
+        list.List.RecycledItemViewLimit(0);
+        var cells = BindCells(list, source, 2);
+
+        foreach (var cell in cells)
+        {
+            list.Recycle(cell);
+        }
+
+        Assert.All(cells, static cell => Assert.False(cell.ViewManager.ControlsBound));
+        Assert.Equal(0, source.HandlerCount);
+    }
+
+    [Fact]
+    public void RecycledItemViewLimit_AppliesToThatListOnly()
+    {
+        var source = new LongLivedSource();
+        var raised = new ListHarness();
+        var other = new ListHarness();
+        var returned = raised.List.RecycledItemViewLimit(Cap + 1);
+        var cells = BindCells(other, source, Cap + 1);
+
+        foreach (var cell in cells)
+        {
+            other.Recycle(cell);
+        }
+
+        Assert.Same(raised.List, returned);
+        Assert.False(cells[Cap].ViewManager.ControlsBound);
+    }
+
+    [Fact]
+    public void RecycledItemViewLimit_RejectsANegativeNumber()
+    {
+        var list = new ListHarness();
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => list.List.RecycledItemViewLimit(-1));
+    }
+
+    [Fact]
     public void RebindingTheRetainedViews_DoesNotBindThemAgainAndFreesTheirSlots()
     {
         var source = new LongLivedSource();

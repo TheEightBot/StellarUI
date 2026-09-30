@@ -11,13 +11,15 @@ internal sealed class ItemsHostWatcher
 {
     // RecyclerView.RecycledViewPool.DEFAULT_MAX_SCRAP. A recycler drops the holders it is
     // handed beyond this many, and a view it dropped is never rebound.
-    internal const int MaxParked = 5;
+    internal const int DefaultLimit = 5;
 
     private static readonly ConditionalWeakTable<ItemsView, ItemsHostWatcher> Watchers = new();
 
     private readonly Lock _gate = new();
 
-    private readonly List<WeakReference<IParkedItemView>> _parked = new(MaxParked);
+    private readonly List<WeakReference<IParkedItemView>> _parked = new(DefaultLimit);
+
+    private int _limit = DefaultLimit;
 
     private ItemsHostWatcher(ItemsView host)
     {
@@ -29,6 +31,12 @@ internal sealed class ItemsHostWatcher
 
     public static ItemsHostWatcher? Find(ItemsView host) =>
         Watchers.TryGetValue(host, out var watcher) ? watcher : null;
+
+    public int Limit
+    {
+        get => Volatile.Read(ref _limit);
+        set => Volatile.Write(ref _limit, value);
+    }
 
     public bool TryPark(WeakReference<IParkedItemView> view)
     {
@@ -42,7 +50,7 @@ internal sealed class ItemsHostWatcher
                 }
             }
 
-            if (_parked.Count >= MaxParked)
+            if (_parked.Count >= _limit)
             {
                 return false;
             }
