@@ -88,7 +88,9 @@ jobs:
     # xcode-27, not macos-26: the .NET 10 iOS/MacCatalyst workload band
     # 27.0.10722 requires Xcode 27.0, and the newest Xcode on the macos-26
     # image is 26.6. Library builds do not enforce that check but app heads do,
-    # so Stellar.Maui built there while Stellar.MauiSample did not.
+    # so Stellar.Maui built there while Stellar.MauiSample did not. The check
+    # is an exact major.minor match, so Xcode is pinned to 27.0 rather than
+    # latest-stable (27.1); move the pin when the workload moves.
     runs-on: xcode-27
     steps:
       - uses: actions/checkout@v7
@@ -99,7 +101,7 @@ jobs:
 
       - uses: maxim-lobanov/setup-xcode@v1.7.0
         with:
-          xcode-version: latest-stable
+          xcode-version: '27.0'
 
       - name: Install MAUI workloads
         run: dotnet workload install maui --ignore-failed-sources
@@ -138,7 +140,7 @@ jobs:
 
       - uses: maxim-lobanov/setup-xcode@v1.7.0
         with:
-          xcode-version: latest-stable
+          xcode-version: '27.0'
 
       - name: Install MAUI workloads
         run: dotnet workload install maui --ignore-failed-sources
