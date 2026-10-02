@@ -13,10 +13,10 @@
 
   <!-- Core -->
   <ItemGroup>
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.12" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.AutoActivation" Version="10.8.0" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="10.0.10" />
-    <PackageVersion Include="System.Threading.RateLimiting" Version="10.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="10.0.12" />
+    <PackageVersion Include="System.Threading.RateLimiting" Version="10.0.12" />
     <PackageVersion Include="FluentValidation" Version="12.1.1" />
   </ItemGroup>
 
@@ -28,11 +28,11 @@
        public API is built on. System.Reactive is referenced directly because the
        default ReactiveUI packages no longer pull it in transitively. -->
   <ItemGroup>
-    <PackageVersion Include="ReactiveUI.Reactive" Version="24.0.0" />
-    <PackageVersion Include="ReactiveUI.Blazor.Reactive" Version="24.0.0" />
-    <PackageVersion Include="ReactiveUI.Maui.Reactive" Version="24.0.0" />
-    <PackageVersion Include="ReactiveUI.WPF.Reactive" Version="24.0.0" />
-    <PackageVersion Include="ReactiveUI.WinUI.Reactive" Version="24.0.0" />
+    <PackageVersion Include="ReactiveUI.Reactive" Version="24.3.0" />
+    <PackageVersion Include="ReactiveUI.Blazor.Reactive" Version="24.3.0" />
+    <PackageVersion Include="ReactiveUI.Maui.Reactive" Version="24.3.0" />
+    <PackageVersion Include="ReactiveUI.WPF.Reactive" Version="24.3.0" />
+    <PackageVersion Include="ReactiveUI.WinUI.Reactive" Version="24.3.0" />
     <PackageVersion Include="System.Reactive" Version="7.0.0" />
     <PackageVersion Include="ReactiveGenerator" Version="0.12.0" />
     <PackageVersion Include="ReactiveUI.SourceGenerators" Version="3.2.0" />
@@ -41,8 +41,8 @@
 
   <!-- MAUI -->
   <ItemGroup>
-    <PackageVersion Include="Microsoft.Maui.Controls" Version="10.0.90" />
-    <PackageVersion Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="10.0.90" />
+    <PackageVersion Include="Microsoft.Maui.Controls" Version="10.0.110" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="10.0.110" />
     <PackageVersion Include="CommunityToolkit.Maui" Version="15.0.0" />
     <PackageVersion Include="CommunityToolkit.Maui.Markup" Version="8.0.0" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />

@@ -38,29 +38,32 @@ public sealed class DependencyObjectObservableForProperty : ICreatesObservableFo
     public IObservable<IObservedChange<object?, object?>> GetNotificationForProperty(object sender, Expression expression, string propertyName, bool beforeChanged) =>
         GetNotificationForProperty(sender, expression, propertyName, beforeChanged, suppressWarnings: false);
 
-public IObservable<IObservedChange<object?, object?>> GetNotificationForProperty(object sender, Expression expression, string propertyName, bool beforeChanged, bool suppressWarnings)
-{
-    if (beforeChanged)
+    public IObservable<IObservedChange<object?, object?>> GetNotificationForProperty(object sender, Expression expression, string propertyName, bool beforeChanged, bool suppressWarnings)
     {
-        return Observable.Never<IObservedChange<object?, object?>>();
-    }
-
-    if (sender is not DependencyObject dependencyObject)
-    {
-        throw new ArgumentException($"Sender must be a DependencyObject, but was {sender?.GetType().FullName ?? \"null\"}.", nameof(sender));
-    }
-
-    var dependencyProperty = GetDependencyProperty(sender.GetType(), propertyName);
-
-    if (dependencyProperty is null)
-    {
-        if (suppressWarnings)
+        // GetAffinityForObject already declines beforeChanged requests, so this is
+        // defensive: DependencyProperty callbacks fire only after a value changes.
+        if (beforeChanged)
         {
             return Observable.Never<IObservedChange<object?, object?>>();
         }
 
-        throw new ArgumentException($"No DependencyProperty named '{propertyName}Property' was found on {sender.GetType().FullName}.", nameof(propertyName));
-    }
+        if (sender is not DependencyObject dependencyObject)
+        {
+            throw new ArgumentException($"Sender must be a DependencyObject, but was {sender?.GetType().FullName ?? "null"}.", nameof(sender));
+        }
+
+        var dependencyProperty = GetDependencyProperty(sender.GetType(), propertyName);
+
+        if (dependencyProperty is null)
+        {
+            if (suppressWarnings)
+            {
+                return Observable.Never<IObservedChange<object?, object?>>();
+            }
+
+            throw new ArgumentException($"No DependencyProperty named '{propertyName}Property' was found on {sender.GetType().FullName}.", nameof(propertyName));
+        }
+
         return Observable.Create<IObservedChange<object?, object?>>(
             observer =>
             {
