@@ -85,11 +85,11 @@ jobs:
 
   maui:
     name: MAUI packages
-    # macos-26, not macos-15: the .NET 10 iOS/MacCatalyst workload band
-    # 26.5.10301 requires Xcode 26.6, and the newest Xcode on the macos-15
-    # image is 26.3. Library builds do not enforce that check but app heads do,
+    # xcode-27, not macos-26: the .NET 10 iOS/MacCatalyst workload band
+    # 27.0.10722 requires Xcode 27.0, and the newest Xcode on the macos-26
+    # image is 26.6. Library builds do not enforce that check but app heads do,
     # so Stellar.Maui built there while Stellar.MauiSample did not.
-    runs-on: macos-26
+    runs-on: xcode-27
     steps:
       - uses: actions/checkout@v7
 
@@ -122,7 +122,7 @@ jobs:
   samples:
     name: Sample apps (${{ matrix.project }})
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-samples') }}
-    runs-on: macos-26
+    runs-on: xcode-27
     strategy:
       fail-fast: false
       matrix:
