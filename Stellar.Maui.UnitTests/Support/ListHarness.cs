@@ -9,8 +9,20 @@ namespace Stellar.Maui.UnitTests.Support;
 /// </summary>
 internal sealed class ListHarness
 {
-    public ListHarness()
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ListHarness"/> class.
+    /// </summary>
+    /// <param name="recycledItemViewLimit">
+    /// The limit the list opts in with, or null to leave the list as an app that never
+    /// calls RecycledItemViewLimit would have it.
+    /// </param>
+    public ListHarness(int? recycledItemViewLimit = 5)
     {
+        if (recycledItemViewLimit is { } limit)
+        {
+            List.RecycledItemViewLimit(limit);
+        }
+
         Page = new ContentPage { Content = new Grid { Children = { List, Side } } };
         Window = new Window(Page);
     }

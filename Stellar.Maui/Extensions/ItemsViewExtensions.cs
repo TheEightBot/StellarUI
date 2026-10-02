@@ -6,10 +6,17 @@ public static class ItemsViewExtensions
 {
     /// <summary>
     /// Sets how many recycled item views of this list keep their bindings until they are
-    /// rebound. The default is 5, the number of holders an Android RecyclerView pool keeps
-    /// for a view type. A list whose pool has been given a different size should be given
-    /// the same number here; 0 tears every view down as it is recycled.
+    /// rebound, which saves tearing down and rebuilding a row's bindings each time it is
+    /// reused. This is opt-in: the default is 0, which tears every view down as it is
+    /// recycled. 5 matches the number of holders an Android RecyclerView pool keeps for a
+    /// view type; a list whose pool has been given a different size should be given the
+    /// same number here.
     /// </summary>
+    /// <remarks>
+    /// A kept view does not run Bind, Initialized, Activated or Deactivated again when it
+    /// is given its next row; only its view model's item changes. Opt in only for item
+    /// views that take everything they show from bindings to the view model.
+    /// </remarks>
     /// <typeparam name="TItemsView">The type of the list.</typeparam>
     /// <param name="itemsView">The list.</param>
     /// <param name="limit">The number of recycled item views that keep their bindings.</param>

@@ -342,6 +342,40 @@ public class ItemsViewRecyclingTests : MauiTestBase
     }
 
     [Fact]
+    public void ListThatHasNotOptedIn_TearsEveryViewDownAsBefore()
+    {
+        var source = new LongLivedSource();
+        var list = new ListHarness(recycledItemViewLimit: null);
+        var cells = BindCells(list, source, 2);
+
+        foreach (var cell in cells)
+        {
+            list.Recycle(cell);
+        }
+
+        Assert.All(cells, static cell => Assert.False(cell.ViewManager.ControlsBound));
+        Assert.Equal(0, source.HandlerCount);
+    }
+
+    [Fact]
+    public void RecycledItemViewLimit_Lowered_ReleasesTheViewsAlreadyKept()
+    {
+        var source = new LongLivedSource();
+        var list = new ListHarness();
+        var cells = BindCells(list, source, 2);
+
+        foreach (var cell in cells)
+        {
+            list.Recycle(cell);
+        }
+
+        list.List.RecycledItemViewLimit(0);
+
+        Assert.All(cells, static cell => Assert.False(cell.ViewManager.ControlsBound));
+        Assert.Equal(0, source.HandlerCount);
+    }
+
+    [Fact]
     public void RecycledItemViewLimit_OfZero_TearsEveryViewDownAsBefore()
     {
         var source = new LongLivedSource();

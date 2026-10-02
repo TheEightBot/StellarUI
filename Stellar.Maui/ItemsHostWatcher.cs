@@ -9,17 +9,14 @@ namespace Stellar.Maui;
 /// </summary>
 internal sealed class ItemsHostWatcher
 {
-    // RecyclerView.RecycledViewPool.DEFAULT_MAX_SCRAP. A recycler drops the holders it is
-    // handed beyond this many, and a view it dropped is never rebound.
-    internal const int DefaultLimit = 5;
-
     private static readonly ConditionalWeakTable<ItemsView, ItemsHostWatcher> Watchers = new();
 
     private readonly Lock _gate = new();
 
-    private readonly List<WeakReference<IParkedItemView>> _parked = new(DefaultLimit);
+    private readonly List<WeakReference<IParkedItemView>> _parked = [];
 
-    private int _limit = DefaultLimit;
+    // Zero until the list opts in through RecycledItemViewLimit.
+    private int _limit;
 
     private ItemsHostWatcher(ItemsView host)
     {
@@ -35,7 +32,19 @@ internal sealed class ItemsHostWatcher
     public int Limit
     {
         get => Volatile.Read(ref _limit);
-        set => Volatile.Write(ref _limit, value);
+        set
+        {
+            var lowered = value < Volatile.Read(ref _limit);
+
+            Volatile.Write(ref _limit, value);
+
+            // Views parked under the old limit would otherwise keep their bindings
+            // until they are rebound or the list leaves its window.
+            if (lowered)
+            {
+                this.ReleaseParked();
+            }
+        }
     }
 
     public bool TryPark(WeakReference<IParkedItemView> view)
