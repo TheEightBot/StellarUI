@@ -7,7 +7,12 @@ permissions:
   contents: read
   pull-requests: read
 
-engine: copilot
+# The model is pinned because the compiler's built-in default (claude-sonnet-4.6)
+# was withdrawn from Copilot, which failed every scheduled run with a 400. When
+# this one is withdrawn in turn, the failing run's log lists the available models.
+engine:
+  id: copilot
+  model: claude-sonnet-5
 
 network:
   allowed:
@@ -61,14 +66,22 @@ loading for every consumer below SDK 10.0.3xx, and nothing would fail the build 
 they would just get no generated code. For analyzers and generators the reference
 is a compatibility floor, not a version to maximise. Leave it alone.
 
-**Keep Avalonia on the 11.3.x line.** Avalonia itself has shipped 12.x, but
-`Avalonia.ReactiveUI` has no 12.x release and `Stellar.Avalonia` depends on it.
-Taking Avalonia 12 while that package sits at 11.3.9 produces a build that
-compiles and then fails at runtime. Patch updates within 11.3.x are fine. If you
-find that `Avalonia.ReactiveUI` has finally published a 12.x version, do not
-attempt the upgrade yourself — say so in the pull request body and leave the
-versions unchanged, because it also needs the ReactiveUI initialisation in
-`Stellar.Avalonia/Extensions/AppBuilderExtensions.cs` revisited.
+**Keep ReactiveUI on the 24.x line.** This covers every `ReactiveUI.*.Reactive`
+package and `ReactiveUI.SourceGenerators`. ReactiveUI 25 moves binding onto a
+source generator: `Bind` calls through private view fields, which is how Stellar
+views are written, get no generated binding and throw at run time, and the
+`ICreatesCustomizedCommandRebinding` extension point that
+`Stellar.Maui/MauiCommandRebinding.cs` implements no longer exists. Minor and patch
+updates within 24.x are fine. Do not attempt the move to 25 yourself — note in the
+pull request body that it is available and leave the versions unchanged.
+
+**Keep the packages a ReactiveUI update depends on in step with it.**
+`CentralPackageTransitivePinningEnabled` is on, so when a ReactiveUI package
+requires a newer `Microsoft.Extensions.*` or `Microsoft.Maui.Controls` than the
+one pinned here, restore fails with NU1109. `Stellar.slnf` does not include the
+MAUI projects, so for `ReactiveUI.Maui.Reactive` check its dependencies on
+nuget.org and raise `Microsoft.Maui.Controls` and
+`Microsoft.AspNetCore.Components.WebView.Maui` to at least what it asks for.
 
 **Stable releases only.** No previews, betas or release candidates, even when they
 are the newest version on nuget.org. `global.json` sets `allowPrerelease: false`.
