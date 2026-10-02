@@ -41,7 +41,12 @@ public static class MauiAppBuilderExtensions
         // The schedulers are still assigned in MauiSchedulerInitializer below,
         // because IDispatcher cannot be resolved this early.
         Locator.CurrentMutable.InitializeSplat();
-        mauiAppBuilder.UseReactiveUI(static builder => builder.WithMaui());
+        mauiAppBuilder.UseReactiveUI(
+            static builder =>
+                builder
+                    .WithMaui()
+                    .WithRegistration(
+                        static resolver => resolver.RegisterConstant<ICreatesCustomizedCommandRebinding>(new MauiCommandRebinding())));
 
         mauiAppBuilder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IMauiInitializeScopedService, MauiSchedulerInitializer>());
 
