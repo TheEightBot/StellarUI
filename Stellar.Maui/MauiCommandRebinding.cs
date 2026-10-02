@@ -11,7 +11,7 @@ namespace Stellar.Maui;
 /// it disposes the previous one, and disposing the previous one restores the command
 /// the control had before it was bound, so the control is left with no command.
 /// </summary>
-public sealed class MauiCommandRebinding : ICreatesCustomizedCommandRebinding
+internal sealed class MauiCommandRebinding : ICreatesCustomizedCommandRebinding
 {
     public bool TryUpdateCommand<TControl>(TControl? control, ICommand? command)
         where TControl : class

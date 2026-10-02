@@ -39,6 +39,9 @@
         <ProjectReference Include="..\Stellar\Stellar.csproj" />
     </ItemGroup>
     <ItemGroup>
+        <InternalsVisibleTo Include="Stellar.Maui.UnitTests" />
+    </ItemGroup>
+    <ItemGroup>
         <None Remove="Exceptions\" />
     </ItemGroup>
     <ItemGroup>
