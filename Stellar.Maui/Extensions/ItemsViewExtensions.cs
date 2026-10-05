@@ -15,7 +15,10 @@ public static class ItemsViewExtensions
     /// <remarks>
     /// A kept view does not run Bind, Initialized, Activated or Deactivated again when it
     /// is given its next row; only its view model's item changes. Opt in only for item
-    /// views that take everything they show from bindings to the view model.
+    /// views that take everything they show from bindings to the view model. Set the limit
+    /// before the list shows its rows: a view learns whether its list keeps views when it
+    /// is bound, so one bound before the limit was raised is torn down once more and kept
+    /// from the next time it is bound.
     /// </remarks>
     /// <typeparam name="TItemsView">The type of the list.</typeparam>
     /// <param name="itemsView">The list.</param>
@@ -26,6 +29,15 @@ public static class ItemsViewExtensions
     {
         ArgumentNullException.ThrowIfNull(itemsView);
         ArgumentOutOfRangeException.ThrowIfNegative(limit);
+
+        // Zero is what a list that never opted in already does, so it must not be what
+        // gives the list a watcher.
+        if (limit == 0)
+        {
+            ItemsHostWatcher.Find(itemsView)?.Limit = 0;
+
+            return itemsView;
+        }
 
         ItemsHostWatcher.For(itemsView).Limit = limit;
 

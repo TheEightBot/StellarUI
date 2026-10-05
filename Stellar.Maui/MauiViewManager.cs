@@ -8,7 +8,9 @@ public class MauiViewManager<TViewModel> : ViewManager<TViewModel>, IParkedItemV
 {
     private WeakReference<object?>? _reloadView;
 
-    private WeakReference<ItemsView?>? _itemsHost;
+    // The watcher of the list the view belongs to; None for a list that has not opted in or
+    // a parent that is not a list; null until the view has been in a list at all.
+    private ItemsHostWatcher? _itemsHost;
 
     private Parking? _parking;
 
@@ -107,52 +109,69 @@ public class MauiViewManager<TViewModel> : ViewManager<TViewModel>, IParkedItemV
         base.Dispose(disposing);
     }
 
+    // Runs when the view gains a window and when its parent changes. By the time the view
+    // is told its window is gone, MAUI has already cleared its parent (Element.SetParent
+    // sets RealParent before OnParentSet propagates the window), so which list the view
+    // is leaving has to be remembered from here. The watcher is remembered rather than
+    // the list: it holds the list weakly itself, so this costs an item view nothing.
     private void TrackItemsHost(VisualElement view)
     {
         if (view.Parent is not ItemsView host)
         {
-            this._itemsHost?.SetTarget(null);
+            // A view just recycled has no parent and no window, and keeps its list until
+            // it is given a parent or a window again. Null is kept for a view that has
+            // never had a list, which is what releases the views a recycler dropped.
+            if (this._itemsHost is not null && (view.Parent is not null || view.Window is not null))
+            {
+                this._itemsHost = ItemsHostWatcher.None;
+            }
+
             return;
         }
 
-        if (this._itemsHost is not null)
+        var tracked = this._itemsHost;
+
+        if (tracked is not null && tracked.IsFor(host))
         {
-            this._itemsHost.SetTarget(host);
             return;
         }
 
-        this._itemsHost = new WeakReference<ItemsView?>(host);
+        // A list has a watcher only once it has opted in through RecycledItemViewLimit.
+        // For one that has not, this lookup on bind is the whole cost, and None stands in.
+        var watcher = ItemsHostWatcher.Find(host);
 
-        ItemsHostWatcher.Find(host)?.ReleaseParked();
+        this._itemsHost = watcher ?? ItemsHostWatcher.None;
+
+        if (tracked is null)
+        {
+            watcher?.ReleaseParked();
+        }
     }
 
     private bool TryPark(VisualElement element, IStellarView<TViewModel> view)
     {
         var viewModel = view.ViewModel;
+        var watcher = this._itemsHost;
 
         if (this.Maintain
             || viewModel is null
-            || ReferenceEquals(element.BindingContext, viewModel)
-            || this._itemsHost is null
-            || !this._itemsHost.TryGetTarget(out var host)
-            || host?.Window is null)
+            || watcher is null
+            || ReferenceEquals(element.BindingContext, viewModel))
         {
             return false;
         }
 
-        // A list has a watcher only once it has opted in through RecycledItemViewLimit,
-        // so a list that has not costs nothing here.
-        if (ItemsHostWatcher.Find(host) is not { } watcher)
+        // Nothing is allocated until the list has taken the view: the first time, the
+        // watcher creates the slot's weak reference, and the parking is built around it.
+        var parking = this._parking;
+        var slot = parking?.Slot;
+
+        if (!watcher.TryPark(this, ref slot))
         {
             return false;
         }
 
-        var parking = this._parking ??= new Parking(this);
-
-        if (!watcher.TryPark(parking.Owner))
-        {
-            return false;
-        }
+        parking ??= this._parking = new Parking(slot!);
 
         parking.Park(watcher, view, viewModel);
 
@@ -170,7 +189,7 @@ public class MauiViewManager<TViewModel> : ViewManager<TViewModel>, IParkedItemV
             return false;
         }
 
-        watcher.Unpark(parking.Owner);
+        watcher.Unpark(parking.Slot);
 
         parkedViewModel = parking.Unpark();
 
@@ -205,12 +224,16 @@ public class MauiViewManager<TViewModel> : ViewManager<TViewModel>, IParkedItemV
 
         private readonly WeakReference<TViewModel?> _viewModel = new(null);
 
-        public Parking(IParkedItemView owner)
+        public Parking(WeakReference<IParkedItemView> slot)
         {
-            Owner = new WeakReference<IParkedItemView>(owner);
+            Slot = slot;
         }
 
-        public WeakReference<IParkedItemView> Owner { get; }
+        /// <summary>
+        /// Gets the weak reference the watcher holds this view's manager through. The same
+        /// one is handed to the watcher each time, which is how it finds the slot to free.
+        /// </summary>
+        public WeakReference<IParkedItemView> Slot { get; }
 
         public ItemsHostWatcher? Host { get; private set; }
 
