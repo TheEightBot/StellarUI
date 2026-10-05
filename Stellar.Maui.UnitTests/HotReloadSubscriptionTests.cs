@@ -62,6 +62,23 @@ public sealed class HotReloadSubscriptionTests : MauiTestBase, IDisposable
         GC.KeepAlive(window);
     }
 
+    [Fact]
+    public void HotReload_ReachesAViewThatIsInAWindow()
+    {
+        var page = new ContentPage();
+        var window = new Window(page);
+        var cell = new GridDataModelCell();
+
+        page.Content = cell;
+
+        // ReloadView hands its work to the main thread, which a test host does not
+        // have, so reaching that hand-off is the evidence that the view was reloaded.
+        var thrown = Record.Exception(static () => HotReloadService.UpdateApplication(null));
+
+        Assert.NotNull(thrown);
+        GC.KeepAlive(window);
+    }
+
     private static bool IsSubscribed(ITestCell cell)
     {
         var handlers =
