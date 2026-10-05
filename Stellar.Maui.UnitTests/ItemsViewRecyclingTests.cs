@@ -1,3 +1,6 @@
+using System.Runtime.CompilerServices;
+using Stellar.UnitTests;
+
 namespace Stellar.Maui.UnitTests;
 
 /// <summary>
@@ -303,6 +306,115 @@ public class ItemsViewRecyclingTests : MauiTestBase
     }
 
     [Fact]
+    public void RecycledView_WhoseViewModelWasReplacedMeanwhile_DeactivatesTheViewModelItActivatedWhenItReturns()
+    {
+        var source = new LongLivedSource();
+        var list = new ListHarness();
+        var cell = new GridDataModelCell(source);
+        list.BindNew(cell, new TestItem("Chair", 3));
+        var original = cell.ViewModel!;
+        var replacement = new TestCellViewModel(source);
+        list.Recycle(cell);
+        cell.ViewModel = replacement;
+        cell.Events.Clear();
+        original.Events.Clear();
+
+        list.Bind(cell, new TestItem("Table", 7));
+
+        Assert.Equal(new[] { LifecycleEvent.Deactivated }, original.Events);
+        Assert.Equal(
+            new[] { LifecycleEvent.Initialized, LifecycleEvent.Activated, LifecycleEvent.Attached },
+            replacement.Events);
+        Assert.Equal(
+            new[]
+            {
+                LifecycleEvent.Deactivated,
+                LifecycleEvent.Initialized,
+                LifecycleEvent.Activated,
+                LifecycleEvent.Attached,
+            },
+            cell.Events);
+    }
+
+    [Fact]
+    public void RecycledView_WhoseViewModelWasReplacedMeanwhile_DeactivatesTheViewModelItActivatedWhenTheListLeavesTheWindow()
+    {
+        var source = new LongLivedSource();
+        var list = new ListHarness();
+        var cell = new GridDataModelCell(source);
+        list.BindNew(cell, new TestItem("Chair", 3));
+        var original = cell.ViewModel!;
+        var replacement = new TestCellViewModel(source);
+        list.Recycle(cell);
+        cell.ViewModel = replacement;
+        cell.Events.Clear();
+        original.Events.Clear();
+
+        list.RemoveFromWindow();
+
+        Assert.Equal(new[] { LifecycleEvent.Deactivated }, original.Events);
+        Assert.Empty(replacement.Events);
+        Assert.Equal(new[] { LifecycleEvent.Deactivated }, cell.Events);
+    }
+
+    [Fact]
+    public void RecycledView_WhoseViewModelWasTakenAwayMeanwhile_DeactivatesTheViewModelItActivated()
+    {
+        var source = new LongLivedSource();
+        var list = new ListHarness();
+        var cell = new GridDataModelCell(source);
+        list.BindNew(cell, new TestItem("Chair", 3));
+        var original = cell.ViewModel!;
+        list.Recycle(cell);
+        cell.ViewModel = null;
+        cell.Events.Clear();
+
+        list.RemoveFromWindow();
+
+        Assert.Equal(
+            new[]
+            {
+                LifecycleEvent.Initialized,
+                LifecycleEvent.Activated,
+                LifecycleEvent.Attached,
+                LifecycleEvent.Detached,
+                LifecycleEvent.Deactivated,
+            },
+            original.Events);
+        Assert.Equal(new[] { LifecycleEvent.Deactivated }, cell.Events);
+        Assert.False(original.BindingsRegistered);
+        Assert.False(cell.ViewManager.ControlsBound);
+        Assert.Equal(0, source.HandlerCount);
+    }
+
+    [Fact]
+    public void RecycledView_WhoseReplacedViewModelIsNoLongerAlive_RaisesDeactivatedOnceAndOnlyOnTheView()
+    {
+        var list = new ListHarness();
+        var cell = new GridDataModelCell();
+        var replacement = new TestCellViewModel();
+        var original = BindRecycleAndReplace(list, cell, replacement);
+        GcHelpers.ForceFullCollection();
+        cell.Events.Clear();
+
+        list.Bind(cell, new TestItem("Table", 7));
+
+        Assert.False(original.IsAlive);
+        Assert.Equal(
+            new[]
+            {
+                LifecycleEvent.Deactivated,
+                LifecycleEvent.Initialized,
+                LifecycleEvent.Activated,
+                LifecycleEvent.Attached,
+            },
+            cell.Events);
+        Assert.Equal(
+            new[] { LifecycleEvent.Initialized, LifecycleEvent.Activated, LifecycleEvent.Attached },
+            replacement.Events);
+    }
+
+    [Fact]
     public void RecyclingMoreViewsThanARecyclerRetains_TearsDownTheRestImmediately()
     {
         var source = new LongLivedSource();
@@ -355,6 +467,48 @@ public class ItemsViewRecyclingTests : MauiTestBase
 
         Assert.All(cells, static cell => Assert.False(cell.ViewManager.ControlsBound));
         Assert.Equal(0, source.HandlerCount);
+    }
+
+    [Fact]
+    public void ListThatHasNotOptedIn_IsNotWatched()
+    {
+        var source = new LongLivedSource();
+        var list = new ListHarness(recycledItemViewLimit: null);
+        var cells = BindCells(list, source, 2);
+
+        foreach (var cell in cells)
+        {
+            list.Recycle(cell);
+        }
+
+        Assert.Null(ItemsHostWatcher.Find(list.List));
+    }
+
+    [Fact]
+    public void RecycledItemViewLimit_OfZero_OnAListThatHasNotOptedIn_DoesNotWatchIt()
+    {
+        var list = new ListHarness(recycledItemViewLimit: null);
+
+        list.List.RecycledItemViewLimit(0);
+
+        Assert.Null(ItemsHostWatcher.Find(list.List));
+    }
+
+    [Fact]
+    public void RecycledItemViewLimit_SetAfterViewsAreBound_KeepsThemFromTheirNextRecycle()
+    {
+        var source = new LongLivedSource();
+        var list = new ListHarness(recycledItemViewLimit: null);
+        var cells = BindCells(list, source, 2);
+
+        list.List.RecycledItemViewLimit(Cap);
+
+        foreach (var cell in cells)
+        {
+            list.Recycle(cell);
+        }
+
+        Assert.All(cells, static cell => Assert.True(cell.ViewManager.ControlsBound));
     }
 
     [Fact]
@@ -848,6 +1002,21 @@ public class ItemsViewRecyclingTests : MauiTestBase
 
         Assert.False(cell.ViewManager.ControlsBound);
         Assert.Equal(0, source.HandlerCount);
+    }
+
+    // Not inlined, so that no local of the caller keeps the original view model alive.
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private static WeakReference BindRecycleAndReplace(
+        ListHarness list,
+        GridDataModelCell cell,
+        TestCellViewModel replacement)
+    {
+        list.BindNew(cell, new TestItem("Chair", 3));
+        var original = new WeakReference(cell.ViewModel);
+        list.Recycle(cell);
+        cell.ViewModel = replacement;
+
+        return original;
     }
 
     private static List<GridDataModelCell> BindCells(

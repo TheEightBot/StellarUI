@@ -301,14 +301,25 @@ public abstract class ViewManager<TViewModel> : IDisposable
         }
     }
 
-    public void OnLifecycle(IStellarView<TViewModel> view, LifecycleEvent lifecycleEvent)
+    public void OnLifecycle(IStellarView<TViewModel> view, LifecycleEvent lifecycleEvent) =>
+        OnLifecycle(view.ViewModel, lifecycleEvent);
+
+    /// <summary>
+    /// Raises a lifecycle event to a view model and to this manager's lifecycle stream. The
+    /// view model is a parameter so that a derived manager can address one the view no
+    /// longer holds, such as the view model a recycled view was activated with before it
+    /// was given another.
+    /// </summary>
+    /// <param name="viewModel">The view model to notify, if it is <see cref="ILifecycleEventAware"/>.</param>
+    /// <param name="lifecycleEvent">The event.</param>
+    protected void OnLifecycle(TViewModel? viewModel, LifecycleEvent lifecycleEvent)
     {
         if (Volatile.Read(ref _isDisposed))
         {
             return; // Silently return if disposed to avoid exceptions during cleanup
         }
 
-        if (view.ViewModel is ILifecycleEventAware lea)
+        if (viewModel is ILifecycleEventAware lea)
         {
             lea.OnLifecycleEvent(lifecycleEvent);
         }
