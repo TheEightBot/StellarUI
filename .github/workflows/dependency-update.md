@@ -109,13 +109,15 @@ they would just get no generated code. For analyzers and generators the referenc
 is a compatibility floor, not a version to maximise. Leave it alone.
 
 **Keep ReactiveUI on the 24.x line.** This covers every `ReactiveUI.*.Reactive`
-package and `ReactiveUI.SourceGenerators`. ReactiveUI 25 moves binding onto a
+package. `ReactiveUI.SourceGenerators` is versioned separately and stays on 3.x:
+ReactiveUI 25 bundles 4.x and the two move together. ReactiveUI 25 moves binding onto a
 source generator: `Bind` calls through private view fields, which is how Stellar
 views are written, get no generated binding and throw at run time, and the
 `ICreatesCustomizedCommandRebinding` extension point that
 `Stellar.Maui/MauiCommandRebinding.cs` implements no longer exists. Minor and patch
-updates within 24.x are fine. Do not attempt the move to 25 yourself — note in the
-pull request body that it is available and leave the versions unchanged.
+updates within 24.x (and within 3.x for the generators) are fine. Do not attempt
+the move to 25 or later yourself — note in the pull request body that it is
+available and leave the versions unchanged.
 
 **Keep the packages a ReactiveUI update depends on in step with it.**
 `CentralPackageTransitivePinningEnabled` is on, so when a ReactiveUI package
@@ -159,10 +161,10 @@ one.
 
 Apply the `dependencies` label to every pull request you open.
 
-Also apply `skip-samples` **only when the batch contains at least one major version
-bump**. That label makes CI skip the two MAUI sample app builds, which take about
-twelve minutes. Batches of patch and minor updates must not carry it, so those get
-the full sample coverage.
+**Never apply `skip-samples`.** That label makes CI skip the two MAUI sample app
+builds. You cannot build the MAUI projects here, so those jobs are the only thing
+that tests your update against a MAUI app head, and they are what catches version
+conflicts that `Stellar.slnf` cannot see. The label is for a person to add by hand.
 
 ## The pull request
 

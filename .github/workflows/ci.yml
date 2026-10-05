@@ -125,8 +125,10 @@ jobs:
   #
   # They are not merely decorative. The samples, and only the samples, caught
   # the CommunityToolkit.Maui / Microsoft.Maui.Essentials version conflict and
-  # the Android minSdk 21 break during the .NET 10 upgrade. Skip them for a
-  # patch bump; do not skip them for anything that moves a major.
+  # the Android minSdk 21 break during the .NET 10 upgrade. Skip them by hand
+  # for a patch bump you have reason to trust; do not skip them for anything
+  # that moves a major. The dependency bot never applies the label, because
+  # these jobs are the only MAUI app coverage its pull requests get.
   samples:
     name: Sample apps (${{ matrix.project }})
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-samples') }}
