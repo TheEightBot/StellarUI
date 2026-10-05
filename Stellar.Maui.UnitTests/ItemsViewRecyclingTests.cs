@@ -358,6 +358,48 @@ public class ItemsViewRecyclingTests : MauiTestBase
     }
 
     [Fact]
+    public void ListThatHasNotOptedIn_IsNotWatched()
+    {
+        var source = new LongLivedSource();
+        var list = new ListHarness(recycledItemViewLimit: null);
+        var cells = BindCells(list, source, 2);
+
+        foreach (var cell in cells)
+        {
+            list.Recycle(cell);
+        }
+
+        Assert.Null(ItemsHostWatcher.Find(list.List));
+    }
+
+    [Fact]
+    public void RecycledItemViewLimit_OfZero_OnAListThatHasNotOptedIn_DoesNotWatchIt()
+    {
+        var list = new ListHarness(recycledItemViewLimit: null);
+
+        list.List.RecycledItemViewLimit(0);
+
+        Assert.Null(ItemsHostWatcher.Find(list.List));
+    }
+
+    [Fact]
+    public void RecycledItemViewLimit_SetAfterViewsAreBound_KeepsThemFromTheirNextRecycle()
+    {
+        var source = new LongLivedSource();
+        var list = new ListHarness(recycledItemViewLimit: null);
+        var cells = BindCells(list, source, 2);
+
+        list.List.RecycledItemViewLimit(Cap);
+
+        foreach (var cell in cells)
+        {
+            list.Recycle(cell);
+        }
+
+        Assert.All(cells, static cell => Assert.True(cell.ViewManager.ControlsBound));
+    }
+
+    [Fact]
     public void RecycledItemViewLimit_Lowered_ReleasesTheViewsAlreadyKept()
     {
         var source = new LongLivedSource();

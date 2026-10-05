@@ -509,6 +509,29 @@ var removed = await _cache.RemoveAsync<MyModel>(cacheKey: "my-key");
 await _cache.ClearCacheAsync("group");                // null clears the default group
 ```
 
+### Keeping Recycled List Rows Bound (MAUI)
+
+A `CollectionView` reuses its row views. By default StellarUI tears a row's bindings down
+when the row is recycled and builds them again when it is reused. A list can opt in to
+keeping a number of recycled rows bound instead, which removes that work while scrolling:
+
+```csharp
+var list = new CollectionView().RecycledItemViewLimit(5);
+```
+
+- The default is `0`: nothing is kept, and a list that never calls the method is unaffected.
+- `5` matches the number of views an Android `RecyclerView` pool holds per view type. If you
+  have resized that pool, pass the same number here.
+- Kept rows are released when the list leaves its window, or when the limit is lowered.
+- Only rows whose view maps a data model onto its own view model are kept
+  (`GridBase<TViewModel, TDataModel>` and the other two-parameter base classes). A row that
+  is handed a view model per item is torn down as before.
+
+A kept row does **not** run `Bind`, `Initialized`, `Activated` or `Deactivated` again when it
+is given its next item; it only receives `Detached` and `Attached`, and its view model's
+item changes. Opt in only for rows that take everything they show from bindings to the view
+model. A row that reads its item imperatively inside `Bind` would show the previous item.
+
 ### Hot Reload
 
 StellarUI has built-in support for hot reload during development:
