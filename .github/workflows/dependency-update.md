@@ -52,6 +52,48 @@ Every package version in this repository lives in `Directory.Packages.props`.
 Central package management is enabled, so **that is the only file whose versions
 you should edit**. Do not add `Version=` attributes to any `.csproj`.
 
+## The shell you have
+
+Only allowlisted commands run: `dotnet`, `git status` and `git diff` from this
+workflow's `tools.bash` list, the `git` commands needed to branch and commit, and
+a few read-only basics (`cat`, `ls`, `grep`, `head`, `tail`, `sort`, `uniq`, `wc`,
+`echo`, `printf`). A command line that
+contains anything else is refused as a whole with "Permission denied", even when
+the rest of it is allowed. That refusal is the allowlist, **not a network block**:
+nuget.org is reachable through `dotnet`.
+
+- Do not use `curl`, `wget`, `cd`, `timeout`, `xargs`, `sed`, `awk` or scripts.
+  The working directory is already the repository root, so `cd` is never needed.
+- Run each `dotnet` command on its own line, exactly as written in this file.
+- If a command is refused, drop the part that is not on the list and run it again
+  before concluding anything. Do not report the task as incomplete because of a
+  refused `curl`.
+
+## How to find newer versions
+
+```
+dotnet restore Stellar.slnf
+dotnet list Stellar.slnf package --outdated
+dotnet list Stellar.slnf package --outdated --highest-minor
+```
+
+The first listing shows the newest stable version of each package; the second shows
+the newest within the current major, which is the one to use for any package a rule
+below holds on its current major line.
+
+`Stellar.slnf` leaves out the MAUI projects, so those packages do not appear in
+either listing. Look each of them up by id instead (`Microsoft.Maui.Controls`,
+`Microsoft.AspNetCore.Components.WebView.Maui`, `ReactiveUI.Maui.Reactive`,
+`CommunityToolkit.Maui`, `CommunityToolkit.Maui.Markup`, `CommunityToolkit.Mvvm`,
+`Mopups`):
+
+```
+dotnet package search Microsoft.Maui.Controls --exact-match --source https://api.nuget.org/v3/index.json
+```
+
+That prints every published version; take the highest one without a prerelease
+suffix.
+
 ## Rules about what may be updated
 
 These are not suggestions. Each one exists because taking the newest version
