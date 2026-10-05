@@ -14,7 +14,7 @@
   <!-- Core -->
   <ItemGroup>
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.12" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.AutoActivation" Version="10.8.0" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.AutoActivation" Version="10.10.0" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="10.0.12" />
     <PackageVersion Include="System.Threading.RateLimiting" Version="10.0.12" />
     <PackageVersion Include="FluentValidation" Version="12.1.1" />
@@ -52,7 +52,7 @@
   <ItemGroup>
     <PackageVersion Include="Microsoft.Maui.Controls" Version="10.0.110" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="10.0.110" />
-    <PackageVersion Include="CommunityToolkit.Maui" Version="15.0.0" />
+    <PackageVersion Include="CommunityToolkit.Maui" Version="15.0.1" />
     <PackageVersion Include="CommunityToolkit.Maui.Markup" Version="8.0.0" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageVersion Include="Mopups" Version="1.3.4" />
@@ -65,16 +65,16 @@
        to the standalone Avalonia Accelerate tooling) and was referenced but unused,
        so it is dropped rather than pinned. -->
   <ItemGroup>
-    <PackageVersion Include="Avalonia" Version="12.1.1" />
-    <PackageVersion Include="Avalonia.Desktop" Version="12.1.1" />
-    <PackageVersion Include="Avalonia.Fonts.Inter" Version="12.1.1" />
-    <PackageVersion Include="Avalonia.Themes.Fluent" Version="12.1.1" />
+    <PackageVersion Include="Avalonia" Version="12.1.3" />
+    <PackageVersion Include="Avalonia.Desktop" Version="12.1.3" />
+    <PackageVersion Include="Avalonia.Fonts.Inter" Version="12.1.3" />
+    <PackageVersion Include="Avalonia.Themes.Fluent" Version="12.1.3" />
   </ItemGroup>
 
   <!-- Blazor -->
   <ItemGroup>
-    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.10" />
-    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.10" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.12" />
   </ItemGroup>
 
   <!-- Windows (WPF / WinUI 3) and Uno. There is no ReactiveUI 24-compatible Uno
@@ -82,8 +82,8 @@
        Stellar.Uno hand-rolls its activation fetcher and scheduler the same way
        Stellar.Avalonia does. -->
   <ItemGroup>
-    <PackageVersion Include="Microsoft.WindowsAppSDK" Version="2.3.1" />
-    <PackageVersion Include="Uno.WinUI" Version="6.6.184" />
+    <PackageVersion Include="Microsoft.WindowsAppSDK" Version="2.5.1" />
+    <PackageVersion Include="Uno.WinUI" Version="6.7.135" />
   </ItemGroup>
 
   <!-- Source generators. Roslyn is pinned to 5.0.0 rather than the newest
@@ -97,9 +97,9 @@
 
   <!-- Test -->
   <ItemGroup>
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.8.1" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
     <PackageVersion Include="Microsoft.Reactive.Testing" Version="7.0.0" />
-    <PackageVersion Include="coverlet.collector" Version="10.0.1" />
+    <PackageVersion Include="coverlet.collector" Version="10.1.0" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
   </ItemGroup>
