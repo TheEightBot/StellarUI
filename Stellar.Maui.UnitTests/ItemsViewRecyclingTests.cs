@@ -383,8 +383,11 @@ public class ItemsViewRecyclingTests : MauiTestBase
     }
 
     [Fact]
-    public void RecycledItemViewLimit_SetAfterViewsAreBound_KeepsThemFromTheirNextRecycle()
+    public void RecycledItemViewLimit_SetAfterViewsAreBound_KeepsThemOnceTheyHaveBeenBoundAgain()
     {
+        // A view learns whether its list keeps recycled views when it is bound, not when it
+        // is recycled: by then MAUI has already taken its parent away. So a view bound
+        // before the list opted in is torn down once more, and kept from its next bind on.
         var source = new LongLivedSource();
         var list = new ListHarness(recycledItemViewLimit: null);
         var cells = BindCells(list, source, 2);
@@ -396,7 +399,52 @@ public class ItemsViewRecyclingTests : MauiTestBase
             list.Recycle(cell);
         }
 
+        Assert.All(cells, static cell => Assert.False(cell.ViewManager.ControlsBound));
+
+        foreach (var cell in cells)
+        {
+            list.Bind(cell, new TestItem("Rebound", 1));
+            list.Recycle(cell);
+        }
+
         Assert.All(cells, static cell => Assert.True(cell.ViewManager.ControlsBound));
+        Assert.Equal(2, source.HandlerCount);
+    }
+
+    [Fact]
+    public void RecycledItemViewLimit_OfZero_OnAListThatHasNotOptedIn_AllocatesNothing()
+    {
+        // Warmed up on a list of its own so that neither JIT nor static state is counted.
+        new ListHarness(recycledItemViewLimit: null).List.RecycledItemViewLimit(0);
+        var list = new ListHarness(recycledItemViewLimit: null);
+
+        var before = GC.GetAllocatedBytesForCurrentThread();
+        list.List.RecycledItemViewLimit(0);
+        var allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+
+        Assert.Equal(0, allocated);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData(Cap)]
+    public void ItemView_RemembersItsListWithoutAllocating(int? recycledItemViewLimit)
+    {
+        // A view that is not a Stellar view is only ever tracked, so this is the cost of
+        // the tracking alone. The first manager warms up whatever is created once.
+        var list = new ListHarness(recycledItemViewLimit);
+        var view = new ReactiveUI.Reactive.Maui.ReactiveContentView<TestCellViewModel>();
+        list.List.AddLogicalChild(view);
+        using var first = new MauiViewManager<TestCellViewModel>();
+        first.PropertyChanged(view, nameof(Element.Parent));
+        using var manager = new MauiViewManager<TestCellViewModel>();
+
+        var before = GC.GetAllocatedBytesForCurrentThread();
+        manager.PropertyChanged(view, nameof(Element.Parent));
+        manager.PropertyChanged(view, nameof(VisualElement.Window));
+        var allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+
+        Assert.Equal(0, allocated);
     }
 
     [Fact]
