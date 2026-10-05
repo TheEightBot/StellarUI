@@ -58,7 +58,7 @@ public class MauiViewManager<TViewModel> : ViewManager<TViewModel>, IParkedItemV
                     return;
                 }
 
-                this.Deactivate(isv, parkedViewModel);
+                this.DeactivateParked(isv, parkedViewModel);
             }
 
             this.HandleActivated(isv);
@@ -93,7 +93,7 @@ public class MauiViewManager<TViewModel> : ViewManager<TViewModel>, IParkedItemV
 
         if (this.Unpark(out var parkedViewModel) && view is not null)
         {
-            this.Deactivate(view, parkedViewModel);
+            this.DeactivateParked(view, parkedViewModel);
         }
     }
 
@@ -177,11 +177,30 @@ public class MauiViewManager<TViewModel> : ViewManager<TViewModel>, IParkedItemV
         return true;
     }
 
-    private void Deactivate(IStellarView<TViewModel> view, TViewModel? parkedViewModel = null)
+    private void Deactivate(IStellarView<TViewModel> view)
     {
         this.HandleDeactivated(view);
 
-        if (parkedViewModel is ViewModelBase replaced && !ReferenceEquals(replaced, view.ViewModel))
+        view.DisposeView();
+    }
+
+    private void DeactivateParked(IStellarView<TViewModel> view, TViewModel? parkedViewModel)
+    {
+        if (parkedViewModel is not null && ReferenceEquals(parkedViewModel, view.ViewModel))
+        {
+            this.Deactivate(view);
+            return;
+        }
+
+        // The view was given another view model while it was recycled. The one it was
+        // parked with is the one that was activated, so Deactivated is its to receive. The
+        // one the view has now was never activated: it is either about to be, or is being
+        // let go with the view.
+        this.OnLifecycle(parkedViewModel, LifecycleEvent.Deactivated);
+
+        this.UnregisterBindings(view);
+
+        if (parkedViewModel is ViewModelBase replaced)
         {
             replaced.Unregister();
         }
