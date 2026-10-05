@@ -26,7 +26,16 @@
        new Primitives engine as the default packages, but keeps System.Reactive 7
        types (Unit, IScheduler, Subject<T>) at the API boundary, which Stellar's
        public API is built on. System.Reactive is referenced directly because the
-       default ReactiveUI packages no longer pull it in transitively. -->
+       default ReactiveUI packages no longer pull it in transitively.
+
+       Held on 24.x (and ReactiveUI.SourceGenerators on 3.x) on purpose. ReactiveUI
+       25 moves binding onto a source generator: Bind calls through private view
+       fields, which is how Stellar views are written, get no generated binding and
+       throw at run time, and the ICreatesCustomizedCommandRebinding extension point
+       behind Stellar.Maui's MauiCommandRebinding is gone. Moving is a breaking
+       release, not a version bump. ReactiveUI.Maui.Reactive also sets the floor for
+       Microsoft.Maui.Controls and Microsoft.Extensions.*; with transitive pinning
+       on, raise those with it or restore fails with NU1109. -->
   <ItemGroup>
     <PackageVersion Include="ReactiveUI.Reactive" Version="24.3.0" />
     <PackageVersion Include="ReactiveUI.Blazor.Reactive" Version="24.3.0" />
