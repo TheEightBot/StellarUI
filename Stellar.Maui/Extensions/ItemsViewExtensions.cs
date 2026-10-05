@@ -27,6 +27,15 @@ public static class ItemsViewExtensions
         ArgumentNullException.ThrowIfNull(itemsView);
         ArgumentOutOfRangeException.ThrowIfNegative(limit);
 
+        // Zero is what a list that never opted in already does, so it must not be what
+        // gives the list a watcher.
+        if (limit == 0)
+        {
+            ItemsHostWatcher.Find(itemsView)?.Limit = 0;
+
+            return itemsView;
+        }
+
         ItemsHostWatcher.For(itemsView).Limit = limit;
 
         return itemsView;

@@ -1,18 +1,10 @@
-using ReactiveUI.Reactive.Builder;
-
 namespace Stellar.Maui.UnitTests;
 
-public abstract class MauiTestBase
+public abstract class MauiTestBase : StellarTestBase
 {
-    // RecyclerView.RecycledViewPool.DEFAULT_MAX_SCRAP, which the view manager mirrors.
+    // The limit ListHarness opts its list in with, which is
+    // RecyclerView.RecycledViewPool.DEFAULT_MAX_SCRAP.
     protected const int Cap = 5;
-
-    static MauiTestBase()
-    {
-        // ReactiveUI throws on first use unless it has been built. This is the same
-        // registration UseStellarComponents performs, without a MauiAppBuilder.
-        RxAppBuilder.CreateReactiveUIBuilder().WithMaui().BuildApp();
-    }
 
     public static TheoryData<CellKind> CellKinds =>
         new()

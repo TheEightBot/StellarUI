@@ -141,7 +141,7 @@ public class MauiViewManager<TViewModel> : ViewManager<TViewModel>, IParkedItemV
         }
 
         // A list has a watcher only once it has opted in through RecycledItemViewLimit,
-        // so a list that has not costs nothing here.
+        // so for a list that has not this lookup is the whole cost of a recycle.
         if (ItemsHostWatcher.Find(host) is not { } watcher)
         {
             return false;
