@@ -191,7 +191,7 @@ public class MauiViewManager<TViewModel> : ViewManager<TViewModel>, IParkedItemV
 
     private void HandleHotReload(Type[]? updatedTypes)
     {
-        if (_reloadView is null || _reloadView.TryGetTarget(out var target) || target is not IStellarView<TViewModel> isv)
+        if (_reloadView is null || !_reloadView.TryGetTarget(out var target) || target is not IStellarView<TViewModel> isv)
         {
             return;
         }
